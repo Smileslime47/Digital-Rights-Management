@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import webIcon from "~/assets/icons/web-icon.svg";
 </script>
 

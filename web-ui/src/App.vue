@@ -4,7 +4,8 @@
         <TopNavBar />
       </el-header>
 
-      <el-main>
+      <el-main style="min-height: 80vh">
+        <!--TopNavBar导航栏预留空间-->
         <div style="height:60px"/>
         <router-view/>
       </el-main>
@@ -27,9 +28,6 @@
 }
 
 .el-footer{
-  padding:0
+  padding:0 !important;
 }
 </style>
-
-<script setup>
-</script>

@@ -1,7 +1,61 @@
-span{
-    font-family: "JetBrains Mono", "PingFang SC", serif;
+span,p,h1,h2,h3,h4,h5,h6,label{
+    font-family:  "SF Pro", "PingFang SC", sans-serif;
 }
 
 body{
     margin:0
+}
+
+.el-button{
+    border-radius: 10px !important;
+}
+
+.el-card{
+    border-radius: 25px !important;
+}
+
+.el-input__wrapper{
+    border-radius: 50px !important;
+}
+
+.horizontal-center{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.vertical-center{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.text-center{
+    text-align: center;
+}
+
+.full-width{
+    width:100%
+}
+
+.large-text{
+    font-size:32px
+}
+
+.medium-text {
+    font-size: 20px
+}
+
+.hero-text {
+    font-size: 76px;
+}
+
+.text-blue {
+    color: #409EFF
+}
+
+.text-black {
+    color: #323232
 }

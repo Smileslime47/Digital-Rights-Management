@@ -7,3 +7,8 @@
     font-family: "PingFang SC";
     src:url("PingFang.ttf");
 }
+
+@font-face {
+    font-family: "SF Pro";
+    src:url("SF-Pro.ttf");
+}

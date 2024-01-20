@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import githubIcon from "~/assets/icons/github.svg"
 import webIcon from "~/assets/icons/web-icon.svg"
-
+import bugIcon from "~/assets/icons/bug.svg"
+import routeTo from "~/route/routeTo.ts";
 
 const handleSelect = (key: string, keyPath: string[]) => {
   console.log(key, keyPath)
@@ -17,7 +18,7 @@ const goToGithub=()=>{
       :ellipsis=false
       @select="handleSelect"
   >
-    <el-menu-item index="0">
+    <el-menu-item index="0" @click="routeTo.home()">
       <el-space>
         <img
             style="width: 40px"
@@ -28,18 +29,22 @@ const goToGithub=()=>{
       </el-space>
     </el-menu-item>
     <div class="flex-grow"/>
-    <el-menu-item index="1">
-      <el-text>登入</el-text>
-    </el-menu-item>
-    <el-menu-item index="2">
-      <el-text>注册</el-text>
+    <el-menu-item index="1" @click="routeTo.login()">
+      <el-text>登入/注册</el-text>
     </el-menu-item>
     <el-divider direction="vertical" border-style="solid" />
-    <el-menu-item index="3" @click="goToGithub">
+    <el-menu-item index="2" @click="goToGithub">
       <img
           style="width: 20px"
           :src=githubIcon
           alt="githubIcon"
+      />
+    </el-menu-item>
+    <el-menu-item index="3" @click="routeTo.debug()">
+      <img
+          style="width: 20px"
+          :src=bugIcon
+          alt="bugIcon"
       />
     </el-menu-item>
   </el-menu>
