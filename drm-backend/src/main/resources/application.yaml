@@ -1,0 +1,19 @@
+ktor:
+  deployment:
+    port: 8080
+  application:
+    modules:
+      - moe._47saikyo.ApplicationKt.modules
+
+exposed:
+  datasource:
+    driverClassName: "org.mariadb.jdbc.Driver"
+    jdbcUrl: "jdbc:mariadb://localhost:3306/drm-backend?characterEncoding=utf-8&serverTimezone=Asia/Shanghai"
+    username: "root"
+    password: "123456"
+
+JWT:
+  subject: "Digital Right Manager Access License"
+  issuer: "Digital Right Manager"
+  audience: "Browser Application"
+  secret: "secret"
