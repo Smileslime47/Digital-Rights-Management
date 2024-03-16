@@ -4,11 +4,8 @@ import webIcon from "~/assets/icons/web-icon.svg"
 import bugIcon from "~/assets/icons/bug.svg"
 import routeTo from "~/route/routeTo.ts";
 import fresh from "~/composables/fresh.ts";
-import Constant from "~/constant/Constant.ts";
-import httpService from "~/server/http.ts";
-import User from "~/modules/User.ts";
 import {useRoute} from "vue-router";
-import * as jose from 'jose'
+import TokenUtils from "~/server/TokenUtils.ts";
 
 const goToGithub = () => {
   window.open("https://github.com/Smileslime47/Digital-Rights-Management")
@@ -28,35 +25,16 @@ const logout = () => {
   }
 }
 
-fresh((_) => {
-  //是否登陆
-  let userLocalId = localStorage.getItem(Constant.Authentication.USER_ID_CLAIM)
-  if (userLocalId == null) return
-
-  //判断登陆凭证是否过期
-  let userExpireTime = localStorage.getItem(Constant.Authentication.EXPIRE_TIME_CLAIM)
-  if (userExpireTime == null) return;
-  let expireTime = Number.parseInt(userExpireTime)
-  let nowTime = new Date().getTime()
-  if (nowTime - expireTime > 0) {
-    localStorage.clear()
-    return;
-  }
-
-  if (new Date(userExpireTime))
-    httpService.get(
-        Constant.Api.USER_API,
-        {
-          params: {
-            id: userLocalId
-          }
+fresh(async (_) => {
+  TokenUtils.getUser(
+      useRoute().path
+  ).then((result) => {
+        if (result != null) {
+          logged.value = true
+          nickname.value = result.nickname
+          userId.value = result.id
         }
-    ).then((data) => {
-      let user = data[Constant.RespondField.USER] as User
-      logged.value = true
-      userId.value = user.id
-      nickname.value = user.nickname
-    })
+      })
 })
 </script>
 

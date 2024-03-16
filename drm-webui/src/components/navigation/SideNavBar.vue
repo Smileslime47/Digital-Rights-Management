@@ -1,4 +1,22 @@
 <script setup lang="ts">
+import fresh from "~/composables/fresh.ts";
+import routeTo from "~/route/routeTo.ts";
+import TokenUtils from "~/server/TokenUtils.ts";
+import {useRoute} from "vue-router";
+
+const userId = ref(0)
+const logged = ref(false)
+
+fresh((_) => {
+  TokenUtils.getUser(
+      useRoute().path
+  ).then((result) => {
+    if (result != null) {
+      logged.value = true
+      userId.value = result.id
+    }
+  })
+})
 </script>
 
 <template>
@@ -6,33 +24,16 @@
       default-active="2"
       class="el-menu-vertical-demo"
   >
-    <el-sub-menu index="1">
-      <template #title>
-        <el-icon><location /></el-icon>
-        <span>个人资料</span>
-      </template>
-      <el-menu-item-group title="Group One">
-        <el-menu-item index="1-1">item one</el-menu-item>
-        <el-menu-item index="1-2">item two</el-menu-item>
-      </el-menu-item-group>
-      <el-menu-item-group title="Group Two">
-        <el-menu-item index="1-3">item three</el-menu-item>
-      </el-menu-item-group>
-      <el-sub-menu index="1-4">
-        <template #title>item four</template>
-        <el-menu-item index="1-4-1">item one</el-menu-item>
-      </el-sub-menu>
-    </el-sub-menu>
+    <el-menu-item index="1" @click="routeTo.profile(userId)">
+      <span>个人资料</span>
+    </el-menu-item>
     <el-menu-item index="2">
-      <el-icon><icon-menu /></el-icon>
       <span>上传资源</span>
     </el-menu-item>
     <el-menu-item index="3" disabled>
-      <el-icon><document /></el-icon>
       <span>获取授权</span>
     </el-menu-item>
     <el-menu-item index="4">
-      <el-icon><setting /></el-icon>
       <span>版权审核</span>
     </el-menu-item>
   </el-menu>
