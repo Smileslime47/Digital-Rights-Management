@@ -10,20 +10,15 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import kotlinx.serialization.Serializable
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.constant.HttpStatus
 import moe._47saikyo.constant.getProperties
 import moe._47saikyo.models.HttpResponse
 import moe._47saikyo.service.UserService
-import moe._47saikyo.constant.getProperty
 import moe._47saikyo.plugins.security.PasswordEncoder
-import moe._47saikyo.plugins.security.authenticateAfterLogin
 import moe._47saikyo.service.GroupService
-import org.koin.java.KoinJavaComponent
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
-import kotlin.math.log
 
 /**
  * User HTTP Controller
@@ -44,7 +39,7 @@ fun Application.userController() {
                     //检查参数格式
                     val targetIdStr = call.request.queryParameters["id"]
                     if (targetIdStr == null || !targetIdStr.matches(Regex("[0-9]*"))) {
-                        call.respond(HttpResponse(HttpStatus.INVALID_ARGUMENT))
+                        call.respond(HttpResponse(HttpStatus.BAD_REQUEST))
                         return@get
                     }
 
@@ -140,6 +135,53 @@ fun Application.userController() {
                         )
                     }
                 }
+
+                post("/change-password") {
+                    data class ChangePasswordForm(
+                        val oldPassword: String,
+                        val newPassword: String,
+                        val confirmPassword: String
+                    )
+
+                    val changePasswordForm = call.receive<ChangePasswordForm>()
+
+                    //新密码应当与确认密码相同
+                    if (changePasswordForm.newPassword != changePasswordForm.confirmPassword) {
+                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.BAD_REQUEST, "两次密码不匹配")))
+                        return@post
+                    }
+
+                    //检查用户合法性
+                    val loginId =
+                        call.principal<JWTPrincipal>()!!.payload.getClaim(Constant.Authentication.USER_ID_CLAIM)
+                            .asLong()
+                    val loginUser = userService.getUser(loginId)
+                    if (loginUser == null || !passwordEncoder.verifyPassword(
+                            changePasswordForm.oldPassword,
+                            loginUser.password
+                        )
+                    ) {
+                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "密码不符")))
+                        return@post
+                    }
+
+                    loginUser.password = passwordEncoder.hashPassword(changePasswordForm.newPassword)
+
+                    //返回修改结果
+                    when (userService.updateUser(loginUser)) {
+                        true -> call.respond(
+                            HttpResponse(
+                                data = mapOf(Constant.RespondField.SUCCESS to true)
+                            )
+                        )
+
+                        false -> call.respond(
+                            HttpResponse(
+                                data = mapOf(Constant.RespondField.SUCCESS to false)
+                            )
+                        )
+                    }
+                }
             }
 
             post("/login") {
@@ -153,8 +195,8 @@ fun Application.userController() {
 
                 //检查用户合法性
                 val loginUser = userService.getUser(loginForm.username)
-                if (loginUser == null || !passwordEncoder.verifyPassword(loginForm.password, loginUser.password)) {
-                    call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "用户名或密码不符")))
+                if (loginUser == null || !passwordEncoder.verifyPassword(loginForm.password,loginUser.password)) {
+                    call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "用户名或密码不符")))
                     return@post
                 }
 
@@ -165,20 +207,16 @@ fun Application.userController() {
                 }
 
                 //签发jwt
-                val jwtSubject = properties.jwtSubject
-                val jwtIssuer = properties.jwtIssuer
-                val jwtAudience = properties.jwtAudience
-                val jwtSecret = properties.jwtSecret
                 val jwtIssueTime = System.currentTimeMillis()
                 val jwtExpireTime =
                     jwtIssueTime + if (loginForm.rememberMe) Constant.Authentication.REMEMBER_ME_EXPIRE_TIME else Constant.Authentication.DEFAULT_EXPIRE_TIME
                 val token = JWT.create()
                     //主题:Digital Right Manager Access License
-                    .withSubject(jwtSubject)
+                    .withSubject(properties.jwtSubject)
                     //签发者：Digital Right Manager
-                    .withIssuer(jwtIssuer)
+                    .withIssuer(properties.jwtIssuer)
                     //签发受众：Browser Application
-                    .withAudience(jwtAudience)
+                    .withAudience(properties.jwtAudience)
                     //被签发人身份
                     .withClaim(Constant.Authentication.USER_ID_CLAIM, loginUser.id)
                     .withClaim(Constant.Authentication.GROUP_ID_CLAIM, loginUser.permissionId)
@@ -186,7 +224,7 @@ fun Application.userController() {
                     .withIssuedAt(Date(jwtIssueTime))
                     //过期日期
                     .withExpiresAt(Date(jwtExpireTime))//一小时
-                    .sign(Algorithm.HMAC256(jwtSecret))
+                    .sign(Algorithm.HMAC256(properties.jwtSecret))
 
                 call.respond(
                     HttpResponse(
@@ -236,25 +274,23 @@ fun Application.userController() {
                 }
 
                 //签发jwt
-                val jwtSubject = properties.jwtSubject
-                val jwtIssuer = properties.jwtIssuer
-                val jwtAudience = properties.jwtAudience
-                val jwtSecret = properties.jwtSecret
+                val jwtIssueTime = System.currentTimeMillis()
+                val jwtExpireTime = jwtIssueTime + Constant.Authentication.DEFAULT_EXPIRE_TIME
                 val token = JWT.create()
                     //主题:Digital Right Manager Access License
-                    .withSubject(jwtSubject)
+                    .withSubject(properties.jwtSubject)
                     //签发者：Digital Right Manager
-                    .withIssuer(jwtIssuer)
+                    .withIssuer(properties.jwtIssuer)
                     //签发受众：Browser Application
-                    .withAudience(jwtAudience)
+                    .withAudience(properties.jwtAudience)
                     //被签发人身份
                     .withClaim(Constant.Authentication.USER_ID_CLAIM, registerUser.id)
                     .withClaim(Constant.Authentication.GROUP_ID_CLAIM, registerUser.permissionId)
                     //签发日期
-                    .withIssuedAt(Date(System.currentTimeMillis()))
+                    .withIssuedAt(Date(jwtIssueTime))
                     //过期日期
-                    .withExpiresAt(Date(System.currentTimeMillis() + 3600000))//一小时
-                    .sign(Algorithm.HMAC256(jwtSecret))
+                    .withExpiresAt(Date(jwtExpireTime))//一小时
+                    .sign(Algorithm.HMAC256(properties.jwtSecret))
 
                 call.respond(
                     HttpResponse(

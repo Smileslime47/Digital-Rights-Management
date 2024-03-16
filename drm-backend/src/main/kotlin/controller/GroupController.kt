@@ -20,7 +20,7 @@ fun Application.groupController() {
                     //检查参数格式
                     val targetIdStr = call.request.queryParameters["id"]
                     if (targetIdStr == null || !targetIdStr.matches(Regex("[0-9]*"))) {
-                        call.respond(HttpResponse(HttpStatus.INVALID_ARGUMENT))
+                        call.respond(HttpResponse(HttpStatus.BAD_REQUEST))
                         return@get
                     }
 

@@ -14,7 +14,7 @@ object Constant {
         const val EXPIRE_TIME_CLAIM = "expire_time"
 
         const val DEFAULT_GROUP_ID = 0L
-        const val DEFAULT_EXPIRE_TIME = 3600000
+        const val DEFAULT_EXPIRE_TIME = 3600000L
         const val REMEMBER_ME_EXPIRE_TIME = DEFAULT_EXPIRE_TIME * 24
 
         const val NEED_LOGIN = "need_login"

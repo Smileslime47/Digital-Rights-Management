@@ -13,9 +13,11 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
  *   `group_name` varchar(128) NOT NULL,
  *   `permission_show_profile` tinyint(1) NOT NULL DEFAULT 0,
  *   `permission_login` tinyint(1) NOT NULL DEFAULT 0,
+ *   `permission_create_right` tinyint(1) NOT NULL DEFAULT 0,
+ *   `permission_create_license` tinyint(1) NOT NULL DEFAULT 0,
  *   PRIMARY KEY (`id`),
  *   UNIQUE KEY `group_name` (`group_name`)
- * ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+ * ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
  *
  * @author 刘一邦
  * @since 2024/01/07
@@ -25,18 +27,24 @@ object GroupTable : Table("drm_group") {
     val group_name = varchar("group_name", 128).uniqueIndex()
     val permission_login = bool("permission_login")
     val permission_show_profile = bool("permission_show_profile")
+    val permission_create_right = bool("permission_create_right")
+    val permission_create_license = bool("permission_create_license")
     override val primaryKey = PrimaryKey(id)
 
     fun resultRowToGroup(row: ResultRow) = Group(
         id = row[id],
         groupName = row[group_name],
         permissionLogin = row[permission_login],
-        permissionShowProfile = row[permission_show_profile]
+        permissionShowProfile = row[permission_show_profile],
+        permissionCreateRight = row[permission_create_right],
+        permissionCreateLicense = row[permission_create_license]
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(group: Group): GroupTable.(statement: T) -> Unit = {
         it[group_name] = group.groupName ?: GlobalConstant.NULL_PLACEHOLDER
         it[permission_login] = group.permissionLogin
         it[permission_show_profile] = group.permissionShowProfile
+        it[permission_create_right] = group.permissionCreateRight
+        it[permission_create_license] = group.permissionCreateLicense
     }
 }
