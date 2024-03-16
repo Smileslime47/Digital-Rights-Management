@@ -14,7 +14,7 @@ httpService.interceptors.request.use(
     //发生请求拦截
     (config) => {
         //如果开启 token 认证
-        config.headers["Authorization"] = "Bearer "+localStorage.getItem("Token"); // 请求头携带 token
+        config.headers["Authorization"] = "Bearer "+localStorage.getItem(Constant.Authentication.TOKEN_STORAGE); // 请求头携带 token
 
         // // 设置请求头
         // if (!config.headers["content-type"]) { // 如果没有设置请求头

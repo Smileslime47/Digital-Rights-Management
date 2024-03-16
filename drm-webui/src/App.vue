@@ -1,33 +1,7 @@
 <template>
-    <el-container>
-      <el-header>
-        <TopNavBar />
-      </el-header>
-
-      <el-main style="min-height: 80vh">
-        <!--TopNavBar导航栏预留空间-->
-        <div style="height:60px"/>
-        <router-view/>
-      </el-main>
-
-      <el-footer>
-        <Footer/>
-      </el-footer>
-    </el-container>
+  <!--
+  如果把导航栏等内容放在router-view外会导致路由刷新时展示在这些组件上的信息无法及时跟进
+  因此将所有内容都放在router-view内，通过<TemplatePage>构建页面模板
+  -->
+  <router-view/>
 </template>
-
-<style>
-.el-header{
-  height: 60px;
-  width: 100%;
-  position: fixed;
-  padding:0;
-  top: 0;
-  left: 0;
-  z-index: 1;
-}
-
-.el-footer{
-  padding:0 !important;
-}
-</style>

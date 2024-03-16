@@ -9,20 +9,21 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
     "axios": "^1.4.0",
     "element-plus": "^2.3.12",
-    "@element-plus/icons-vue": "^2.1.0",
+    "jose": "^5.2.3",
     "vue": "^3.3.11",
     "vue-router": "^4.2.4"
   },
   "devDependencies": {
     "@types/node": "^20.3.1",
+    "@vitejs/plugin-vue": "^4.5.2",
     "sass": "^1.63.4",
+    "typescript": "^5.2.2",
     "unplugin-auto-import": "^0.16.6",
     "unplugin-icons": "^0.16.6",
     "unplugin-vue-components": "^0.25.2",
-    "@vitejs/plugin-vue": "^4.5.2",
-    "typescript": "^5.2.2",
     "vite": "^5.0.8",
     "vue-tsc": "^1.8.25"
   },

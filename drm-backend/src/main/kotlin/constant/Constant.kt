@@ -7,14 +7,24 @@ package moe._47saikyo.constant
  * @since 2024/01/20
  */
 object Constant {
-    object Global {
-        const val NULL_PLACEHOLDER = "N/A"
-    }
-
     object Authentication {
+        const val TOKEN_STORAGE = "token"
         const val USER_ID_CLAIM = "user_id"
         const val GROUP_ID_CLAIM = "group_id"
+        const val EXPIRE_TIME_CLAIM = "expire_time"
+
+        const val DEFAULT_GROUP_ID = 0L
+        const val DEFAULT_EXPIRE_TIME = 3600000
+        const val REMEMBER_ME_EXPIRE_TIME = DEFAULT_EXPIRE_TIME * 24
+
         const val NEED_LOGIN = "need_login"
+    }
+
+    object RespondField{
+        const val USER = "user"
+        const val GROUP = "group"
+        const val SELF_PROFILE = "self"
+        const val SUCCESS = "success"
     }
 
     object PropertyUrl {

@@ -3,6 +3,7 @@ import httpService from "~/server/http.ts";
 import {ElMessage} from "element-plus";
 import Constant from "~/constant/Constant.ts";
 import routeTo from "~/route/routeTo.ts";
+import TemplatePage from "~/pages/TemplatePage.vue";
 
 const debugUser = () => {
   httpService.get(
@@ -28,15 +29,17 @@ const toProfile = () => {
 </script>
 
 <template>
-  <el-button @click="debugUser">
-    测试按钮
-  </el-button>
-  <el-button @click="errorStatus">
-    错误码测试
-  </el-button>
-  <el-button @click="toProfile">
-    前往个人页
-  </el-button>
+  <TemplatePage>
+    <el-button @click="debugUser">
+      测试按钮
+    </el-button>
+    <el-button @click="errorStatus">
+      错误码测试
+    </el-button>
+    <el-button @click="toProfile">
+      前往个人页
+    </el-button>
+  </TemplatePage>
 </template>
 
 <style scoped>

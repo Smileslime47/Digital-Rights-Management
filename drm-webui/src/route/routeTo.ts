@@ -14,7 +14,8 @@ const routeTo = {
     home: () => loadAndTo("/home"),
     debug: () => loadAndTo("/Debug"),
     login: () => loadAndTo("/login"),
-    profile: (id: Number) => loadAndTo("/profile/" + id)
+    profile: (id: Number) => loadAndTo("/profile/" + id),
+    fresh: () => router.go(0)
 }
 
 export default routeTo

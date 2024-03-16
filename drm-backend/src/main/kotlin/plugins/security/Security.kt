@@ -3,11 +3,13 @@ package moe._47saikyo.plugins.security
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import domain.Group
+import domain.User
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.ktor.util.pipeline.*
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.constant.HttpStatus
 import moe._47saikyo.models.HttpResponse
@@ -83,7 +85,7 @@ fun Route.authenticateAfterLogin(
     optional: Boolean = false,
     build: Route.() -> Unit
 ): Route {
-    return authenticate("need_login") {
+    return authenticate(Constant.Authentication.NEED_LOGIN) {
         authenticate(
             configurations = configurations,
             strategy = if (optional) AuthenticationStrategy.Optional else AuthenticationStrategy.FirstSuccessful,

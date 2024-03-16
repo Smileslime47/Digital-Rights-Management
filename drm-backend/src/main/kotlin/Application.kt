@@ -3,6 +3,7 @@ package moe._47saikyo
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import moe._47saikyo.controller.debugController
+import moe._47saikyo.controller.groupController
 import moe._47saikyo.controller.userController
 import moe._47saikyo.plugins.exposed.configureDataSource
 import moe._47saikyo.plugins.*
@@ -26,5 +27,6 @@ fun Application.modules() {
     configureDataSource()
     //项目内配置
     userController()
+    groupController()
     debugController()
 }

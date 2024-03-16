@@ -26,6 +26,9 @@ class HttpStatus(val code: Int = 200, val msg: String = "Success") {
 
             //资源不存在
             const val NOT_FOUND = 404
+
+            //服务器错误
+            const val SERVER_ERROR = 500
         }
     }
 
@@ -44,5 +47,8 @@ class HttpStatus(val code: Int = 200, val msg: String = "Success") {
 
         //资源不存在
         val NOT_FOUND = HttpStatus(Code.NOT_FOUND, "Not Found")
+
+        //服务器错误
+        val SERVER_ERROR = HttpStatus(Code.SERVER_ERROR,"Server Error")
     }
 }

@@ -1,7 +1,7 @@
 package moe._47saikyo.models
 
+import constant.GlobalConstant
 import domain.Group
-import moe._47saikyo.constant.Constant
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -20,7 +20,7 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
  * @author 刘一邦
  * @since 2024/01/07
  */
-object Groups : Table("drm_group") {
+object GroupTable : Table("drm_group") {
     val id = long("id").autoIncrement()
     val group_name = varchar("group_name", 128).uniqueIndex()
     val permission_login = bool("permission_login")
@@ -34,9 +34,8 @@ object Groups : Table("drm_group") {
         permissionShowProfile = row[permission_show_profile]
     )
 
-    fun <T : UpdateBuilder<Int>> getStatementBinder(group: Group): Groups.(statement: T) -> Unit = {
-        it[id] = group.id
-        it[group_name] = group.groupName ?: Constant.Global.NULL_PLACEHOLDER
+    fun <T : UpdateBuilder<Int>> getStatementBinder(group: Group): GroupTable.(statement: T) -> Unit = {
+        it[group_name] = group.groupName ?: GlobalConstant.NULL_PLACEHOLDER
         it[permission_login] = group.permissionLogin
         it[permission_show_profile] = group.permissionShowProfile
     }
