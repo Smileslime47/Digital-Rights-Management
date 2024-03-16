@@ -5,5 +5,8 @@ class Group {
     groupName: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     permissionLogin: boolean = false;
     permissionShowProfile: boolean = false;
+    permissionCreateRight: boolean = false;
+    permissionCreateLicense: boolean = false;
 }
+
 export default Group

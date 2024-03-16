@@ -9,11 +9,11 @@ const Constant = {
         GROUP_ID_CLAIM: "group_id",
         EXPIRE_TIME_CLAIM: "expire_time"
     },
-    RespondField:{
-        USER:"user",
-        GROUP:"group",
-        SELF_PROFILE:"self",
-        SUCCESS:"success",
+    RespondField: {
+        USER: "user",
+        GROUP: "group",
+        SELF_PROFILE: "self",
+        SUCCESS: "success",
     },
     Property: {
         BASE_URL: import.meta.env.VITE_BASE_URL,
@@ -27,8 +27,9 @@ const Constant = {
         USER_API: "/user",
         USER_LOGIN: "/login",
         USER_REGISTER: "/register",
+        USER_CHANGE_PWD: "/change-password",
 
-        GROUP_API:"/group",
+        GROUP_API: "/group",
     }
 }
 export default Constant

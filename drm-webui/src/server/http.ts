@@ -53,6 +53,10 @@ httpService.interceptors.response.use(
                 ElMessage.error(httpResponse.status.msg)
                 return Promise.reject();
             }
+            default :{
+                ElMessage.error(httpResponse.status.msg)
+                return Promise.reject();
+            }
         }
     },
     (error) => {

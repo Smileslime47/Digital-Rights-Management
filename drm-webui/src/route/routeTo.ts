@@ -15,6 +15,7 @@ const routeTo = {
     debug: () => loadAndTo("/Debug"),
     login: () => loadAndTo("/login"),
     profile: (id: Number) => loadAndTo("/profile/" + id),
+    changePassword: () => loadAndTo("/change-password"),
     fresh: () => router.go(0)
 }
 

@@ -10,6 +10,10 @@ body{
     border-radius: 10px !important;
 }
 
+.el-button-group>.el-button{
+    border-radius: 0 !important;
+}
+
 .el-card{
     border-radius: 25px !important;
 }
