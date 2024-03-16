@@ -9,7 +9,7 @@ import io.ktor.server.routing.*
 fun Application.configureHTTP() {
     //配置CORS策略
     install(CORS) {
-//        //CORS默认允许以method
+//        //CORS默认允许以下method
 //        allowMethod(HttpMethod.Get)
 //        allowMethod(HttpMethod.Post)
 //        allowMethod(HttpMethod.Head)
