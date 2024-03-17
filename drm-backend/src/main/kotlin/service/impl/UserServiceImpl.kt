@@ -2,11 +2,11 @@ package moe._47saikyo.service.impl
 
 import domain.Group
 import domain.User
+import moe._47saikyo.configuration.security.PasswordEncoder
 import moe._47saikyo.dao.GroupDao
 import moe._47saikyo.dao.UserDao
 import moe._47saikyo.models.GroupTable
 import moe._47saikyo.models.UserTable
-import moe._47saikyo.plugins.security.PasswordEncoder
 import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent.inject
 

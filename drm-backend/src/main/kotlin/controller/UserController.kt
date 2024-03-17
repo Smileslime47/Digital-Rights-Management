@@ -10,13 +10,13 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import moe._47saikyo.configuration.security.PasswordEncoder
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.constant.HttpStatus
 import moe._47saikyo.constant.getProperties
 import moe._47saikyo.models.HttpResponse
-import moe._47saikyo.service.UserService
-import moe._47saikyo.plugins.security.PasswordEncoder
 import moe._47saikyo.service.GroupService
+import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
 

@@ -1,11 +1,11 @@
-package moe._47saikyo.plugins.koin
+package moe._47saikyo.configuration.koin
 
+import moe._47saikyo.configuration.security.BCryptPasswordEncoder
+import moe._47saikyo.configuration.security.PasswordEncoder
 import moe._47saikyo.dao.GroupDao
 import moe._47saikyo.dao.UserDao
 import moe._47saikyo.dao.impl.GroupDaoImpl
 import moe._47saikyo.dao.impl.UserDaoImpl
-import moe._47saikyo.plugins.security.BCryptPasswordEncoder
-import moe._47saikyo.plugins.security.PasswordEncoder
 import moe._47saikyo.service.GroupService
 import moe._47saikyo.service.UserService
 import moe._47saikyo.service.impl.GroupServiceImpl

@@ -1,21 +1,18 @@
-package moe._47saikyo.plugins.security
+package moe._47saikyo.configuration.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import domain.Group
-import domain.User
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.util.pipeline.*
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.constant.HttpStatus
-import moe._47saikyo.models.HttpResponse
 import moe._47saikyo.constant.getProperty
+import moe._47saikyo.models.HttpResponse
 import moe._47saikyo.service.GroupService
-import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent
 
 /**

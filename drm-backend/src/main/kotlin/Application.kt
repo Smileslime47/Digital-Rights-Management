@@ -2,13 +2,15 @@ package moe._47saikyo
 
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import moe._47saikyo.configuration.configureHTTP
+import moe._47saikyo.configuration.configureSerialization
+import moe._47saikyo.configuration.exposed.configureDataSource
+import moe._47saikyo.configuration.koin.configureKoin
+import moe._47saikyo.configuration.security.configureSecurity
 import moe._47saikyo.controller.debugController
 import moe._47saikyo.controller.groupController
 import moe._47saikyo.controller.userController
-import moe._47saikyo.plugins.exposed.configureDataSource
-import moe._47saikyo.plugins.*
-import moe._47saikyo.plugins.koin.configureKoin
-import moe._47saikyo.plugins.security.configureSecurity
+
 
 /**
  * 启动类

@@ -1,4 +1,4 @@
-package moe._47saikyo.plugins.security
+package moe._47saikyo.configuration.security
 
 interface PasswordEncoder {
     fun hashPassword(pwd:String):String

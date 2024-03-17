@@ -1,4 +1,4 @@
-package moe._47saikyo.plugins.security
+package moe._47saikyo.configuration.security
 
 import org.mindrot.jbcrypt.BCrypt
 

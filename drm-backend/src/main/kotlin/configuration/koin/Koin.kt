@@ -1,4 +1,4 @@
-package moe._47saikyo.plugins.koin
+package moe._47saikyo.configuration.koin
 
 import io.ktor.server.application.*
 import org.koin.ktor.plugin.Koin

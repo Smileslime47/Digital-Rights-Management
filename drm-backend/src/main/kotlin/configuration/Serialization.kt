@@ -1,6 +1,5 @@
-package moe._47saikyo.plugins
+package moe._47saikyo.configuration
 
-import com.fasterxml.jackson.databind.SerializationFeature
 import io.ktor.http.*
 import io.ktor.serialization.jackson.*
 import io.ktor.server.application.*

@@ -1,4 +1,4 @@
-package moe._47saikyo.plugins
+package moe._47saikyo.configuration
 
 import io.ktor.http.*
 import io.ktor.server.application.*

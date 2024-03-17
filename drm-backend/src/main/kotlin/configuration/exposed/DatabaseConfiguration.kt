@@ -1,4 +1,4 @@
-package moe._47saikyo.plugins.exposed
+package moe._47saikyo.configuration.exposed
 
 import io.ktor.server.application.*
 import moe._47saikyo.constant.Constant
