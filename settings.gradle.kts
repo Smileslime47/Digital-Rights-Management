@@ -12,3 +12,4 @@ rootProject.name = "drm"
 include("drm-core")
 include("drm-backend")
 include("drm-blockchain")
+include("drm-blockchain")
