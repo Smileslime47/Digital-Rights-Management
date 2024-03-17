@@ -95,6 +95,7 @@ const register = () => {
           </el-form>
           <el-space>
             <el-button
+                class="smooth-button"
                 size="large"
                 text
                 bg
@@ -102,6 +103,7 @@ const register = () => {
                 @click="login()">登入
             </el-button>
             <el-button
+                class="smooth-button"
                 size="large"
                 text
                 bg
@@ -154,6 +156,7 @@ const register = () => {
           </el-form>
           <el-space>
             <el-button
+                class="smooth-button"
                 size="large"
                 text
                 bg
@@ -161,6 +164,7 @@ const register = () => {
                 @click="register()">注册
             </el-button>
             <el-button
+                class="smooth-button"
                 size="large"
                 text
                 bg

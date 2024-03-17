@@ -6,7 +6,7 @@ import routeTo from "~/route/routeTo.ts";
 
 const httpService: AxiosInstance = axios.create({
     baseURL: Constant.Property.BASE_URL, //基础公共URL
-    timeout: 10000,              //超时配置
+    // timeout: 10000,              //超时配置
     withCredentials: false,      //跨域携带cookie
 })
 

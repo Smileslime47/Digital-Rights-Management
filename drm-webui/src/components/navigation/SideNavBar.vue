@@ -27,13 +27,16 @@ fresh((_) => {
     <el-menu-item index="1" @click="routeTo.profile(userId)">
       <span>个人资料</span>
     </el-menu-item>
-    <el-menu-item index="2">
+    <el-menu-item index="2" @click="routeTo.chainAccount">
+      <span>链上账户</span>
+    </el-menu-item>
+    <el-menu-item index="3">
       <span>上传资源</span>
     </el-menu-item>
-    <el-menu-item index="3" disabled>
+    <el-menu-item index="4" disabled>
       <span>获取授权</span>
     </el-menu-item>
-    <el-menu-item index="4">
+    <el-menu-item index="5">
       <span>版权审核</span>
     </el-menu-item>
   </el-menu>

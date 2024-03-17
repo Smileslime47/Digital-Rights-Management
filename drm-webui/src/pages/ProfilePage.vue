@@ -35,9 +35,10 @@ fresh((route) => {
   })
 })
 const update = () => {
+  console.log(user)
   httpService.post(
       Constant.Api.USER_API,
-      user
+      user.value
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]
     if (success) {
@@ -73,6 +74,7 @@ const update = () => {
     <el-button-group v-if="selfProfile">
       <el-button text bg type="primary" @click="update">提交修改</el-button>
       <el-button text bg type="warning" @click="routeTo.changePassword">修改密码</el-button>
+      <el-button text bg  @click="routeTo.chainAccount">链上账户</el-button>
     </el-button-group>
 
     <h1>用户组</h1>
@@ -86,6 +88,7 @@ const update = () => {
           <el-descriptions-item label="允许展示资料">{{ group.permissionShowProfile }}</el-descriptions-item>
           <el-descriptions-item label="允许上传版权资源">{{ group.permissionCreateRight }}</el-descriptions-item>
           <el-descriptions-item label="允许获取版权授权">{{ group.permissionCreateLicense }}</el-descriptions-item>
+          <el-descriptions-item label="允许创建链上账户">{{ group.permissionCreateChainAccount }}</el-descriptions-item>
         </el-descriptions>
       </el-descriptions-item>
     </el-descriptions>

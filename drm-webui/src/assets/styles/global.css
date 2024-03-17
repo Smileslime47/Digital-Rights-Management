@@ -1,51 +1,52 @@
-span,p,h1,h2,h3,h4,h5,h6,label{
-    font-family:  "SF Pro", "PingFang SC", sans-serif;
+span, p, h1, h2, h3, h4, h5, h6, label {
+    font-family: "SF Pro", "PingFang SC", sans-serif;
 }
 
-body{
-    margin:0
+body {
+    margin: 0
 }
 
-.el-button{
+.smooth-button {
     border-radius: 10px !important;
 }
 
-.el-button-group>.el-button{
-    border-radius: 0 !important;
-}
-
-.el-card{
+.el-card {
     border-radius: 25px !important;
 }
 
-.el-input__wrapper{
+.el-input__wrapper {
     border-radius: 50px !important;
 }
 
-.horizontal-center{
+.el-input-group--append > .el-input__wrapper {
+    border-top-right-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+}
+
+.horizontal-center {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
 }
 
-.vertical-center{
+.vertical-center {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
 
-.text-center{
+.text-center {
     text-align: center;
 }
 
-.full-width{
-    width:100%
+.full-width {
+    width: 100%
 }
 
-.large-text{
-    font-size:32px
+.large-text {
+    font-size: 32px
 }
 
 .medium-text {

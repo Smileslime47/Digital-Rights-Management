@@ -21,6 +21,7 @@ const placeholderAvatar = ref("https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a549
       </div>
       <div>
         <el-button
+            class = "smooth-button"
             size="large"
             text
             bg

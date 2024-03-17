@@ -57,4 +57,7 @@ declare module 'vue' {
     SideNavBar: typeof import('./components/navigation/SideNavBar.vue')['default']
     TopNavBar: typeof import('./components/navigation/TopNavBar.vue')['default']
   }
+  export interface ComponentCustomProperties {
+    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
+  }
 }

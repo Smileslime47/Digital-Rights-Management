@@ -10,6 +10,7 @@ import Constant from "~/constant/Constant.ts";
 class TokenUtils {
     private static user: User = new User()
     private static group: Group = new Group()
+    private static initialized: boolean = false
     public static routeCache: string = ""
 
     public static async flushData(): Promise<Boolean> {
@@ -24,7 +25,7 @@ class TokenUtils {
         let nowTime = new Date().getTime()
         if (nowTime - expireTime > 0) {
             localStorage.clear()
-            return false;
+            return false
         }
 
         await httpService.get(
@@ -51,21 +52,23 @@ class TokenUtils {
     }
 
     public static async getUser(routeNow: string) {
-        if (routeNow !== this.routeCache || this.routeCache.length === 0) {
+        if (routeNow === this.routeCache || this.routeCache.length === 0 || !this.initialized) {
             this.routeCache = routeNow
-            if(await this.flushData()){
+            if (await this.flushData()) {
+                this.initialized = true
                 return this.user
-            }else return null
+            } else return null
         } else return this.user
     }
 
     public static async getGroup(routeNow: string) {
-        if (routeNow === this.routeCache || this.routeCache.length === 0) {
+        if (routeNow === this.routeCache || this.routeCache.length === 0 || !this.initialized) {
             this.routeCache = routeNow
             if (await this.flushData()) {
-                return this.user
+                this.initialized = true
+                return this.group
             } else return null
-        } else return this.user
+        } else return this.group
     }
 }
 

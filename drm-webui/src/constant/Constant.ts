@@ -14,6 +14,7 @@ const Constant = {
         GROUP: "group",
         SELF_PROFILE: "self",
         SUCCESS: "success",
+        ADDRESS: "address",
     },
     Property: {
         BASE_URL: import.meta.env.VITE_BASE_URL,
@@ -28,6 +29,11 @@ const Constant = {
         USER_LOGIN: "/login",
         USER_REGISTER: "/register",
         USER_CHANGE_PWD: "/change-password",
+
+        CHAIN_API: "/chain",
+        CHAIN_CREATE_ACCOUNT: "/new-account",
+        CHAIN_GET_BALANCE:"/balance",
+        CHAIN_CHARGE:"/charge",
 
         GROUP_API: "/group",
     }
