@@ -2,52 +2,33 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-contract Account {
-    bool private available;
-    uint32 private dbId;
-    Right[] private rights;
-    License[] private licenses;
-
-    function addRight(Right right) public {
-        rights.push(right);
-    }
-
-    function addLicense(License license) public {
-        licenses.push(license);
-    }
+contract DRManager{
+    mapping (address=>Right[]) private rights;
+    mapping (address=>License[]) private licenses;
 }
 
 contract Right {
-    Account private owner;
+    address private owner;
+    uint32 private issueTIme;
+    string private rightName;
+
     License[] private licenses;
 
-    constructor(Account own){
-        owner = own;
-
-        owner.addRight(this);
-    }
-
-    function addLicense(License license) public {
-        licenses.push(license);
+    constructor(uint32 iss,string memory name) {
+        owner = msg.sender;
+        issueTIme = iss;
+        rightName = name;
     }
 }
 
 contract License {
-    Account private author;
-    Account private owner;
+    address private author;
+    address private owner;
+
     Right private right;
+    uint private index;
 
-    uint32 private expireTime;
+    bool private available;
     uint32 private issueTime;
-
-    constructor(Account aut,Account own,Right rig,uint32 exp,uint32 iss){
-        author=aut;
-        owner=own;
-        right=rig;
-        expireTime=exp;
-        issueTime=iss;
-
-        owner.addLicense(this);
-        right.addLicense(this);
-    }
+    uint32 private expireTime;
 }

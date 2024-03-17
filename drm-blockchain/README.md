@@ -17,31 +17,30 @@ solc --evm-version paris ./contract/DigitalRights.sol --bin --abi --optimize -o 
 curl -L get.web3j.io | sh && source ~/.web3j/source.sh
 ```
 
-## 生成Kotlin对象
+## 生成Java对象
 ```bash
 export project_path=./src/main/java &&
 web3j generate solidity \
     -b ./contract/build/Account.bin \
     -a ./contract/build/Account.abi \
     -o $project_path \
-    -p moe._47saikyo &&
+    -p moe._47saikyo.contract &&
 web3j generate solidity \
 -b ./contract/build/Right.bin \
 -a ./contract/build/Right.abi \
 -o $project_path \
--p moe._47saikyo &&
+-p moe._47saikyo.contract &&
 web3j generate solidity \
 -b ./contract/build/License.bin \
 -a ./contract/build/License.abi \
 -o $project_path \
--p moe._47saikyo
+-p moe._47saikyo.contract
 ```
-
 # 注意事项
-- 记得需要挖坑来确认交易
+- 至少维护一台矿机来达成交易
 
 # 参考
-[以太坊-智能合约](https://ethereum.org/zh/developers/docs/smart-contracts/)
+[以太坊官方文档-智能合约](https://ethereum.org/zh/developers/docs/smart-contracts/)
 
 [Solidity Documentation](https://docs.soliditylang.org/en/latest/)
 
