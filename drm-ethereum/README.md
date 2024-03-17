@@ -26,7 +26,19 @@ Geth基于[go-ethereum-1.11.6](https://github.com/ethereum/go-ethereum/)构建
     console 2>>geth.log
 ```
 
-## 创建用户
+# Clef
+## 初始化
 ```bash
- ./clef --keystore ./blockchain-data/keystore newaccount
+./clef init
+```
+
+## 启动服务
+```bash
+ ./clef \
+    --keystore ./blockchain-data/keystore \
+    --chainid 721 \
+    --http \
+    --http.port 8550 \
+    --http.addr 192.168.10.108 \
+    --rules ./clef-rules.js
 ```
