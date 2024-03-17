@@ -6,7 +6,7 @@
 
 同时，希望对初学**Kotlin、KTor、TypeScript、Vue、Ethereum、Web3j**等技术栈的开发者有所启发
 
-# 开发语言和框架
+## 开发语言和框架
 
 项目整体通过Gradle管理
 
@@ -21,7 +21,7 @@
 - 智能合约基于Solidity开发
   - EVM版本使用Paris
 
-# TODO
+## TODO
 
 | 目标           | 进度  |
 |--------------|-----|
@@ -33,18 +33,18 @@
 | IPFS部署及组件开发  | 计划中 |
 | Kubernetes部署 | 计划中 |
 
-# 核心组件
+## 核心组件
 
 详见各模块下的README文档（如果有）
 
-## drm-core
+### drm-core
 
 核心模块，基于Kotlin
 
 - domain包：包含Kotlin模块之间相互传输的通用数据类
 - constant包：应用于Kotlin项目全局的环境变量
 
-## drm-blockchain
+### drm-blockchain
 
 包含与以太坊区块链交互的代码，由Java代码、Kotlin代码和Solidity代码共同组成（Java和Solidity均为智能合约）
 
@@ -56,7 +56,7 @@
 - contract：包含`.sol`格式的智能合约源代码（开发中）及其直接构件（`.bin`和`.abi`），.sol文件通过solc编译为abi和bin文件后，通过web3j转译为Java对象导入到项目中
   - 智能合约编译见[README](./drm-blockchain/README.md)
 
-## drm-backend
+### drm-backend
 
 服务器后端模块，包含网络请求和业务逻辑处理的大部分代码，基于Kotlin with Ktor，依赖于drm-core和drm-blockchain组件
 
@@ -67,7 +67,7 @@
 - dao包：基于models包的表映射关系，实现最基础的CRUD函数
 - models包：建立domain包下数据类与数据库表之间的映射关系
 
-## drm-webui
+### drm-webui
 
 前端模块，包含与用户直接进行交互的代码，基于TypeScript with Vue3
 
@@ -80,7 +80,7 @@
 - route：路由映射
 - server：网络请求相关配置类
 
-## drm-ethereum
+### drm-ethereum
 
 部署以太坊私有链的相关环境和配置，严格意义上来讲，该模块独立运作，不依赖于其他几个组件，需要单独部署
 
@@ -88,6 +88,6 @@
   - 区块链部署见[README](./drm-ethereum/README.md)
 - clef：本地的以太坊账号管理服务（暂时没用）
 
-# License
+## License
 
 Digital Rights Manager项目由[MIT](./LICENSE)协议进行许可开源
