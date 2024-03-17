@@ -7,6 +7,7 @@ class Group {
     permissionShowProfile: boolean = false;
     permissionCreateRight: boolean = false;
     permissionCreateLicense: boolean = false;
+    permissionCreateChainAccount: boolean = false;
 }
 
 export default Group

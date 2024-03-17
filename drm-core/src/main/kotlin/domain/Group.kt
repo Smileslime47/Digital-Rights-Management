@@ -6,5 +6,6 @@ data class Group(
     var permissionLogin: Boolean = false,
     var permissionShowProfile: Boolean = false,
     var permissionCreateRight: Boolean = false,
-    var permissionCreateLicense: Boolean = false
+    var permissionCreateLicense: Boolean = false,
+    var permissionCreateChainAccount: Boolean = false
 )

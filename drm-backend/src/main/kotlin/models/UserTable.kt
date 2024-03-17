@@ -32,6 +32,7 @@ object UserTable : Table("drm_user") {
     val nickname = varchar("nickname", 128)
     val email = varchar("email", 128)
     val phone_number = varchar("phone_number", 128)
+    val chain_address = varchar("chain_address", 128).uniqueIndex()
     override val primaryKey = PrimaryKey(id)
 
     fun resultRowToUser(row: ResultRow) = User(
@@ -41,7 +42,8 @@ object UserTable : Table("drm_user") {
         password = row[password],
         nickname = row[nickname],
         email = row[email],
-        phoneNumber = row[phone_number]
+        phoneNumber = row[phone_number],
+        chainAddress = row[chain_address]
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(user: User): UserTable.(statement: T) -> Unit = {
@@ -51,5 +53,6 @@ object UserTable : Table("drm_user") {
         it[nickname] = user.nickname ?: GlobalConstant.NULL_PLACEHOLDER
         it[email] = user.email ?: GlobalConstant.NULL_PLACEHOLDER
         it[phone_number] = user.phoneNumber ?: GlobalConstant.NULL_PLACEHOLDER
+        it[chain_address] = user.chainAddress ?: GlobalConstant.NULL_PLACEHOLDER
     }
 }
