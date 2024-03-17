@@ -18,6 +18,7 @@ object Constant {
         const val REMEMBER_ME_EXPIRE_TIME = DEFAULT_EXPIRE_TIME * 24
 
         const val NEED_LOGIN = "need_login"
+        const val PERMISSION_CREATE_CHAIN_ACCOUNT = "permission_create_chain_account"
     }
 
     object RespondField{
@@ -25,6 +26,7 @@ object Constant {
         const val GROUP = "group"
         const val SELF_PROFILE = "self"
         const val SUCCESS = "success"
+        const val ADDRESS = "address"
     }
 
     object PropertyUrl {
@@ -37,5 +39,10 @@ object Constant {
         const val JWT_ISSUER = "JWT.issuer"
         const val JWT_AUDIENCE = "JWT.audience"
         const val JWT_SUBJECT = "JWT.subject"
+
+        const val CHAIN_SOCKET = "chain.socket"
+        const val CHAIN_PASSWORD = "chain.password"
+        const val CHAIN_WALLET_FILE = "chain.walletFile"
+        const val CHAIN_ID = "chain.chainId"
     }
 }

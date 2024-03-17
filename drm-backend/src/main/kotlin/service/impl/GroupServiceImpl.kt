@@ -6,6 +6,11 @@ import moe._47saikyo.models.GroupTable
 import moe._47saikyo.service.GroupService
 import org.koin.java.KoinJavaComponent
 
+/**
+ * GroupService实现
+ *
+ * @author 刘一邦
+ */
 class GroupServiceImpl : GroupService {
     private val groupDao: GroupDao by KoinJavaComponent.inject(GroupDao::class.java)
     override suspend fun getGroup(id: Long): Group? =

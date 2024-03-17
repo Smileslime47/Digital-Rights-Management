@@ -69,6 +69,10 @@ fun Application.configureSecurity() {
                 call.respond(HttpResponse(HttpStatus.UNAUTHORIZED))
             }
         }
+
+        jwt(Constant.Authentication.PERMISSION_CREATE_CHAIN_ACCOUNT) {
+            authenticateGroupPermission(Group::permissionCreateChainAccount)
+        }
     }
 }
 

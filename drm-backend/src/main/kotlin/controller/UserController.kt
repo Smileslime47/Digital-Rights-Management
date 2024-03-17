@@ -11,6 +11,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import moe._47saikyo.configuration.security.PasswordEncoder
+import moe._47saikyo.configuration.security.authenticateAfterLogin
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.constant.HttpStatus
 import moe._47saikyo.constant.getProperties
@@ -36,88 +37,88 @@ fun Application.userController() {
         route("/user") {
             authenticate(Constant.Authentication.NEED_LOGIN) {
                 get {
-                    //检查参数格式
                     val targetIdStr = call.request.queryParameters["id"]
-                    if (targetIdStr == null || !targetIdStr.matches(Regex("[0-9]*"))) {
-                        call.respond(HttpResponse(HttpStatus.BAD_REQUEST))
-                        return@get
-                    }
-
-                    //检查用户是否存在
-                    val targetId = targetIdStr.toLong()
-                    val targetUser = userService.getUser(targetId)
-                    if (targetUser == null) {
-                        call.respond(HttpResponse(HttpStatus.NOT_FOUND))
-                        return@get
-                    }
-
-                    //检查该用户是否有展示权限
+                    val targetId = if (targetIdStr?.matches(Regex("[0-9]+")) == true) targetIdStr.toLong() else null
+                    val targetUser = targetId?.let { id -> userService.getUser(id) }
                     val loginId =
-                        call.principal<JWTPrincipal>()!!.payload.getClaim(Constant.Authentication.USER_ID_CLAIM)
-                            .asLong()
+                        call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
+                            ?.asLong()
                     when {
-                        loginId.equals(targetId) -> {
-                            call.respond(
-                                HttpResponse(
-                                    data = mapOf(
-                                        Constant.RespondField.USER to User(
-                                            id = targetUser.id,
-                                            permissionId = targetUser.permissionId,
-                                            username = targetUser.username,
-                                            nickname = targetUser.nickname,
-                                            password = targetUser.password,
-                                            email = targetUser.email,
-                                            phoneNumber = targetUser.phoneNumber
-                                        ),
-                                        Constant.RespondField.SELF_PROFILE to true
-                                    )
-                                )
-                            )
+                        //检查参数格式
+                        (targetIdStr == null || !targetIdStr.matches(Regex("[0-9]*"))) -> {
+                            call.respond(HttpResponse(HttpStatus.BAD_REQUEST))
                             return@get
                         }
 
-                        groupService.authenticate(targetUser.permissionId, Group::permissionShowProfile) -> {
-                            call.respond(
-                                HttpResponse(
-                                    data = mapOf(
-                                        Constant.RespondField.USER to User(
-                                            id = targetUser.id,
-                                            permissionId = targetUser.permissionId,
-                                            username = targetUser.username,
-                                            nickname = targetUser.nickname,
-                                            email = targetUser.email,
-                                            phoneNumber = targetUser.phoneNumber
-                                        ),
-                                        Constant.RespondField.SELF_PROFILE to false
-                                    )
-                                )
-                            )
+                        //检查用户是否存在
+                        ((targetUser == null)) -> {
+                            call.respond(HttpResponse(HttpStatus.NOT_FOUND))
                             return@get
                         }
 
-                        else -> {
+                        //检查用户登陆id
+                        (loginId == null) -> {
+                            call.respond(HttpResponse(HttpStatus.UNAUTHORIZED))
+                            return@get
+                        }
+
+                        //检查该用户是否有展示权限
+                        (loginId != targetId && !groupService.authenticate(
+                            targetUser.permissionId,
+                            Group::permissionShowProfile
+                        )) -> {
                             call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "该用户无展示信息权限")))
                             return@get
                         }
                     }
+
+                    call.respond(
+                        HttpResponse(
+                            data = mapOf(
+                                Constant.RespondField.USER to
+                                        if (loginId!! == targetId)
+                                            User(
+                                                id = targetUser!!.id,
+                                                permissionId = targetUser.permissionId,
+                                                username = targetUser.username,
+                                                nickname = targetUser.nickname,
+                                                password = targetUser.password,
+                                                email = targetUser.email,
+                                                phoneNumber = targetUser.phoneNumber,
+                                                chainAddress = targetUser.chainAddress
+                                            )
+                                        else
+                                            User(
+                                                id = targetUser!!.id,
+                                                permissionId = targetUser.permissionId,
+                                                username = targetUser.username,
+                                                nickname = targetUser.nickname,
+                                                email = targetUser.email,
+                                                phoneNumber = targetUser.phoneNumber
+                                            ),
+                                Constant.RespondField.SELF_PROFILE to true
+                            )
+                        )
+                    )
                 }
 
                 post {
                     val targetUser = call.receive<User>()
-
-                    //检查用户是否存在
-                    if (userService.getUser(targetUser.id) == null) {
-                        call.respond(HttpResponse(HttpStatus.NOT_FOUND))
-                        return@post
-                    }
-
-                    //检查该用户是否要修改自身信息
                     val loginId =
-                        call.principal<JWTPrincipal>()!!.payload.getClaim(Constant.Authentication.USER_ID_CLAIM)
-                            .asLong()
-                    if (loginId != targetUser.id) {
-                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "禁止修改他人信息")))
-                        return@post
+                        call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
+                            ?.asLong()
+                    when {
+                        //检查用户是否存在
+                        (userService.getUser(targetUser.id) == null) -> {
+                            call.respond(HttpResponse(HttpStatus.NOT_FOUND))
+                            return@post
+                        }
+
+                        //检查该用户是否要修改自身信息
+                        (loginId == null || loginId != targetUser.id) -> {
+                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "禁止修改他人信息")))
+                            return@post
+                        }
                     }
 
                     //返回修改结果
@@ -144,28 +145,30 @@ fun Application.userController() {
                     )
 
                     val changePasswordForm = call.receive<ChangePasswordForm>()
-
-                    //新密码应当与确认密码相同
-                    if (changePasswordForm.newPassword != changePasswordForm.confirmPassword) {
-                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.BAD_REQUEST, "两次密码不匹配")))
-                        return@post
-                    }
-
-                    //检查用户合法性
                     val loginId =
-                        call.principal<JWTPrincipal>()!!.payload.getClaim(Constant.Authentication.USER_ID_CLAIM)
-                            .asLong()
-                    val loginUser = userService.getUser(loginId)
-                    if (loginUser == null || !passwordEncoder.verifyPassword(
+                        call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
+                            ?.asLong()
+                    val loginUser = loginId?.let { id -> userService.getUser(id) }
+
+
+                    when {
+                        //新密码应当与确认密码相同
+                        (changePasswordForm.newPassword != changePasswordForm.confirmPassword) -> {
+                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.BAD_REQUEST, "两次密码不匹配")))
+                            return@post
+                        }
+
+                        //检查登陆用户合法性
+                        (loginUser == null || !passwordEncoder.verifyPassword(
                             changePasswordForm.oldPassword,
                             loginUser.password
-                        )
-                    ) {
-                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "密码不符")))
-                        return@post
+                        )) -> {
+                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "密码不符")))
+                            return@post
+                        }
                     }
 
-                    loginUser.password = passwordEncoder.hashPassword(changePasswordForm.newPassword)
+                    loginUser!!.password = passwordEncoder.hashPassword(changePasswordForm.newPassword)
 
                     //返回修改结果
                     when (userService.updateUser(loginUser)) {
@@ -192,18 +195,20 @@ fun Application.userController() {
                 )
 
                 val loginForm = call.receive<LoginForm>()
-
-                //检查用户合法性
                 val loginUser = userService.getUser(loginForm.username)
-                if (loginUser == null || !passwordEncoder.verifyPassword(loginForm.password,loginUser.password)) {
-                    call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "用户名或密码不符")))
-                    return@post
-                }
 
-                //检查用户组登陆权限
-                if (!groupService.authenticate(loginUser.permissionId, Group::permissionLogin)) {
-                    call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "该用户组已被封禁")))
-                    return@post
+                when {
+                    //检查用户合法性
+                    (loginUser == null || !passwordEncoder.verifyPassword(loginForm.password, loginUser.password)) -> {
+                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "用户名或密码不符")))
+                        return@post
+                    }
+
+                    //检查用户组登陆权限
+                    (!groupService.authenticate(loginUser.permissionId, Group::permissionLogin)) -> {
+                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "该用户组已被封禁")))
+                        return@post
+                    }
                 }
 
                 //签发jwt
@@ -218,7 +223,7 @@ fun Application.userController() {
                     //签发受众：Browser Application
                     .withAudience(properties.jwtAudience)
                     //被签发人身份
-                    .withClaim(Constant.Authentication.USER_ID_CLAIM, loginUser.id)
+                    .withClaim(Constant.Authentication.USER_ID_CLAIM, loginUser!!.id)
                     .withClaim(Constant.Authentication.GROUP_ID_CLAIM, loginUser.permissionId)
                     //签发日期
                     .withIssuedAt(Date(jwtIssueTime))

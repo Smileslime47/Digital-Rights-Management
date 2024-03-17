@@ -2,11 +2,13 @@ package moe._47saikyo
 
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
+import moe._47saikyo.configuration.configureBlockChain
 import moe._47saikyo.configuration.configureHTTP
 import moe._47saikyo.configuration.configureSerialization
 import moe._47saikyo.configuration.exposed.configureDataSource
 import moe._47saikyo.configuration.koin.configureKoin
 import moe._47saikyo.configuration.security.configureSecurity
+import moe._47saikyo.controller.chainController
 import moe._47saikyo.controller.debugController
 import moe._47saikyo.controller.groupController
 import moe._47saikyo.controller.userController
@@ -27,8 +29,11 @@ fun Application.modules() {
     configureSerialization()
     //数据库配置
     configureDataSource()
+    //区块链API配置
+    configureBlockChain()
     //项目内配置
     userController()
     groupController()
+    chainController()
     debugController()
 }
