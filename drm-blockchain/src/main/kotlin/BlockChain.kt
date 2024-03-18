@@ -15,9 +15,11 @@ import org.web3j.tx.TransactionManager
  * @author 刘一邦
  */
 object BlockChain {
-    //
+    //连接状态
     var connected = false
         private set
+
+    //区块链ID
     var chainId = 0L
         private set
 

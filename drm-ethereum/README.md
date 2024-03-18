@@ -1,18 +1,24 @@
-# 环境
+## 环境
+
 Geth基于[go-ethereum-1.11.6](https://github.com/ethereum/go-ethereum/)构建
 
 # genesis.json
+
 `"gasLimit": "0xffffffff",`
+
 - 防止Error: exceeds block gas limit undefined
 
 
-# 指令
-## 初始化
+## 指令
+
+### 初始化
+
 ```bash
 ./geth --datadir ./blockchain-data init genesis.json
 ```
 
-## 启动
+### 启动
+
 ```bash
 ./geth \
     --datadir ./blockchain-data \
@@ -26,13 +32,16 @@ Geth基于[go-ethereum-1.11.6](https://github.com/ethereum/go-ethereum/)构建
     console 2>>geth.log
 ```
 
-# Clef
-## 初始化
+## Clef
+
+### 初始化
+
 ```bash
 ./clef init
 ```
 
-## 启动服务
+### 启动服务
+
 ```bash
  ./clef \
     --keystore ./blockchain-data/keystore \
