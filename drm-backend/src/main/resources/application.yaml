@@ -21,6 +21,6 @@ JWT:
 chain:
   socket: "http://192.168.10.108:8545"
   address: "0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe"
-  password: "test"
-  walletFile: "/KeyStore/UTC--2024-03-17T14-50-44.567854327Z--35e6632f8c633d1cc299c88b6d6ec1646c57385b.json"
+  password: "1234567890"
+  walletFile: "/KeyStore/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json"
   chainId: 721
