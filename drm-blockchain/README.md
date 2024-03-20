@@ -1,5 +1,7 @@
 ## 编译合约
 
+> 2024/03/20：在安装完相关环境后，可以直接运行目录下的`solidity-compile.sh`完成以下操作
+
 ### 安装solc(solidity编译器)
 
 ```bash
@@ -9,7 +11,7 @@ yay -S solidity
 ### 编译
 
 ```bash
-solc --evm-version paris ./src/main/solidity/DigitalRights.sol --bin --abi --optimize -o ./solidity-build
+solc --evm-version paris ./src/main/solidity/DRManager.sol --bin --abi --optimize -o ./solidity-build
 ```
 **关于指定EVM版本号为Paris**:
 
