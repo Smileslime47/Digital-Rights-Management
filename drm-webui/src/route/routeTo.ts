@@ -16,7 +16,8 @@ const routeTo = {
     login: () => loadAndTo("/login"),
     profile: (id: Number) => loadAndTo("/profile/" + id),
     changePassword: () => loadAndTo("/change-password"),
-    chainAccount: () => loadAndTo("/chain-account"),
+    chainAccount: () => loadAndTo("/chain/account"),
+    chainRight: () => loadAndTo("/chain/right"),
     fresh: () => router.go(0)
 }
 

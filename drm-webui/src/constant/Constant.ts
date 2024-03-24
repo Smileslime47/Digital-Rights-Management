@@ -31,9 +31,11 @@ const Constant = {
         USER_CHANGE_PWD: "/change-password",
 
         CHAIN_API: "/chain",
-        CHAIN_CREATE_ACCOUNT: "/new-account",
-        CHAIN_GET_BALANCE:"/balance",
-        CHAIN_CHARGE:"/charge",
+        CHAIN_ACCOUNT_API:"/account",
+
+        ACCOUNT_NEW_ACCOUNT: "/new-account",
+        ACCOUNT_GET_BALANCE:"/balance",
+        ACCOUNT_CHARGE:"/charge",
 
         GROUP_API: "/group",
     }

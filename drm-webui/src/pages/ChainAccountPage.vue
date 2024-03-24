@@ -28,7 +28,7 @@ fresh(async (_) => {
   })
   if (addr.value != null && addr.value.length > 0) {
     httpService.get(
-        Constant.Api.CHAIN_API + Constant.Api.CHAIN_GET_BALANCE,
+        Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.ACCOUNT_GET_BALANCE,
         {
           params: {
             addr: addr.value
@@ -44,7 +44,7 @@ fresh(async (_) => {
 const confirmCreate = () => {
   const loadingInstance = ElLoading.service()
   httpService.post(
-      Constant.Api.CHAIN_API + Constant.Api.CHAIN_CREATE_ACCOUNT,
+      Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.ACCOUNT_NEW_ACCOUNT,
       passwordForm
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]
@@ -59,7 +59,7 @@ const confirmCreate = () => {
 }
 const confirmCharge = () => {
   httpService.post(
-      Constant.Api.CHAIN_API + Constant.Api.CHAIN_CHARGE,
+      Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.ACCOUNT_CHARGE,
       chargeValue.value
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]

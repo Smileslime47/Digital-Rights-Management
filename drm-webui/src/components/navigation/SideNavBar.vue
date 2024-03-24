@@ -30,7 +30,7 @@ fresh((_) => {
     <el-menu-item index="2" @click="routeTo.chainAccount">
       <span>链上账户</span>
     </el-menu-item>
-    <el-menu-item index="3">
+    <el-menu-item index="3" @click="routeTo.chainRight">
       <span>上传资源</span>
     </el-menu-item>
     <el-menu-item index="4" disabled>
