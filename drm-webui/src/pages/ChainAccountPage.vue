@@ -5,11 +5,10 @@ import fresh from "~/composables/fresh.ts";
 import {useRoute} from "vue-router";
 import Constant from "~/constant/Constant.ts";
 import httpService from "~/server/http.ts";
-import {ElMessage} from "element-plus";
+import {ElLoading, ElMessage} from "element-plus";
 import routeTo from "~/route/routeTo.ts";
 
 const passwordForm = reactive({
-  id: 0,
   password: "",
   confirmPassword: ""
 })
@@ -24,7 +23,6 @@ fresh(async (_) => {
       useRoute().path
   ).then((result) => {
     if (result != null) {
-      passwordForm.id = result.id
       addr.value = result.chainAddress
     }
   })
@@ -44,6 +42,7 @@ fresh(async (_) => {
 })
 
 const confirmCreate = () => {
+  const loadingInstance = ElLoading.service()
   httpService.post(
       Constant.Api.CHAIN_API + Constant.Api.CHAIN_CREATE_ACCOUNT,
       passwordForm
@@ -54,6 +53,8 @@ const confirmCreate = () => {
     } else {
       ElMessage.error("创建失败！")
     }
+    loadingInstance.close()
+    routeTo.fresh()
   })
 }
 const confirmCharge = () => {

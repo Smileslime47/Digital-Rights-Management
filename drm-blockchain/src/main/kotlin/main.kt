@@ -5,14 +5,30 @@ import java.util.Base64
 import javax.crypto.spec.SecretKeySpec
 
 fun main(){
-    val iv = CryptoUtils.getRandomByteArray(CryptoUtils.IV_128_BIT)
-    val spec = CryptoUtils.getSecretKey("password")
+    val iv = Base64.getDecoder().decode("ZR7qTzBJiN/Lq7BrpC53GA==")
 
-    val encrypted = CryptoUtils.encrypt("testdata".toByteArray(),spec,iv)
-    println(String(encrypted))
+    println(String(iv))
 
-    val decrypted = CryptoUtils.decrypt(encrypted,spec,iv)
-    println(String(decrypted))
+    val secretKey = CryptoUtils.getSecretKey("123")
+    val walletFile = "{\"address\":\"fdd71114061494a053b2ef4cd7e6242e9459ca2b\",\"id\":\"89595057-c10e-41d9-9ad4-a03ae108dbce\",\"version\":3,\"crypto\":{\"cipher\":\"aes-128-ctr\",\"ciphertext\":\"9970188930abd777375be8f37931c39cc18098ab7c036691c0a59dc9c0d54015\",\"cipherparams\":{\"iv\":\"d930212c1cc1b18a5caa9e2c57a349d6\"},\"kdf\":\"scrypt\",\"kdfparams\":{\"dklen\":32,\"n\":262144,\"p\":1,\"r\":8,\"salt\":\"ee516fc5ab522794876bfaa37afaa25b9f728622309a2fb1e6cd4b22d91d6a85\"},\"mac\":\"806a76b5386edeae53043fce2f2c61bf40cad604326fa561534aebd253254000\"}}\n"
+
+    val encryptedWalletFile= CryptoUtils.encrypt(
+        data = walletFile.toByteArray(),
+        secretKey = secretKey,
+        iv = iv
+    )
+
+    println(String(encryptedWalletFile))
+
+    val test = CryptoUtils.decrypt(
+        data = encryptedWalletFile,
+        secretKey = secretKey,
+        iv = iv
+    )
+
+    println(String(test))
+
+
 
 //    BlockChain.connect(
 //        socket = "http://192.168.10.108:8545",

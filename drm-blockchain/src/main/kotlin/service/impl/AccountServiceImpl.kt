@@ -7,6 +7,7 @@ import moe._47saikyo.service.AccountService
 import moe._47saikyo.utils.CryptoUtils
 import org.web3j.crypto.Keys
 import org.web3j.crypto.Wallet
+import org.web3j.crypto.WalletFile
 import org.web3j.crypto.WalletUtils
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.tx.RawTransactionManager
@@ -23,18 +24,21 @@ import java.math.BigInteger
  */
 class AccountServiceImpl : AccountService {
     /**
-     * 通过密码和随机生成的密钥对创建WalletFile,并将KeyFile以序列化字符串形式返回
+     * 通过密码和随机生成的密钥对创建WalletFile,并将KeyFile以WalletFile对象返回
      *
      * 由于KeyFile的特殊性，在考虑中心化存储该文件的情况下请考虑加密存储
      * @see [CryptoUtils]
      *
      * @param password 新账户的密码
-     * @return 序列化后的Json KeyFile文件
+     * @return 账户地址和KeyFile文件
      */
-    override fun newAccount(password: String): String {
-        val wallerFile = Wallet.createStandard(password, Keys.createEcKeyPair())
-        return ObjectMapper().writeValueAsString(wallerFile)
-    }
+    override fun newAccount(password: String): Pair<String, String> =
+        Wallet.createStandard(password, Keys.createEcKeyPair()).let {
+            Pair(
+                it.address,
+                ObjectMapper().writeValueAsString(it)
+            )
+        }
 
     /**
      * 通过BlockChain的Web3j实例创建一个新的区块链账户

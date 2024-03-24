@@ -11,7 +11,9 @@ import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.UserService
+import moe._47saikyo.utils.CryptoUtils
 import org.koin.java.KoinJavaComponent
+import java.util.*
 
 /**
  * BlockChain HTTP Controller
@@ -28,7 +30,7 @@ fun Application.chainController() {
                 get("/balance") {
                     val addr = call.request.queryParameters["addr"]
 
-                    if (addr == null || !addr.matches(Regex("0x[0-9A-Fa-f]{40}"))) {
+                    if (addr == null || !addr.matches(Regex("(0x)?[0-9A-Fa-f]{40}"))) {
                         call.httpRespond(HttpStatus.BAD_REQUEST)
                         return@get
                     }
@@ -101,16 +103,33 @@ fun Application.chainController() {
                     }
 
                     try {
-                        //创建新的链上账户
-                        val addr = accountService.newAccountByPersonal(password)
+                        //创建钱包文件并获取地址
+                        val pair = accountService.newAccount(password)
+                        val addr = pair.first
+                        val walletFile = pair.second
 
-                        if (addr.isEmpty()) {
-                            call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
-                            return@post
-                        }
+                        //生成加密密钥和初始化向量
+                        val secretKey = CryptoUtils.getSecretKey(password)
+                        val iv = CryptoUtils.getRandomByteArray(CryptoUtils.IV_128_BIT)
+
+                        //序列号钱包文件并加密
+                        val encryptedWalletFile= CryptoUtils.encrypt(
+                            data = walletFile.toByteArray(),
+                            secretKey = secretKey,
+                            iv = iv
+                        )
+
+                        //数据进行Base64编码
+                        val encoder = Base64.getEncoder()
+                        val base64Iv = String(encoder.encode(iv))
+                        val base64Wallet = String(encoder.encode(encryptedWalletFile))
 
                         //将链上账户地址绑定至用户信息并更新
-                        loginUser!!.chainAddress = addr
+                        loginUser!!.let {
+                            it.chainAddress = addr
+                            it.chainWalletFile = base64Wallet
+                            it.chainCipherIv = base64Iv
+                        }
                         when (userService.updateUser(loginUser)) {
                             true -> call.httpRespond(
                                 data = mapOf(
