@@ -11,7 +11,7 @@ import java.math.BigInteger
  * @author 刘一邦
  */
 interface AccountService {
-    fun newAccount(password: String):Pair<String, String>
+    fun newAccount(password: String):WalletFile
     fun newAccountByPersonal(password: String): String
     fun getBalance(addr: String): BigInteger
     fun chargeFromBank(addr: String, value: String): Boolean

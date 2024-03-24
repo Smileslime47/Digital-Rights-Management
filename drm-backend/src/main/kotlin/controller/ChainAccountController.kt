@@ -1,5 +1,6 @@
 package moe._47saikyo.controller
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -108,9 +109,12 @@ fun Application.chainAccountController() {
 
                     try {
                         //创建钱包文件并获取地址
-                        val pair = accountService.newAccount(password)
-                        val addr = pair.first
-                        val walletFile = pair.second
+                        val walletFile = accountService.newAccount(password)
+                        val walletFileJson = ObjectMapper().writeValueAsString(walletFile)
+                        var addr = walletFile.address
+                        if(addr.startsWith("0x")) {
+                            addr = "0x$addr"
+                        }
 
                         //生成加密密钥和初始化向量
                         val secretKey = CryptoUtils.getSecretKey(password)
@@ -118,7 +122,7 @@ fun Application.chainAccountController() {
 
                         //序列号钱包文件并加密
                         val encryptedWalletFile = CryptoUtils.encrypt(
-                            data = walletFile.toByteArray(),
+                            data = walletFileJson.toByteArray(),
                             secretKey = secretKey,
                             iv = iv
                         )

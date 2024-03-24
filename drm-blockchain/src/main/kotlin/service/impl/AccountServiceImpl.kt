@@ -30,15 +30,10 @@ class AccountServiceImpl : AccountService {
      * @see [CryptoUtils]
      *
      * @param password 新账户的密码
-     * @return 账户地址和KeyFile文件
+     * @return KeyFile文件
      */
-    override fun newAccount(password: String): Pair<String, String> =
-        Wallet.createStandard(password, Keys.createEcKeyPair()).let {
-            Pair(
-                it.address,
-                ObjectMapper().writeValueAsString(it)
-            )
-        }
+    override fun newAccount(password: String): WalletFile =
+        Wallet.createStandard(password, Keys.createEcKeyPair())
 
     /**
      * 通过BlockChain的Web3j实例创建一个新的区块链账户

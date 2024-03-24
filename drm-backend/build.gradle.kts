@@ -3,6 +3,7 @@ val koin_version: String by project
 val ktor_version: String by project
 val jbcrypt_version: String by project
 val logback_version: String by project
+val web3j_version: String by project
 val exposed_version: String by project
 val h2_version: String by project
 val mariadb_version: String by project
@@ -47,6 +48,8 @@ dependencies {
     implementation("org.mindrot:jbcrypt:$jbcrypt_version")
     //Log框架
     implementation("ch.qos.logback:logback-classic:$logback_version")
+    //web3j
+    implementation("org.web3j:core:$web3j_version")
     //Dao层框架——Exposed
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
