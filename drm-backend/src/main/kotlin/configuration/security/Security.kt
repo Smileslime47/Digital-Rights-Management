@@ -12,7 +12,9 @@ import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.constant.getProperty
 import moe._47saikyo.models.HttpResponse
+import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService
+import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent
 
 /**
@@ -23,6 +25,7 @@ import org.koin.java.KoinJavaComponent
  *
  */
 fun Application.configureSecurity() {
+    val userService: UserService by KoinJavaComponent.inject(UserService::class.java)
     val groupService: GroupService by KoinJavaComponent.inject(GroupService::class.java)
 
     val jwtSubject = getProperty(Constant.PropertyUrl.JWT_SUBJECT)
@@ -66,7 +69,24 @@ fun Application.configureSecurity() {
             verifier(jwtTemplate)
             validate { JWTPrincipal(it.payload) }
             challenge { _, _ ->
-                call.respond(HttpResponse(HttpStatus.UNAUTHORIZED))
+                call.httpRespond(HttpStatus.UNAUTHORIZED)
+            }
+        }
+
+        //验证包含链上账户
+        jwt(Constant.Authentication.NEED_BLOCK_ACCOUNT){
+            verifier(jwtTemplate)
+            validate {
+                val userId = it.payload.getClaim(Constant.Authentication.USER_ID_CLAIM).asLong()
+                val user = userService.getUser(userId)
+                if(user?.chainWalletFile != null && user.chainWalletFile!!.isNotEmpty()){
+                    JWTPrincipal(it.payload)
+                }else{
+                    null
+                }
+            }
+            challenge { _, _ ->
+                call.httpRespond(HttpStatus.FORBIDDEN with "需要先开通链上账户")
             }
         }
 

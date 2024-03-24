@@ -7,6 +7,12 @@ package moe._47saikyo.constant
  * @since 2024/01/20
  */
 object Constant {
+    object Global{
+        const val PENDING_STATUS_PENDING = "PENDING"
+        const val PENDING_STATUS_CONFIRMED = "CONFIRMED"
+        const val PENDING_STATUS_REJECTED = "REJECTED"
+        const val PENDING_STATUS_DEPLOYED = "DEPLOYED"
+    }
     object Authentication {
         const val TOKEN_STORAGE = "token"
         const val USER_ID_CLAIM = "user_id"
@@ -18,6 +24,7 @@ object Constant {
         const val REMEMBER_ME_EXPIRE_TIME = DEFAULT_EXPIRE_TIME * 24
 
         const val NEED_LOGIN = "need_login"
+        const val NEED_BLOCK_ACCOUNT = "need_block_account"
         const val PERMISSION_CREATE_CHAIN_ACCOUNT = "permission_create_chain_account"
     }
 
