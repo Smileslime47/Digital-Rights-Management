@@ -2,7 +2,7 @@ package moe._47saikyo.dao.impl
 
 import domain.Group
 import moe._47saikyo.dao.GroupDao
-import moe._47saikyo.models.GroupTable
+import moe._47saikyo.mapper.GroupTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -17,7 +17,7 @@ class GroupDaoImpl : GroupDao {
     override suspend fun getGroup(where: SqlExpressionBuilder.() -> Op<Boolean>): Group? =
         transaction { GroupTable.select(where).map(GroupTable::resultRowToGroup).singleOrNull() }
 
-    override suspend fun getAllGroups(): List<Group> =
+    override suspend fun getGroups(): List<Group> =
         transaction { GroupTable.selectAll().map(GroupTable::resultRowToGroup) }
 
     override suspend fun insertGroup(group: Group): Group? =

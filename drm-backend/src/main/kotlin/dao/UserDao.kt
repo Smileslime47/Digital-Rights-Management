@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder
  */
 interface UserDao {
     suspend fun getUser(where: SqlExpressionBuilder.() -> Op<Boolean>): User?
-    suspend fun getAllUsers(): List<User>
+    suspend fun getUsers(): List<User>
     suspend fun insertUser(user:User):User?
     suspend fun updateUser(user:User):Boolean
     suspend fun deleteUser(user:User):Boolean

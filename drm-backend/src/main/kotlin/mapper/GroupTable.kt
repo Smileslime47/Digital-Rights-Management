@@ -1,4 +1,4 @@
-package moe._47saikyo.models
+package moe._47saikyo.mapper
 
 import constant.GlobalConstant
 import domain.Group

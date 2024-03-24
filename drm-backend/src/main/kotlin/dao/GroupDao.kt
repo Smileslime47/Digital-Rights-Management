@@ -12,7 +12,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder
  */
 interface GroupDao {
     suspend fun getGroup(where: SqlExpressionBuilder.() -> Op<Boolean>): Group?
-    suspend fun getAllGroups(): List<Group>
+    suspend fun getGroups(): List<Group>
     suspend fun insertGroup(group: Group): Group?
     suspend fun updateGroup(group: Group): Boolean
     suspend fun deleteGroup(group: Group): Boolean

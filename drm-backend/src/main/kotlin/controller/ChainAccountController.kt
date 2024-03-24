@@ -20,19 +20,23 @@ import java.util.*
  *
  * @author 刘一邦
  */
-fun Application.chainController() {
+fun Application.chainAccountController() {
     val userService: UserService by KoinJavaComponent.inject(UserService::class.java)
     val accountService: AccountService by KoinJavaComponent.inject(AccountService::class.java)
 
     routing {
-        route("/chain") {
+        route("/chain/account") {
             authenticate(Constant.Authentication.NEED_LOGIN) {
                 get("/balance") {
-                    val addr = call.request.queryParameters["addr"]
+                    var addr = call.request.queryParameters["addr"]
 
                     if (addr == null || !addr.matches(Regex("(0x)?[0-9A-Fa-f]{40}"))) {
                         call.httpRespond(HttpStatus.BAD_REQUEST)
                         return@get
+                    }
+
+                    if (!addr.startsWith("0x")) {
+                        addr = "0x$addr"
                     }
 
                     val balance = accountService.getBalance(addr)
@@ -113,7 +117,7 @@ fun Application.chainController() {
                         val iv = CryptoUtils.getRandomByteArray(CryptoUtils.IV_128_BIT)
 
                         //序列号钱包文件并加密
-                        val encryptedWalletFile= CryptoUtils.encrypt(
+                        val encryptedWalletFile = CryptoUtils.encrypt(
                             data = walletFile.toByteArray(),
                             secretKey = secretKey,
                             iv = iv

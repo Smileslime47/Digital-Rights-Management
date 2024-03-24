@@ -2,7 +2,7 @@ package moe._47saikyo.dao.impl
 
 import domain.User
 import moe._47saikyo.dao.UserDao
-import moe._47saikyo.models.UserTable
+import moe._47saikyo.mapper.UserTable
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -17,12 +17,13 @@ class UserDaoImpl : UserDao {
     override suspend fun getUser(where: SqlExpressionBuilder.() -> Op<Boolean>): User? =
         transaction { UserTable.select(where).map(UserTable::resultRowToUser).singleOrNull() }
 
-    override suspend fun getAllUsers(): List<User> =
+    override suspend fun getUsers(): List<User> =
         transaction { UserTable.selectAll().map(UserTable::resultRowToUser) }
 
     override suspend fun insertUser(user: User): User? =
         transaction {
-            UserTable.insert(UserTable.getStatementBinder(user)).resultedValues?.singleOrNull()?.let(UserTable::resultRowToUser)
+            UserTable.insert(UserTable.getStatementBinder(user)).resultedValues?.singleOrNull()
+                ?.let(UserTable::resultRowToUser)
         }
 
     override suspend fun updateUser(user: User): Boolean =
