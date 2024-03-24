@@ -4,12 +4,11 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import moe._47saikyo.configuration.security.authenticateAfterLogin
 import moe._47saikyo.constant.Constant
-import moe._47saikyo.constant.HttpStatus
-import moe._47saikyo.models.HttpResponse
+import moe._47saikyo.models.HttpStatus
+import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent
@@ -25,17 +24,17 @@ fun Application.chainController() {
 
     routing {
         route("/chain") {
-            authenticate(Constant.Authentication.NEED_LOGIN){
+            authenticate(Constant.Authentication.NEED_LOGIN) {
                 get("/balance") {
                     val addr = call.request.queryParameters["addr"]
 
                     if (addr == null || !addr.matches(Regex("0x[0-9A-Fa-f]{40}"))) {
-                        call.respond(HttpResponse(HttpStatus.BAD_REQUEST))
+                        call.httpRespond(HttpStatus.BAD_REQUEST)
                         return@get
                     }
 
                     val balance = accountService.getBalance(addr)
-                    call.respond(HttpResponse(data = balance))
+                    call.httpRespond(HttpStatus.SUCCESS, balance)
                 }
 
                 post("/charge") {
@@ -48,28 +47,20 @@ fun Application.chainController() {
                     when {
                         //检查登陆用户合法性
                         (loginUser == null) -> {
-                            call.respond(HttpResponse(HttpStatus.UNAUTHORIZED))
+                            call.httpRespond(HttpStatus.UNAUTHORIZED)
                             return@post
                         }
 
                         (loginUser.chainAddress == null || loginUser.chainAddress!!.isEmpty()) -> {
-                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "当前账号未开通链上账户")))
+                            call.httpRespond(HttpStatus.FORBIDDEN with "当前账号未开通链上账户")
                             return@post
                         }
                     }
 
                     when (accountService.chargeFromBank(loginUser!!.chainAddress!!, value)) {
-                        true -> call.respond(
-                            HttpResponse(
-                                data = mapOf(Constant.RespondField.SUCCESS to true)
-                            )
-                        )
+                        true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
 
-                        false -> call.respond(
-                            HttpResponse(
-                                data = mapOf(Constant.RespondField.SUCCESS to false)
-                            )
-                        )
+                        false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                     }
                 }
             }
@@ -92,60 +83,48 @@ fun Application.chainController() {
                     when {
                         //两次密码相同
                         (password != confirmPassword) -> {
-                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.BAD_REQUEST, "两次密码不匹配")))
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "两次密码不匹配")
                             return@post
                         }
 
                         //检查登陆用户合法性
                         (loginUser == null) -> {
-                            call.respond(HttpResponse(HttpStatus.UNAUTHORIZED))
+                            call.httpRespond(HttpStatus.UNAUTHORIZED)
                             return@post
                         }
 
                         //单一用户仅能绑定一个链上账号
                         (loginUser.chainAddress != null && loginUser.chainAddress!!.isNotEmpty()) -> {
-                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "该用户已绑定链上账户")))
+                            call.httpRespond(HttpStatus.FORBIDDEN with "该用户已绑定链上账户")
                             return@post
                         }
                     }
 
                     try {
                         //创建新的链上账户
-                        val addr = accountService.newAccountByPersonal(password!!)
+                        val addr = accountService.newAccountByPersonal(password)
+
                         if (addr.isEmpty()) {
-                            HttpResponse(
-                                data = mapOf(Constant.RespondField.SUCCESS to false)
-                            )
+                            call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
+                            return@post
                         }
 
                         //将链上账户地址绑定至用户信息并更新
                         loginUser!!.chainAddress = addr
                         when (userService.updateUser(loginUser)) {
-                            true -> call.respond(
-                                HttpResponse(
-                                    data = mapOf(
-                                        Constant.RespondField.ADDRESS to addr,
-                                        Constant.RespondField.SUCCESS to true
-                                    )
+                            true -> call.httpRespond(
+                                data = mapOf(
+                                    Constant.RespondField.ADDRESS to addr,
+                                    Constant.RespondField.SUCCESS to true
                                 )
                             )
 
-                            false -> call.respond(
-                                HttpResponse(
-                                    data = mapOf(Constant.RespondField.SUCCESS to false)
-                                )
+                            false -> call.httpRespond(
+                                data = mapOf(Constant.RespondField.SUCCESS to false)
                             )
                         }
                     } catch (e: Exception) {
-                        call.respond(
-                            HttpResponse(
-                                HttpStatus(
-                                    HttpStatus.Code.SERVER_ERROR,
-                                    e.message ?: "Unknown Error"
-                                )
-                            )
-                        )
-                        return@post
+                        call.httpRespond(HttpStatus.SERVER_ERROR with (e.message ?: "Unknown Error"))
                     }
                 }
             }

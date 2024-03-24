@@ -8,14 +8,12 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import moe._47saikyo.configuration.security.PasswordEncoder
-import moe._47saikyo.configuration.security.authenticateAfterLogin
 import moe._47saikyo.constant.Constant
-import moe._47saikyo.constant.HttpStatus
+import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.constant.getProperties
-import moe._47saikyo.models.HttpResponse
+import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService
 import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent.inject
@@ -46,19 +44,19 @@ fun Application.userController() {
                     when {
                         //检查参数格式
                         (targetIdStr == null || !targetIdStr.matches(Regex("[0-9]*"))) -> {
-                            call.respond(HttpResponse(HttpStatus.BAD_REQUEST))
+                            call.httpRespond(HttpStatus.BAD_REQUEST)
                             return@get
                         }
 
                         //检查用户是否存在
                         ((targetUser == null)) -> {
-                            call.respond(HttpResponse(HttpStatus.NOT_FOUND))
+                            call.httpRespond(HttpStatus.NOT_FOUND)
                             return@get
                         }
 
                         //检查用户登陆id
                         (loginId == null) -> {
-                            call.respond(HttpResponse(HttpStatus.UNAUTHORIZED))
+                            call.httpRespond(HttpStatus.UNAUTHORIZED)
                             return@get
                         }
 
@@ -67,37 +65,35 @@ fun Application.userController() {
                             targetUser.permissionId,
                             Group::permissionShowProfile
                         )) -> {
-                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "该用户无展示信息权限")))
+                            call.httpRespond(HttpStatus.FORBIDDEN with "该用户无展示信息权限")
                             return@get
                         }
                     }
 
-                    call.respond(
-                        HttpResponse(
-                            data = mapOf(
-                                Constant.RespondField.USER to
-                                        if (loginId!! == targetId)
-                                            User(
-                                                id = targetUser!!.id,
-                                                permissionId = targetUser.permissionId,
-                                                username = targetUser.username,
-                                                nickname = targetUser.nickname,
-                                                password = targetUser.password,
-                                                email = targetUser.email,
-                                                phoneNumber = targetUser.phoneNumber,
-                                                chainAddress = targetUser.chainAddress
-                                            )
-                                        else
-                                            User(
-                                                id = targetUser!!.id,
-                                                permissionId = targetUser.permissionId,
-                                                username = targetUser.username,
-                                                nickname = targetUser.nickname,
-                                                email = targetUser.email,
-                                                phoneNumber = targetUser.phoneNumber
-                                            ),
-                                Constant.RespondField.SELF_PROFILE to true
-                            )
+                    call.httpRespond(
+                        data = mapOf(
+                            Constant.RespondField.USER to
+                                    if (loginId!! == targetId)
+                                        User(
+                                            id = targetUser!!.id,
+                                            permissionId = targetUser.permissionId,
+                                            username = targetUser.username,
+                                            nickname = targetUser.nickname,
+                                            password = targetUser.password,
+                                            email = targetUser.email,
+                                            phoneNumber = targetUser.phoneNumber,
+                                            chainAddress = targetUser.chainAddress
+                                        )
+                                    else
+                                        User(
+                                            id = targetUser!!.id,
+                                            permissionId = targetUser.permissionId,
+                                            username = targetUser.username,
+                                            nickname = targetUser.nickname,
+                                            email = targetUser.email,
+                                            phoneNumber = targetUser.phoneNumber
+                                        ),
+                            Constant.RespondField.SELF_PROFILE to true
                         )
                     )
                 }
@@ -110,29 +106,25 @@ fun Application.userController() {
                     when {
                         //检查用户是否存在
                         (userService.getUser(targetUser.id) == null) -> {
-                            call.respond(HttpResponse(HttpStatus.NOT_FOUND))
+                            call.httpRespond(HttpStatus.NOT_FOUND)
                             return@post
                         }
 
                         //检查该用户是否要修改自身信息
                         (loginId == null || loginId != targetUser.id) -> {
-                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "禁止修改他人信息")))
+                            call.httpRespond(HttpStatus.FORBIDDEN with "禁止修改他人信息")
                             return@post
                         }
                     }
 
                     //返回修改结果
                     when (userService.updateUser(targetUser)) {
-                        true -> call.respond(
-                            HttpResponse(
-                                data = mapOf(Constant.RespondField.SUCCESS to true)
-                            )
+                        true -> call.httpRespond(
+                            data = mapOf(Constant.RespondField.SUCCESS to true)
                         )
 
-                        false -> call.respond(
-                            HttpResponse(
-                                data = mapOf(Constant.RespondField.SUCCESS to false)
-                            )
+                        false -> call.httpRespond(
+                            data = mapOf(Constant.RespondField.SUCCESS to false)
                         )
                     }
                 }
@@ -154,7 +146,7 @@ fun Application.userController() {
                     when {
                         //新密码应当与确认密码相同
                         (changePasswordForm.newPassword != changePasswordForm.confirmPassword) -> {
-                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.BAD_REQUEST, "两次密码不匹配")))
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "两次密码不匹配")
                             return@post
                         }
 
@@ -163,7 +155,7 @@ fun Application.userController() {
                             changePasswordForm.oldPassword,
                             loginUser.password
                         )) -> {
-                            call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "密码不符")))
+                            call.httpRespond(HttpStatus.INVALID_TOKEN with "密码不符")
                             return@post
                         }
                     }
@@ -172,16 +164,12 @@ fun Application.userController() {
 
                     //返回修改结果
                     when (userService.updateUser(loginUser)) {
-                        true -> call.respond(
-                            HttpResponse(
-                                data = mapOf(Constant.RespondField.SUCCESS to true)
-                            )
+                        true -> call.httpRespond(
+                            data = mapOf(Constant.RespondField.SUCCESS to true)
                         )
 
-                        false -> call.respond(
-                            HttpResponse(
-                                data = mapOf(Constant.RespondField.SUCCESS to false)
-                            )
+                        false -> call.httpRespond(
+                            data = mapOf(Constant.RespondField.SUCCESS to false)
                         )
                     }
                 }
@@ -200,13 +188,13 @@ fun Application.userController() {
                 when {
                     //检查用户合法性
                     (loginUser == null || !passwordEncoder.verifyPassword(loginForm.password, loginUser.password)) -> {
-                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.INVALID_TOKEN, "用户名或密码不符")))
+                        call.httpRespond(HttpStatus.INVALID_TOKEN with "用户名或密码不符")
                         return@post
                     }
 
                     //检查用户组登陆权限
                     (!groupService.authenticate(loginUser.permissionId, Group::permissionLogin)) -> {
-                        call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "该用户组已被封禁")))
+                        call.httpRespond(HttpStatus.FORBIDDEN with "该用户组已被封禁")
                         return@post
                     }
                 }
@@ -231,14 +219,12 @@ fun Application.userController() {
                     .withExpiresAt(Date(jwtExpireTime))//一小时
                     .sign(Algorithm.HMAC256(properties.jwtSecret))
 
-                call.respond(
-                    HttpResponse(
-                        data = mapOf(
-                            Constant.Authentication.TOKEN_STORAGE to token,
-                            Constant.Authentication.USER_ID_CLAIM to loginUser.id,
-                            Constant.Authentication.GROUP_ID_CLAIM to loginUser.permissionId,
-                            Constant.Authentication.EXPIRE_TIME_CLAIM to jwtExpireTime
-                        )
+                call.httpRespond(
+                    data = mapOf(
+                        Constant.Authentication.TOKEN_STORAGE to token,
+                        Constant.Authentication.USER_ID_CLAIM to loginUser.id,
+                        Constant.Authentication.GROUP_ID_CLAIM to loginUser.permissionId,
+                        Constant.Authentication.EXPIRE_TIME_CLAIM to jwtExpireTime
                     )
                 )
             }
@@ -256,7 +242,7 @@ fun Application.userController() {
 
                 //检测用户是否已存在
                 if (userService.getUser(registerForm.username) != null) {
-                    call.respond(HttpResponse(HttpStatus(HttpStatus.Code.FORBIDDEN, "用户已存在")))
+                    call.httpRespond(HttpStatus.FORBIDDEN with "用户已存在")
                     return@post
                 }
 
@@ -274,7 +260,7 @@ fun Application.userController() {
 
                 //检查插入结果
                 if (registerUser == null) {
-                    call.respond(HttpResponse(HttpStatus.SERVER_ERROR))
+                    call.httpRespond(HttpStatus.SERVER_ERROR)
                     return@post
                 }
 
@@ -297,13 +283,11 @@ fun Application.userController() {
                     .withExpiresAt(Date(jwtExpireTime))//一小时
                     .sign(Algorithm.HMAC256(properties.jwtSecret))
 
-                call.respond(
-                    HttpResponse(
-                        data = mapOf(
-                            Constant.Authentication.TOKEN_STORAGE to token,
-                            Constant.Authentication.USER_ID_CLAIM to registerUser.id,
-                            Constant.Authentication.GROUP_ID_CLAIM to registerUser.permissionId
-                        )
+                call.httpRespond(
+                    data = mapOf(
+                        Constant.Authentication.TOKEN_STORAGE to token,
+                        Constant.Authentication.USER_ID_CLAIM to registerUser.id,
+                        Constant.Authentication.GROUP_ID_CLAIM to registerUser.permissionId
                     )
                 )
             }

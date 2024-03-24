@@ -9,7 +9,6 @@ import moe._47saikyo.configuration.exposed.configureDataSource
 import moe._47saikyo.configuration.koin.configureKoin
 import moe._47saikyo.configuration.security.configureSecurity
 import moe._47saikyo.controller.chainController
-import moe._47saikyo.controller.debugController
 import moe._47saikyo.controller.groupController
 import moe._47saikyo.controller.userController
 
@@ -35,5 +34,4 @@ fun Application.modules() {
     userController()
     groupController()
     chainController()
-    debugController()
 }

@@ -9,7 +9,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import moe._47saikyo.constant.Constant
-import moe._47saikyo.constant.HttpStatus
+import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.constant.getProperty
 import moe._47saikyo.models.HttpResponse
 import moe._47saikyo.service.GroupService
