@@ -1,3 +1,4 @@
+#!/bin/bash
 build_path=./solidity-build
 
 if test -d $build_path; then

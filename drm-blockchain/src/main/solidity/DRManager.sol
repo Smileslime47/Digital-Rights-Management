@@ -20,7 +20,7 @@ contract DRManager {
     mapping(address => IterableMap) private licenseMap;
 
     function addRight(Right right) external {
-        add(rightMap[msg.sender], right.getRightName(), address(right));
+        add(rightMap[msg.sender], right.getTitle(), address(right));
     }
 
     function getRight(string memory rightName) view external returns (Right){
