@@ -60,7 +60,7 @@ object CryptoUtils {
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
         val ivSpec = IvParameterSpec(iv)
 
-        return cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec).let { cipher.doFinal() }
+        return cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivSpec).let { cipher.doFinal(data) }
     }
 
     /**
@@ -75,6 +75,6 @@ object CryptoUtils {
         val cipher = Cipher.getInstance("AES/CBC/PKCS5Padding")
         val ivSpec = IvParameterSpec(iv)
 
-        return cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec).let { cipher.doFinal() }
+        return cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec).let { cipher.doFinal(data) }
     }
 }
