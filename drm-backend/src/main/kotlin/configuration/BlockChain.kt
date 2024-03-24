@@ -2,6 +2,7 @@ package moe._47saikyo.configuration
 
 import io.ktor.server.application.*
 import moe._47saikyo.BlockChain
+import moe._47saikyo.BlockChainConfiguration
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.constant.getProperty
 
@@ -15,9 +16,12 @@ fun Application.configureBlockChain() {
         getProperty(Constant.PropertyUrl.CHAIN_WALLET_FILE)!!
     )?.path
     BlockChain.connect(
-        socket = getProperty(Constant.PropertyUrl.CHAIN_SOCKET)!!,
-        password = getProperty(Constant.PropertyUrl.CHAIN_PASSWORD)!!,
-        walletSource = walletFilePath!!,
-        chainId = getProperty(Constant.PropertyUrl.CHAIN_ID)!!.toLong()
+        BlockChainConfiguration()
+            .withChain(getProperty(Constant.PropertyUrl.CHAIN_ID)!!.toLong())
+            .withSocket(getProperty(Constant.PropertyUrl.CHAIN_SOCKET)!!)
+            .withBankWallet(
+                source = walletFilePath!!,
+                password = getProperty(Constant.PropertyUrl.CHAIN_PASSWORD)!!
+            )
     )
 }

@@ -1,5 +1,6 @@
 package moe._47saikyo
 
+import constant.GlobalConstant
 import moe._47saikyo.exception.BlockChainNotConnectedException
 import org.web3j.crypto.Credentials
 import org.web3j.crypto.WalletUtils
@@ -23,7 +24,11 @@ object BlockChain {
     var chainId = 0L
         private set
 
-     //Web3j与以太坊客户端的链接，开启Admin功能以启用账号管理
+    //DRManager地址
+    var managerAddr = ""
+        private set
+
+    //Web3j与以太坊客户端的链接，开启Admin功能以启用账号管理
     var web3jInstance: Admin? = null
         private set
         get() = if (field == null) {
@@ -51,21 +56,19 @@ object BlockChain {
     /**
      * 连接到以太坊客户端
      *
-     * @param socket 以太坊端点地址
-     * @param password 银行账户密码
-     * @param walletSource 银行账户的KeyFile路径
-     * @param chainId 区块链的链ID,用于开启txManager
+     * @param configuration 链接配置
      */
-    fun connect(socket: String, password: String, walletSource: String, chainId: Long) {
+    fun connect(configuration: BlockChainConfiguration) {
         try {
-            web3jInstance = Admin.build(HttpService(socket))
-            bankCredentials = WalletUtils.loadCredentials(password, walletSource)
+            web3jInstance = Admin.build(HttpService(configuration.socket))
+            bankCredentials = WalletUtils.loadCredentials(configuration.walletPassword, configuration.walletSource)
             bankTxManager = RawTransactionManager(
-                web3jInstance, bankCredentials, chainId
+                web3jInstance, bankCredentials, configuration.chainId
             )
 
             connected = true
-            this.chainId = chainId
+            this.chainId = configuration.chainId
+            this.managerAddr = configuration.managerAddress ?: GlobalConstant.NULL_PLACEHOLDER
         } catch (e: Exception) {
             throw BlockChainNotConnectedException(e.message)
         }
