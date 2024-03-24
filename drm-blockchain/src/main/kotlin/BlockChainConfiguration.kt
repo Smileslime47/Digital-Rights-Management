@@ -34,7 +34,7 @@ class BlockChainConfiguration {
     }
 
     fun withBankWallet(source: String, password: String): BlockChainConfiguration {
-        this.walletSource = walletSource
+        this.walletSource = source
         this.walletPassword = password
         return this
     }
