@@ -1,7 +1,5 @@
 package domain
 
-import domain.PendingStatus
-
 data class PendingRight(
     val id:Long,
     val title: String,

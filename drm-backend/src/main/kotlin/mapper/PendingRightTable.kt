@@ -15,7 +15,7 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
  *   `issue_time` bigint(20) NOT NULL,
  *   `expire_time` bigint(20) NOT NULL,
  *   `description` text DEFAULT NULL,
- *   `status` varchar(128) DEFAULT NULL,
+ *   `status` varchar(128) NOT NULL,
  *   PRIMARY KEY (`id`)
  * ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
  *

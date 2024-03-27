@@ -28,6 +28,7 @@ fun Application.chainAccountController() {
     routing {
         route("/chain/account") {
             authenticate(Constant.Authentication.NEED_LOGIN) {
+                //获取链上账户余额
                 get("/balance") {
                     var addr = call.request.queryParameters["addr"]
 
@@ -44,6 +45,7 @@ fun Application.chainAccountController() {
                     call.httpRespond(HttpStatus.SUCCESS, balance)
                 }
 
+                //从银行充值
                 post("/charge") {
                     val value = call.receive<String>()
                     val loginId =
@@ -72,6 +74,7 @@ fun Application.chainAccountController() {
                 }
             }
             authenticateAfterLogin(Constant.Authentication.PERMISSION_CREATE_CHAIN_ACCOUNT) {
+                //创建链上账户
                 post("/new-account") {
                     data class PasswordForm(
                         val password: String,
