@@ -15,7 +15,8 @@ import moe._47saikyo.models.HttpResponse
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService
 import moe._47saikyo.service.UserService
-import org.koin.java.KoinJavaComponent
+import moe._47saikyo.service.WalletService
+import org.koin.java.KoinJavaComponent.inject
 
 /**
  * Auth鉴权模块
@@ -25,8 +26,9 @@ import org.koin.java.KoinJavaComponent
  *
  */
 fun Application.configureSecurity() {
-    val userService: UserService by KoinJavaComponent.inject(UserService::class.java)
-    val groupService: GroupService by KoinJavaComponent.inject(GroupService::class.java)
+    val userService: UserService by inject(UserService::class.java)
+    val groupService: GroupService by inject(GroupService::class.java)
+    val walletService:WalletService by inject(WalletService::class.java)
 
     val jwtSubject = getProperty(Constant.PropertyUrl.JWT_SUBJECT)
     val jwtIssuer = getProperty(Constant.PropertyUrl.JWT_ISSUER)
@@ -78,8 +80,8 @@ fun Application.configureSecurity() {
             verifier(jwtTemplate)
             validate {
                 val userId = it.payload.getClaim(Constant.Authentication.USER_ID_CLAIM).asLong()
-                val user = userService.getUser(userId)
-                if(user?.chainWalletFile != null && user.chainWalletFile!!.isNotEmpty()){
+                val wallet = walletService.getWallet(userId)
+                if(wallet?.walletFile != null && wallet.walletFile!!.isNotEmpty()){
                     JWTPrincipal(it.payload)
                 }else{
                     null

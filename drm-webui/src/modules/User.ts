@@ -8,7 +8,6 @@ class User {
     password: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     email: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     phoneNumber: string = Constant.Global.NULL_STRING_PLACEHOLDER;
-    chainAddress: string = Constant.Global.NULL_STRING_PLACEHOLDER
 }
 
 export default User

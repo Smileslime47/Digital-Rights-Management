@@ -54,7 +54,7 @@ fun Application.noticeController() {
                         else -> 0//不可能到达的分支
                     }
 
-                    call.httpRespond(data = count)
+                    call.httpRespond(data = mapOf(Constant.RespondField.COUNT to count))
                 }
 
                 //获取通知列表
@@ -95,7 +95,7 @@ fun Application.noticeController() {
                         else -> emptyList()//不可能到达的分支
                     }
 
-                    call.httpRespond(data = pages)
+                    call.httpRespond(data = mapOf(Constant.RespondField.NOTICE to pages))
                 }
 
                 post{

@@ -28,9 +28,12 @@ object Constant {
     object RespondField{
         const val USER = "user"
         const val GROUP = "group"
+        const val NOTICE = "notice"
         const val SELF_PROFILE = "self"
         const val SUCCESS = "success"
         const val ADDRESS = "address"
+        const val BALANCE = "balance"
+        const val COUNT = "count"
     }
 
     object PropertyUrl {

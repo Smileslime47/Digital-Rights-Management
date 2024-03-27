@@ -1,6 +1,7 @@
 package moe._47saikyo.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import domain.Wallet
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -12,6 +13,7 @@ import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.UserService
+import moe._47saikyo.service.WalletService
 import moe._47saikyo.utils.CryptoUtils
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
@@ -23,11 +25,35 @@ import java.util.*
  */
 fun Application.chainAccountController() {
     val userService: UserService by inject(UserService::class.java)
+    val walletService: WalletService by inject(WalletService::class.java)
     val accountService: AccountService by inject(AccountService::class.java)
 
     routing {
         route("/chain/account") {
             authenticate(Constant.Authentication.NEED_LOGIN) {
+                get("/by-user") {
+                    val targetIdStr = call.request.queryParameters["id"]
+                    val targetId = if (targetIdStr?.matches(Regex("[0-9]+")) == true) targetIdStr.toLong() else null
+                    val targetUser = targetId?.let { id -> userService.getUser(id) }
+                    val targetWallet = targetId?.let { id -> walletService.getWallet(id) }
+
+                    when {
+                        //检查登陆用户合法性
+                        (targetUser == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST)
+                            return@get
+                        }
+
+                        //检查用户是否有钱包
+                        (targetWallet == null) -> {
+                            call.httpRespond(HttpStatus.FORBIDDEN with "当前账号未开通钱包")
+                            return@get
+                        }
+                    }
+
+                    call.httpRespond(data = mapOf(Constant.RespondField.ADDRESS to targetWallet!!.address))
+                }
+
                 //获取链上账户余额
                 get("/balance") {
                     var addr = call.request.queryParameters["addr"]
@@ -42,7 +68,7 @@ fun Application.chainAccountController() {
                     }
 
                     val balance = accountService.getBalance(addr)
-                    call.httpRespond(HttpStatus.SUCCESS, balance)
+                    call.httpRespond(data = mapOf(Constant.RespondField.BALANCE to balance))
                 }
 
                 //从银行充值
@@ -52,6 +78,7 @@ fun Application.chainAccountController() {
                         call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
                             ?.asLong()
                     val loginUser = loginId?.let { id -> userService.getUser(id) }
+                    val loginWallet = loginId?.let { id -> walletService.getWallet(id) }
 
                     when {
                         //检查登陆用户合法性
@@ -60,15 +87,15 @@ fun Application.chainAccountController() {
                             return@post
                         }
 
-                        (loginUser.chainAddress == null || loginUser.chainAddress!!.isEmpty()) -> {
-                            call.httpRespond(HttpStatus.FORBIDDEN with "当前账号未开通链上账户")
+                        //检查用户是否有钱包
+                        (loginWallet == null) -> {
+                            call.httpRespond(HttpStatus.FORBIDDEN with "当前账号未开通钱包")
                             return@post
                         }
                     }
 
-                    when (accountService.chargeFromBank(loginUser!!.chainAddress!!, value)) {
+                    when (accountService.chargeFromBank(loginWallet!!.address, value)) {
                         true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
-
                         false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                     }
                 }
@@ -102,12 +129,6 @@ fun Application.chainAccountController() {
                             call.httpRespond(HttpStatus.UNAUTHORIZED)
                             return@post
                         }
-
-                        //单一用户仅能绑定一个链上账号
-                        (loginUser.chainAddress != null && loginUser.chainAddress!!.isNotEmpty()) -> {
-                            call.httpRespond(HttpStatus.FORBIDDEN with "该用户已绑定链上账户")
-                            return@post
-                        }
                     }
 
                     try {
@@ -115,7 +136,7 @@ fun Application.chainAccountController() {
                         val walletFile = accountService.newAccount(password)
                         val walletFileJson = ObjectMapper().writeValueAsString(walletFile)
                         var addr = walletFile.address
-                        if(addr.startsWith("0x")) {
+                        if (addr.startsWith("0x")) {
                             addr = "0x$addr"
                         }
 
@@ -136,12 +157,13 @@ fun Application.chainAccountController() {
                         val base64Wallet = String(encoder.encode(encryptedWalletFile))
 
                         //将链上账户地址绑定至用户信息并更新
-                        loginUser!!.let {
-                            it.chainAddress = addr
-                            it.chainWalletFile = base64Wallet
-                            it.chainCipherIv = base64Iv
-                        }
-                        when (userService.updateUser(loginUser)) {
+                        val wallet = Wallet(
+                            address = addr,
+                            walletFile = base64Wallet,
+                            cipherIv = base64Iv,
+                            userId = loginUser!!.id
+                        )
+                        when (walletService.insertWallet(wallet) != null) {
                             true -> call.httpRespond(
                                 data = mapOf(
                                     Constant.RespondField.ADDRESS to addr,

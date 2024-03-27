@@ -25,6 +25,8 @@ class KoinBackendConfiguration {
             single<PendingRightService> { PendingRightServiceImpl() }
             single<NoticeDao> { NoticeDaoImpl() }
             single<NoticeService> { NoticeServiceImpl() }
+            single<WalletDao> { WalletDaoImpl() }
+            single<WalletService> { WalletServiceImpl() }
             single<PasswordEncoder> { BCryptPasswordEncoder() }
         }
     }

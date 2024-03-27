@@ -15,15 +15,11 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
  *   `password` varchar(128) NOT NULL,
  *   `email` varchar(128) DEFAULT NULL,
  *   `phone_number` varchar(128) DEFAULT NULL,
- *   `chain_address` varchar(128) DEFAULT NULL,
- *   `chain_wallet_file` varchar(1024) DEFAULT NULL,
- *   `chain_cipher_iv` varchar(128) DEFAULT NULL,
  *   PRIMARY KEY (`id`),
  *   UNIQUE KEY `user_pk_username` (`username`),
- *   UNIQUE KEY `user_pk_chain_address` (`chain_address`),
  *   KEY `drm_user_group_id_fk` (`permission_id`),
  *   CONSTRAINT `drm_user_group_id_fk` FOREIGN KEY (`permission_id`) REFERENCES `drm_group` (`id`)
- * ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
+ * ) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci
  *
  * @author 刘一邦
  * @since 2024/01/05
@@ -36,9 +32,6 @@ object UserTable : Table("drm_user") {
     val nickname = varchar("nickname", 128)
     val email = varchar("email", 128)
     val phone_number = varchar("phone_number", 128)
-    val chain_address = varchar("chain_address", 128).uniqueIndex()
-    val chain_wallet_file = varchar("chain_wallet_file", 1024)
-    val chain_cipher_iv = varchar("chain_cipher_iv", 128)
     override val primaryKey = PrimaryKey(id)
 
     fun resultRowToUser(row: ResultRow) = User(
@@ -49,9 +42,6 @@ object UserTable : Table("drm_user") {
         nickname = row[nickname],
         email = row[email],
         phoneNumber = row[phone_number],
-        chainAddress = row[chain_address],
-        chainWalletFile = row[chain_wallet_file],
-        chainCipherIv = row[chain_cipher_iv]
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(user: User): UserTable.(statement: T) -> Unit = {
@@ -61,8 +51,5 @@ object UserTable : Table("drm_user") {
         it[nickname] = user.nickname
         it[email] = user.email ?: GlobalConstant.EMPTY_STRING
         it[phone_number] = user.phoneNumber ?: GlobalConstant.EMPTY_STRING
-        it[chain_address] = user.chainAddress ?: GlobalConstant.EMPTY_STRING
-        it[chain_wallet_file] = user.chainWalletFile ?: GlobalConstant.EMPTY_STRING
-        it[chain_cipher_iv] = user.chainCipherIv ?: GlobalConstant.EMPTY_STRING
     }
 }

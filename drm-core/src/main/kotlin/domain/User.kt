@@ -10,7 +10,4 @@ data class User(
     var password: String = GlobalConstant.NULL_PLACEHOLDER,
     var email: String? = null,
     var phoneNumber: String? = null,
-    var chainAddress: String? = null,
-    var chainWalletFile: String? = null,
-    var chainCipherIv: String? = null
 )

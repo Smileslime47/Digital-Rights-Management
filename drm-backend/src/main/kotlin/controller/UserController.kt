@@ -85,7 +85,6 @@ fun Application.userController() {
                                             password = targetUser.password,
                                             email = targetUser.email,
                                             phoneNumber = targetUser.phoneNumber,
-                                            chainAddress = targetUser.chainAddress
                                         )
                                     else
                                         User(
