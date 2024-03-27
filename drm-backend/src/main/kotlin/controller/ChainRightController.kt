@@ -1,18 +1,16 @@
 package moe._47saikyo.controller
 
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.RightService
-import org.koin.java.KoinJavaComponent
+import org.koin.java.KoinJavaComponent.inject
 
 fun Application.chainRightController() {
-    val accountService: AccountService by KoinJavaComponent.inject(AccountService::class.java)
-    val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
+    val accountService: AccountService by inject(AccountService::class.java)
+    val rightService: RightService by inject(RightService::class.java)
 
     routing{
         route("/chain/right") {

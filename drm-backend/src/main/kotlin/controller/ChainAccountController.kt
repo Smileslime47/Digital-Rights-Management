@@ -13,7 +13,7 @@ import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.UserService
 import moe._47saikyo.utils.CryptoUtils
-import org.koin.java.KoinJavaComponent
+import org.koin.java.KoinJavaComponent.inject
 import java.util.*
 
 /**
@@ -22,8 +22,8 @@ import java.util.*
  * @author 刘一邦
  */
 fun Application.chainAccountController() {
-    val userService: UserService by KoinJavaComponent.inject(UserService::class.java)
-    val accountService: AccountService by KoinJavaComponent.inject(AccountService::class.java)
+    val userService: UserService by inject(UserService::class.java)
+    val accountService: AccountService by inject(AccountService::class.java)
 
     routing {
         route("/chain/account") {

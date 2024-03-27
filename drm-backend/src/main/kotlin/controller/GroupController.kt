@@ -7,10 +7,10 @@ import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService
-import org.koin.java.KoinJavaComponent
+import org.koin.java.KoinJavaComponent.inject
 
 fun Application.groupController() {
-    val groupService: GroupService by KoinJavaComponent.inject(GroupService::class.java)
+    val groupService: GroupService by inject(GroupService::class.java)
 
     routing {
         route("/group") {
