@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TemplatePage from "~/pages/TemplatePage.vue";
-import httpService from "~/server/http.ts";
+import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
 import {ElMessage} from "element-plus";
 import routeTo from "~/route/routeTo.ts";

@@ -2,6 +2,7 @@ const Constant = {
     Global: {
         NULL_NUMBER_PLACEHOLDER: 0,
         NULL_STRING_PLACEHOLDER: "undefined",
+        DEFAULT_PAGE_SIZE:10,
     },
     NoticeFilter: {
         ALL:"all",
@@ -18,9 +19,12 @@ const Constant = {
     RespondField: {
         USER: "user",
         GROUP: "group",
+        NOTICE:"notice",
         SELF_PROFILE: "self",
         SUCCESS: "success",
         ADDRESS: "address",
+        BALANCE:"balance",
+        COUNT:"count"
     },
     Property: {
         BASE_URL: import.meta.env.VITE_BASE_URL,
@@ -37,7 +41,9 @@ const Constant = {
         USER_CHANGE_PWD: "/change-password",
 
         CHAIN_API: "/chain",
+
         CHAIN_ACCOUNT_API: "/account",
+        CHAIN_GET_BY_USER:"/by-user",
 
         ACCOUNT_NEW_ACCOUNT: "/new-account",
         ACCOUNT_GET_BALANCE: "/balance",

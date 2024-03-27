@@ -4,7 +4,7 @@ import TokenUtils from "~/server/TokenUtils.ts";
 import fresh from "~/composables/fresh.ts";
 import {useRoute} from "vue-router";
 import Constant from "~/constant/Constant.ts";
-import httpService from "~/server/http.ts";
+import {httpService} from "~/server/http.ts";
 import {ElLoading, ElMessage} from "element-plus";
 import routeTo from "~/route/routeTo.ts";
 
@@ -19,11 +19,11 @@ const chargeValue = ref("")
 const initialized = ref(false)
 
 fresh(async (_) => {
-  await TokenUtils.getUser(
+  await TokenUtils.getChainAddress(
       useRoute().path
   ).then((result) => {
     if (result != null) {
-      addr.value = result.chainAddress
+      addr.value = result
     }
   })
   if (addr.value != null && addr.value.length > 0) {
@@ -34,8 +34,8 @@ fresh(async (_) => {
             addr: addr.value
           }
         }
-    ).then((result) => {
-      balance.value = result
+    ).then((data) => {
+      balance.value = data[Constant.RespondField.BALANCE]
     })
   }
   initialized.value = true

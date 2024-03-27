@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import httpService from "~/server/http.ts";
+import {httpService} from "~/server/http.ts";
 import {ElMessage} from "element-plus";
 import Constant from "~/constant/Constant.ts";
 import routeTo from "~/route/routeTo.ts";

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import TemplatePage from "~/pages/TemplatePage.vue";
 import fresh from "~/composables/fresh.ts";
-import httpService from "~/server/http.ts";
+import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
 import User from "~/modules/User.ts"
 import Group from "~/modules/Group.ts";

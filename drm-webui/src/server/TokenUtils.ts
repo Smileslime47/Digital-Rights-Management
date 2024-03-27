@@ -1,8 +1,8 @@
 import User from "~/modules/User.ts";
 import Group from "~/modules/Group.ts";
-import httpService from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
 import {CoroutineLock} from "~/server/CoroutineLock.ts";
+import {httpServiceIgnoreStatus} from "~/server/http.ts";
 
 /**
  * 缓存类，用于在路由未刷新时
@@ -14,6 +14,8 @@ class TokenUtils {
     private static user: User = new User()
     private static group: Group = new Group()
     private static noticeCnt: number = 0
+    private static chainAddress: string = ""
+
     private static initialized: boolean = false
     public static routeCache: string = ""
 
@@ -32,40 +34,33 @@ class TokenUtils {
             return false
         }
 
-        await httpService.get(
+        //获取用户信息
+        await httpServiceIgnoreStatus.get(
             Constant.Api.USER_API,
-            {
-                params: {
-                    id: userLocalId
-                }
-            }
-        ).then((data) => {
-            this.user = data[Constant.RespondField.USER] as User
-        })
-        await httpService.get(
+            {params: {id: userLocalId}}
+        ).then((data) => this.user = data[Constant.RespondField.USER] as User)
+
+        //获取用户组信息
+        await httpServiceIgnoreStatus.get(
             Constant.Api.GROUP_API,
-            {
-                params: {
-                    id: this.user.permissionId
-                }
-            }
-        ).then((data) => {
-            this.group = data[Constant.RespondField.GROUP] as Group
-        })
-        await httpService.get(
+            {params: {id: this.user.permissionId}}
+        ).then((data) => this.group = data[Constant.RespondField.GROUP] as Group)
+
+        //获取未读通知数量
+        await httpServiceIgnoreStatus.get(
             Constant.Api.NOTICE_API + Constant.Api.NOTICE_COUNT,
-            {
-                params: {
-                    filter: Constant.NoticeFilter.UNREAD
-                }
-            }
-        ).then((data) => {
-            this.noticeCnt = data
-        })
+            {params: {filter: Constant.NoticeFilter.UNREAD}}
+        ).then((data) => this.noticeCnt = data[Constant.RespondField.COUNT])
+
+        //获取链地址
+        await httpServiceIgnoreStatus.get(
+            Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.CHAIN_GET_BY_USER,
+            {params: {id: userLocalId}}
+        ).then((data) => this.chainAddress = data[Constant.RespondField.ADDRESS])
         return true
     }
 
-    public static async getUser(routeNow: string) {
+    public static async checkCache(routeNow: string) {
         await this.lock.lockCoroutine()
 
         if (this.routeCache.length === 0 || !this.initialized) {
@@ -76,35 +71,26 @@ class TokenUtils {
         }
 
         this.lock.unlockCoroutine()
+    }
+
+    public static async getUser(routeNow: string) {
+        await this.checkCache(routeNow)
         return this.user
     }
 
     public static async getGroup(routeNow: string) {
-        await this.lock.lockCoroutine()
-
-        if (this.routeCache.length === 0 || !this.initialized) {
-            this.routeCache = routeNow
-            if (await this.flushData()) {
-                this.initialized = true
-            }
-        }
-
-        this.lock.unlockCoroutine()
+        await this.checkCache(routeNow)
         return this.group
     }
 
     public static async getNoticeCnt(routeNow: string) {
-        await this.lock.lockCoroutine()
-
-        if (this.routeCache.length === 0 || !this.initialized) {
-            this.routeCache = routeNow
-            if (await this.flushData()) {
-                this.initialized = true
-            }
-        }
-
-        this.lock.unlockCoroutine()
+        await this.checkCache(routeNow)
         return this.noticeCnt
+    }
+
+    public static async getChainAddress(routeNow: string) {
+        await this.checkCache(routeNow)
+        return this.chainAddress
     }
 }
 

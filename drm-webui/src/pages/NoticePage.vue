@@ -3,7 +3,7 @@ import TemplatePage from "~/pages/TemplatePage.vue";
 import Constant from "~/constant/Constant.ts";
 import routeTo from "~/route/routeTo.ts";
 import fresh from "~/composables/fresh.ts";
-import httpService from "~/server/http.ts";
+import {httpService} from "~/server/http.ts";
 import Notice from "~/modules/Notice.ts";
 import {ElMessage} from "element-plus";
 
@@ -14,14 +14,13 @@ fresh((route) => {
   let filter = route.params.filter
   let page = route.params.page
 
+  // Get the total number of notices
   httpService.get(
       Constant.Api.NOTICE_API + Constant.Api.NOTICE_COUNT,
       {
         params: {filter: filter}
       }
-  ).then((data) => {
-    maxPage.value = data
-  })
+  ).then((data) => maxPage.value = data[Constant.RespondField.COUNT]/Constant.Global.DEFAULT_PAGE_SIZE)
 
   httpService.get(
       Constant.Api.NOTICE_API,
@@ -31,13 +30,10 @@ fresh((route) => {
           page: page
         }
       }
-  ).then((data) => {
-    notices.value = data
-    console.log(notices.value)
-  })
+  ).then((data) => notices.value = data[Constant.RespondField.NOTICE])
 })
 
-const changeStatus= (id: number,filter:string) => {
+const changeStatus = (id: number, filter: string) => {
   httpService.post(
       Constant.Api.NOTICE_API,
       {
@@ -48,6 +44,7 @@ const changeStatus= (id: number,filter:string) => {
     if (!data[Constant.RespondField.SUCCESS]) {
       ElMessage.error("修改状态失败！")
     }
+    routeTo.fresh()
   })
 }
 </script>
@@ -79,15 +76,20 @@ const changeStatus= (id: number,filter:string) => {
         <el-space fill direction="vertical" style="width:100%" v-for="notice in notices">
           <el-card class="notice">
             <template #header>
-                <span>{{ notice.title }}</span>
+              <span>{{ notice.title }}</span>
             </template>
-            <el-text>{{notice.content}}</el-text>
+            <el-text>{{ notice.content }}</el-text>
             <template #footer>
               <el-button-group>
-                <el-button text bg type="info" @click="routeTo.page(notice.targetRoute)" v-if="notice.targetRoute">查看</el-button>
-                <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.UNREAD)">未读</el-button>
-                <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.READ)">已读</el-button>
-                <el-button text bg type="danger" @click="changeStatus(notice.id,Constant.NoticeFilter.ARCHIVED)">归档</el-button>
+                <el-button text bg type="info" @click="routeTo.page(notice.targetRoute)" v-if="notice.targetRoute">
+                  查看
+                </el-button>
+                <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.UNREAD)">未读
+                </el-button>
+                <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.READ)">已读
+                </el-button>
+                <el-button text bg type="danger" @click="changeStatus(notice.id,Constant.NoticeFilter.ARCHIVED)">归档
+                </el-button>
               </el-button-group>
             </template>
           </el-card>
