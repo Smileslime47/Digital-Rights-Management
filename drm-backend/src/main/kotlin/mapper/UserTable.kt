@@ -59,10 +59,10 @@ object UserTable : Table("drm_user") {
         it[username] = user.username
         it[password] = user.password
         it[nickname] = user.nickname
-        it[email] = user.email ?: GlobalConstant.NULL_PLACEHOLDER
-        it[phone_number] = user.phoneNumber ?: GlobalConstant.NULL_PLACEHOLDER
-        it[chain_address] = user.chainAddress ?: GlobalConstant.NULL_PLACEHOLDER
-        it[chain_wallet_file] = user.chainWalletFile ?: GlobalConstant.NULL_PLACEHOLDER
-        it[chain_cipher_iv] = user.chainCipherIv ?: GlobalConstant.NULL_PLACEHOLDER
+        it[email] = user.email ?: GlobalConstant.EMPTY_STRING
+        it[phone_number] = user.phoneNumber ?: GlobalConstant.EMPTY_STRING
+        it[chain_address] = user.chainAddress ?: GlobalConstant.EMPTY_STRING
+        it[chain_wallet_file] = user.chainWalletFile ?: GlobalConstant.EMPTY_STRING
+        it[chain_cipher_iv] = user.chainCipherIv ?: GlobalConstant.EMPTY_STRING
     }
 }
