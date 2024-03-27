@@ -1,3 +1,3 @@
 package exception
 
-open class DrmException : RuntimeException()
+open class DrmException(override val message:String?) : RuntimeException(message)
