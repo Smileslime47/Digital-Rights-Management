@@ -7,6 +7,9 @@ package moe._47saikyo.constant
  * @since 2024/01/20
  */
 object Constant {
+    //默认页容量
+    const val DEFAULT_PAGE_SIZE = 10
+
     object Authentication {
         const val TOKEN_STORAGE = "token"
         const val USER_ID_CLAIM = "user_id"

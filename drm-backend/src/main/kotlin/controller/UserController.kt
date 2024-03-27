@@ -3,6 +3,7 @@ package moe._47saikyo.controller
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import domain.Group
+import domain.Notice
 import domain.User
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -15,6 +16,7 @@ import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.constant.getProperties
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService
+import moe._47saikyo.service.NoticeService
 import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent.inject
 import java.util.*
@@ -28,6 +30,7 @@ import java.util.*
 fun Application.userController() {
     val userService: UserService by inject(UserService::class.java)
     val groupService: GroupService by inject(GroupService::class.java)
+    val noticeService: NoticeService by inject(NoticeService::class.java)
     val passwordEncoder: PasswordEncoder by inject(PasswordEncoder::class.java)
     val properties = getProperties()
 
@@ -263,6 +266,13 @@ fun Application.userController() {
                     call.httpRespond(HttpStatus.SERVER_ERROR)
                     return@post
                 }
+
+                noticeService.insertNotice(Notice(
+                    "欢迎注册Digital Right Manager",
+                    "欢迎您注册Digital Right Manager，您的用户名为${registerUser.username}，请您牢记您的用户名和密码，以免遗忘。",
+                    registerUser.id,
+                    "/profile/${registerUser.id}"
+                ))
 
                 //签发jwt
                 val jwtIssueTime = System.currentTimeMillis()

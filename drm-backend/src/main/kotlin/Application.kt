@@ -10,6 +10,7 @@ import moe._47saikyo.configuration.koin.configureKoin
 import moe._47saikyo.configuration.security.configureSecurity
 import moe._47saikyo.controller.chainAccountController
 import moe._47saikyo.controller.groupController
+import moe._47saikyo.controller.noticeController
 import moe._47saikyo.controller.userController
 
 
@@ -34,4 +35,5 @@ fun Application.modules() {
     userController()
     groupController()
     chainAccountController()
+    noticeController()
 }
