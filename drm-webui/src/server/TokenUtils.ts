@@ -2,12 +2,15 @@ import User from "~/modules/User.ts";
 import Group from "~/modules/Group.ts";
 import httpService from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
+import {CoroutineLock} from "~/server/CoroutineLock.ts";
 
 /**
  * 缓存类，用于在路由未刷新时
  * 如果页面多次查询当前登陆用户信息，则只发送一次请求
  */
 class TokenUtils {
+    private static lock: CoroutineLock = new CoroutineLock()
+
     private static user: User = new User()
     private static group: Group = new Group()
     private static noticeCnt: number = 0
@@ -63,33 +66,45 @@ class TokenUtils {
     }
 
     public static async getUser(routeNow: string) {
-        if (routeNow === this.routeCache || this.routeCache.length === 0 || !this.initialized) {
+        await this.lock.lockCoroutine()
+
+        if (this.routeCache.length === 0 || !this.initialized) {
             this.routeCache = routeNow
             if (await this.flushData()) {
                 this.initialized = true
-                return this.user
-            } else return null
-        } else return this.user
+            }
+        }
+
+        this.lock.unlockCoroutine()
+        return this.user
     }
 
     public static async getGroup(routeNow: string) {
-        if (routeNow === this.routeCache || this.routeCache.length === 0 || !this.initialized) {
+        await this.lock.lockCoroutine()
+
+        if (this.routeCache.length === 0 || !this.initialized) {
             this.routeCache = routeNow
             if (await this.flushData()) {
                 this.initialized = true
-                return this.group
-            } else return null
-        } else return this.group
+            }
+        }
+
+        this.lock.unlockCoroutine()
+        return this.group
     }
 
     public static async getNoticeCnt(routeNow: string) {
-        if (routeNow === this.routeCache || this.routeCache.length === 0 || !this.initialized) {
+        await this.lock.lockCoroutine()
+
+        if (this.routeCache.length === 0 || !this.initialized) {
             this.routeCache = routeNow
             if (await this.flushData()) {
                 this.initialized = true
-                return this.noticeCnt
-            } else return null
-        } else return this.noticeCnt
+            }
+        }
+
+        this.lock.unlockCoroutine()
+        return this.noticeCnt
     }
 }
 
