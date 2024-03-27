@@ -2,14 +2,10 @@ package moe._47saikyo.configuration.koin
 
 import moe._47saikyo.configuration.security.BCryptPasswordEncoder
 import moe._47saikyo.configuration.security.PasswordEncoder
-import moe._47saikyo.dao.GroupDao
-import moe._47saikyo.dao.UserDao
-import moe._47saikyo.dao.impl.GroupDaoImpl
-import moe._47saikyo.dao.impl.UserDaoImpl
-import moe._47saikyo.service.GroupService
-import moe._47saikyo.service.UserService
-import moe._47saikyo.service.impl.GroupServiceImpl
-import moe._47saikyo.service.impl.UserServiceImpl
+import moe._47saikyo.dao.*
+import moe._47saikyo.dao.impl.*
+import moe._47saikyo.service.*
+import moe._47saikyo.service.impl.*
 import org.koin.dsl.module
 
 /**
@@ -25,6 +21,10 @@ class KoinBackendConfiguration {
             single<UserService> { UserServiceImpl() }
             single<GroupDao> { GroupDaoImpl() }
             single<GroupService> { GroupServiceImpl() }
+            single<PendingRightDao> { PendingRightDaoImpl() }
+            single<PendingRightService> { PendingRightServiceImpl() }
+            single<NoticeDao> { NoticeDaoImpl() }
+            single<NoticeService> { NoticeServiceImpl() }
             single<PasswordEncoder> { BCryptPasswordEncoder() }
         }
     }
