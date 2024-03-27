@@ -3,6 +3,12 @@ const Constant = {
         NULL_NUMBER_PLACEHOLDER: 0,
         NULL_STRING_PLACEHOLDER: "undefined",
     },
+    NoticeFilter: {
+        ALL:"all",
+        UNREAD: "unread",
+        READ: "read",
+        ARCHIVED: "archived"
+    },
     Authentication: {
         TOKEN_STORAGE: "token",
         USER_ID_CLAIM: "user_id",
@@ -31,13 +37,16 @@ const Constant = {
         USER_CHANGE_PWD: "/change-password",
 
         CHAIN_API: "/chain",
-        CHAIN_ACCOUNT_API:"/account",
+        CHAIN_ACCOUNT_API: "/account",
 
         ACCOUNT_NEW_ACCOUNT: "/new-account",
-        ACCOUNT_GET_BALANCE:"/balance",
-        ACCOUNT_CHARGE:"/charge",
+        ACCOUNT_GET_BALANCE: "/balance",
+        ACCOUNT_CHARGE: "/charge",
 
         GROUP_API: "/group",
+
+        NOTICE_API:"/notice",
+        NOTICE_COUNT:"/count",
     }
 }
 export default Constant

@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import githubIcon from "~/assets/icons/github.svg"
 import webIcon from "~/assets/icons/web-icon.svg"
-import bugIcon from "~/assets/icons/bug.svg"
+import msgIcon from "~/assets/icons/message.svg"
 import routeTo from "~/route/routeTo.ts";
 import fresh from "~/composables/fresh.ts";
 import {useRoute} from "vue-router";
 import TokenUtils from "~/server/TokenUtils.ts";
+import Constant from "~/constant/Constant.ts";
 
 const goToGithub = () => {
   window.open("https://github.com/Smileslime47/Digital-Rights-Management")
@@ -14,6 +15,7 @@ const goToGithub = () => {
 const nickname = ref("")
 const userId = ref(0)
 const logged = ref(false)
+const noticeCnt = ref(0)
 const route = useRoute()
 
 const logout = () => {
@@ -36,6 +38,13 @@ fresh(async (_) => {
       userId.value = result.id
     }
   })
+  TokenUtils.getNoticeCnt(
+      useRoute().path
+  ).then((result) => {
+    if (result != null) {
+      noticeCnt.value = result
+    }
+  })
 })
 </script>
 
@@ -54,42 +63,36 @@ fresh(async (_) => {
         <el-text size="large" class="mx-1">Digital Rights Manager</el-text>
       </el-space>
     </el-menu-item>
+
     <div class="flex-grow"/>
 
     <!--Profile/登入按钮-->
-    <el-menu-item v-if="logged" index="1" @click="routeTo.profile(userId)">
-      <el-dropdown style="width: 100%;height: 100%">
-        <div class="vertical-center">
-          <el-text>{{ nickname }}</el-text>
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item @click="routeTo.profile(userId)">个人资料</el-dropdown-item>
-            <el-dropdown-item @click="logout" divided>登出</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </el-menu-item>
+    <el-sub-menu v-if="logged" index="1" @click="routeTo.profile(userId)">
+      <template #title>
+        <el-text>{{ nickname }}</el-text>
+      </template>
+      <el-menu-item @click="routeTo.profile(userId)">
+        个人资料
+      </el-menu-item>
+      <el-menu-item @click="routeTo.notice(Constant.NoticeFilter.ALL,1)">
+        <el-badge v-if="logged" :is-dot="noticeCnt>0">
+          通知
+        </el-badge>
+      </el-menu-item>
+      <el-menu-item @click="logout" divided>登出</el-menu-item>
+    </el-sub-menu>
     <el-menu-item v-else index="1" @click="routeTo.login()">
       <el-text>登入/注册</el-text>
     </el-menu-item>
+
     <el-divider direction="vertical" border-style="solid"/>
 
     <!--Github页面-->
-    <el-menu-item index="2" @click="goToGithub">
+    <el-menu-item index="3" @click="goToGithub">
       <img
           style="width: 20px"
           :src=githubIcon
           alt="githubIcon"
-      />
-    </el-menu-item>
-
-    <!--Debug页面-->
-    <el-menu-item index="3" @click="routeTo.debug()">
-      <img
-          style="width: 20px"
-          :src=bugIcon
-          alt="bugIcon"
       />
     </el-menu-item>
   </el-menu>

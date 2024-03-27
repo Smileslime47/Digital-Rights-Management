@@ -2,6 +2,11 @@ span, p, h1, h2, h3, h4, h5, h6, label {
     font-family: "SF Pro", "PingFang SC", sans-serif;
 }
 
+h1{
+    font-size: 2.2rem;
+    margin-top:0;
+}
+
 body {
     margin: 0
 }
@@ -12,6 +17,10 @@ body {
 
 .el-card {
     border-radius: 25px !important;
+}
+
+.el-card.notice{
+    border-radius:10px !important;
 }
 
 .el-input__wrapper {

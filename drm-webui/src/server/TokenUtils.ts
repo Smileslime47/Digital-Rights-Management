@@ -10,6 +10,7 @@ import Constant from "~/constant/Constant.ts";
 class TokenUtils {
     private static user: User = new User()
     private static group: Group = new Group()
+    private static noticeCnt: number = 0
     private static initialized: boolean = false
     public static routeCache: string = ""
 
@@ -48,6 +49,16 @@ class TokenUtils {
         ).then((data) => {
             this.group = data[Constant.RespondField.GROUP] as Group
         })
+        await httpService.get(
+            Constant.Api.NOTICE_API + Constant.Api.NOTICE_COUNT,
+            {
+                params: {
+                    filter: Constant.NoticeFilter.UNREAD
+                }
+            }
+        ).then((data) => {
+            this.noticeCnt = data
+        })
         return true
     }
 
@@ -69,6 +80,16 @@ class TokenUtils {
                 return this.group
             } else return null
         } else return this.group
+    }
+
+    public static async getNoticeCnt(routeNow: string) {
+        if (routeNow === this.routeCache || this.routeCache.length === 0 || !this.initialized) {
+            this.routeCache = routeNow
+            if (await this.flushData()) {
+                this.initialized = true
+                return this.noticeCnt
+            } else return null
+        } else return this.noticeCnt
     }
 }
 

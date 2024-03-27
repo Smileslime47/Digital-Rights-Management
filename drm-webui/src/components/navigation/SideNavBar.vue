@@ -6,6 +6,7 @@ import {useRoute} from "vue-router";
 
 const userId = ref(0)
 const logged = ref(false)
+const noticeFilter = ref("all")
 
 fresh((_) => {
   TokenUtils.getUser(
@@ -21,22 +22,25 @@ fresh((_) => {
 
 <template>
   <el-menu
-      default-active="2"
+      default-active="1"
       class="el-menu-vertical-demo"
   >
     <el-menu-item index="1" @click="routeTo.profile(userId)">
       <span>个人资料</span>
     </el-menu-item>
-    <el-menu-item index="2" @click="routeTo.chainAccount">
+    <el-menu-item index="2" @click="routeTo.notice(noticeFilter,1)">
+      <span>通知列表</span>
+    </el-menu-item>
+    <el-menu-item index="3" @click="routeTo.chainAccount">
       <span>链上账户</span>
     </el-menu-item>
-    <el-menu-item index="3" @click="routeTo.chainRight">
+    <el-menu-item index="4" @click="routeTo.chainRight">
       <span>上传资源</span>
     </el-menu-item>
-    <el-menu-item index="4" disabled>
+    <el-menu-item index="5" disabled>
       <span>获取授权</span>
     </el-menu-item>
-    <el-menu-item index="5">
+    <el-menu-item index="6">
       <span>版权审核</span>
     </el-menu-item>
   </el-menu>
