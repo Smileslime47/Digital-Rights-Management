@@ -1,6 +1,7 @@
 package moe._47saikyo.controller
 
 import constant.GlobalConstant
+import domain.Notice
 import domain.NoticeStatus
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -75,15 +76,22 @@ fun Application.noticeController() {
                         }
                     }
 
-                    val pages = when {
-                        (filterStr!!.equals("ALL", ignoreCase = true)) -> noticeService.getNotices(pageSize, pageNumberStr!!.toInt(), loginUser!!.id)
-                        (filterStr.equals("UNREAD", ignoreCase = true)) -> noticeService.getUnreadNotices(pageSize, pageNumberStr!!.toInt(), loginUser!!.id)
-                        (filterStr.equals("READ", ignoreCase = true)) -> noticeService.getReadNotices(pageSize, pageNumberStr!!.toInt(), loginUser!!.id)
-                        (filterStr.equals("ARCHIVED", ignoreCase = true)) -> noticeService.getArchivedNotices(pageSize, pageNumberStr!!.toInt(), loginUser!!.id)
-                        else -> emptyList()//不可能到达的分支
+                    val (count, pages:List<Notice>) = when {
+                        (filterStr!!.equals("ALL", ignoreCase = true)) ->
+                            (noticeService.countNotices(loginUser!!.id)         to noticeService.getNotices(pageSize, pageNumberStr!!.toInt(), loginUser.id))
+                        (filterStr.equals("UNREAD", ignoreCase = true)) ->
+                            (noticeService.countUnreadNotices(loginUser!!.id)   to noticeService.getUnreadNotices(pageSize, pageNumberStr!!.toInt(), loginUser.id))
+                        (filterStr.equals("READ", ignoreCase = true)) ->
+                            (noticeService.countReadNotices(loginUser!!.id)     to noticeService.getReadNotices(pageSize, pageNumberStr!!.toInt(), loginUser.id))
+                        (filterStr.equals("ARCHIVED", ignoreCase = true)) ->
+                            (noticeService.countArchivedNotices(loginUser!!.id) to noticeService.getArchivedNotices(pageSize, pageNumberStr!!.toInt(), loginUser.id))
+                        else -> (0 to emptyList())//不可能到达的分支
                     }
 
-                    call.httpRespond(data = mapOf(Constant.RespondField.NOTICE to pages))
+                    call.httpRespond(data = mapOf(
+                        Constant.RespondField.NOTICE to pages,
+                        Constant.RespondField.COUNT to count
+                    ))
                 }
 
                 post{

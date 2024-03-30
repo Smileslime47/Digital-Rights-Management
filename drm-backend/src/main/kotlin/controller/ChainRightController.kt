@@ -4,12 +4,10 @@ import domain.Group
 import domain.Notice
 import domain.PendingRight
 import domain.PendingStatus
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
@@ -26,30 +24,48 @@ fun Application.chainRightController() {
     val pendingRightService: PendingRightService by inject(PendingRightService::class.java)
     val userService: UserService by inject(UserService::class.java)
     val groupService: GroupService by inject(GroupService::class.java)
+    val noticeService: NoticeService by inject(NoticeService::class.java)
 
     routing {
         route("/chain/right") {
             get {
                 val addr = call.parameters["addr"]
+                val pageNumberStr = call.request.queryParameters["page"]
+                val pageSize = Constant.DEFAULT_PAGE_SIZE
 
-                if (addr == null) {
-                    call.httpRespond(HttpStatus.BAD_REQUEST with "Missing parameters")
-                    return@get
+                when {
+                    //addr为空
+                    (addr == null) -> {
+                        call.httpRespond(HttpStatus.BAD_REQUEST with "无效的地址")
+                        return@get
+                    }
+
+                    //检查页码合法性
+                    (pageNumberStr == null || !pageNumberStr.matches(Regex("[0-9]*"))) -> {
+                        call.httpRespond(HttpStatus.BAD_REQUEST with "无效的页码")
+                        return@get
+                    }
                 }
 
-                val right = pendingRightService.getPendingRights(addr)
+                val (count, pages) = pendingRightService.countPendingRights(addr!!) to pendingRightService.getPendingRights(pageSize, pageNumberStr!!.toInt(), addr)
 
-                call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to right))
+                call.httpRespond(
+                    data = mapOf(
+                        Constant.RespondField.COUNT to count,
+                        Constant.RespondField.RIGHT to pages
+                    )
+                )
             }
 
             authenticate(Constant.Authentication.NEED_LOGIN) {
                 authenticate(Constant.Authentication.NEED_BLOCK_ACCOUNT) {
-                    post("/deploy"){
+                    post("/deploy") {
                         //获取表单
                         data class Form(
-                            val password:String,
-                            val pendingId:Long
+                            val password: String,
+                            val pendingId: Long
                         )
+
                         val form = call.receive<Form>()
 
                         //获取信息
@@ -59,7 +75,7 @@ fun Application.chainRightController() {
                         val pendingId = form.pendingId
 
                         //获取txManager
-                        val txManager = accountService.getTxManager(pwd,walletFileContent!!)
+                        val txManager = accountService.getTxManager(pwd, walletFileContent!!)
 
                         //获取pendingRight并生成部署表单
                         val pendingRight = pendingRightService.getPendingRight(pendingId)
@@ -72,7 +88,7 @@ fun Application.chainRightController() {
                         )
 
                         //部署版权
-                        val right = rightService.addRight(txManager,deployForm)
+                        val right = rightService.addRight(txManager, deployForm)
 
                         call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to right.contractAddress))
                     }
@@ -104,21 +120,110 @@ fun Application.chainRightController() {
                             val pendingRight = pendingRightService.insertPendingRight(targetRight)
 
                             //发送通知
-                            when(pendingRight!=null){
-                                true->call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
-                                false->call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
+                            when (pendingRight != null) {
+                                true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
+                                false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                             }
                         }
                     }
 
-                    authenticate(Constant.Authentication.PERMISSION_VERIFY_RIGHT){
-                        post("/verify"){
-                            val targetRight = call.receive<PendingRight>()
+                    authenticate(Constant.Authentication.PERMISSION_VERIFY_RIGHT) {
+                        get("/verify") {
+                            val pageNumberStr = call.request.queryParameters["page"]
+                            val pageSize = Constant.DEFAULT_PAGE_SIZE
+
+                            when {
+                                //检查页码合法性
+                                (pageNumberStr == null || !pageNumberStr.matches(Regex("[0-9]*"))) -> {
+                                    call.httpRespond(HttpStatus.BAD_REQUEST with "无效的页码")
+                                    return@get
+                                }
+                            }
+
+                            val (count, pages) = pendingRightService.countPendingRights() to pendingRightService.getPendingRights(pageSize, pageNumberStr!!.toInt())
+
+                            call.httpRespond(
+                                data = mapOf(
+                                    Constant.RespondField.COUNT to count,
+                                    Constant.RespondField.RIGHT to pages
+                                )
+                            )
+                        }
+
+                        post("/verify/confirm") {
+                            val targetRightId = call.receive<Int>()
+                            val targetRight = pendingRightService.getPendingRight(targetRightId.toLong())
+
+                            when {
+                                //检查版权存在性
+                                (targetRight == null) -> {
+                                    call.httpRespond(HttpStatus.NOT_FOUND with "无效的版权ID")
+                                    return@post
+                                }
+
+                                //检查版权状态
+                                (targetRight.status != PendingStatus.PENDING) -> {
+                                    call.httpRespond(HttpStatus.FORBIDDEN with "非待审核版权")
+                                    return@post
+                                }
+                            }
+
+                            val ownerWallet = walletService.getWallet(targetRight!!.owner)
+
+                            noticeService.insertNotice(
+                                Notice(
+                                    title = "版权审核通知",
+                                    content = "您的版权申请:${targetRight.title}已通过审核,需要您填写区块链账户密码完成合约部署。",
+                                    receiverId = ownerWallet!!.userId,
+                                    targetRoute = "/chain/account"
+                                )
+                            )
 
                             //发送通知
-                            when(pendingRightService.confirmPendingRight(targetRight.id)){
-                                true->call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
-                                false->call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
+                            when (pendingRightService.confirmPendingRight(targetRight.id)) {
+                                true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
+                                false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
+                            }
+                        }
+
+                        post("/verify/reject") {
+                            data class Form(
+                                val pendingRightId:Int,
+                                val rejectReason:String
+                            )
+                            val form = call.receive<Form>()
+                            val targetRightId = form.pendingRightId
+                            val targetRight = pendingRightService.getPendingRight(targetRightId.toLong())
+
+                            when {
+                                //检查版权存在性
+                                (targetRight == null) -> {
+                                    call.httpRespond(HttpStatus.NOT_FOUND with "无效的版权ID")
+                                    return@post
+                                }
+
+                                //检查版权状态
+                                (targetRight.status != PendingStatus.PENDING) -> {
+                                    call.httpRespond(HttpStatus.FORBIDDEN with "非待审核版权")
+                                    return@post
+                                }
+                            }
+
+                            val ownerWallet = walletService.getWallet(targetRight!!.owner)
+
+                            noticeService.insertNotice(
+                                Notice(
+                                    title = "版权审核通知",
+                                    content = "您的版权申请:${targetRight.title}未通过审核,原因:${form.rejectReason}。",
+                                    receiverId = ownerWallet!!.userId,
+                                    targetRoute = "/chain/account"
+                                )
+                            )
+
+                            //发送通知
+                            when (pendingRightService.rejectPendingRight(targetRight.id)) {
+                                true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
+                                false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                             }
                         }
                     }
