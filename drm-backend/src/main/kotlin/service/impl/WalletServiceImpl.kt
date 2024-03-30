@@ -6,10 +6,18 @@ import moe._47saikyo.mapper.WalletTable
 import moe._47saikyo.service.WalletService
 import org.koin.java.KoinJavaComponent.inject
 
+/**
+ * WalletService实现
+ *
+ * @author 刘一邦
+ */
 class WalletServiceImpl :WalletService{
     private val walletDao: WalletDao by inject(WalletDao::class.java)
     override suspend fun getWallet(userId: Long): Wallet? =
         walletDao.getWallet { WalletTable.user_id eq userId }
+
+    override suspend fun getWallet(addr: String): Wallet? =
+        walletDao.getWallet { WalletTable.address eq addr }
 
     override suspend fun getWallets(): List<Wallet> =
         walletDao.getWallets()

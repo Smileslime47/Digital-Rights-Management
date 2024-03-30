@@ -22,6 +22,14 @@ class PendingRightDaoImpl :PendingRightDao{
     override suspend fun getPendingRights(where: SqlExpressionBuilder.() -> Op<Boolean>): List<PendingRight> =
         transaction { PendingRightTable.select(where).map(PendingRightTable::resultRowToPendingRight) }
 
+    override suspend fun countPendingRights(where: SqlExpressionBuilder.() -> Op<Boolean>): Long =
+        transaction { PendingRightTable.select(where).count() }
+
+    override suspend fun getPendingRights(pageSize: Int, pageNumber: Int, where: SqlExpressionBuilder.() -> Op<Boolean>): List<PendingRight> =
+        transaction {
+            PendingRightTable.select(where).limit(pageSize, (pageNumber - 1) * pageSize.toLong())
+                .map(PendingRightTable::resultRowToPendingRight)
+        }
     override suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight? =
         transaction {
             PendingRightTable.insert(PendingRightTable.getStatementBinder(pendingRight)).resultedValues?.singleOrNull()?.let(PendingRightTable::resultRowToPendingRight)

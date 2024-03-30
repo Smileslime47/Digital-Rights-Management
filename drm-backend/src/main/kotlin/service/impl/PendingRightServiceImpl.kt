@@ -12,18 +12,28 @@ import org.koin.java.KoinJavaComponent
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
+/**
+ * PendingRightService实现
+ *
+ * @author 刘一邦
+ */
 class PendingRightServiceImpl : PendingRightService {
     private val pendingRightDao: PendingRightDao by KoinJavaComponent.inject(PendingRightDao::class.java)
     private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
     override suspend fun getPendingRight(id: Long): PendingRight? =
         pendingRightDao.getPendingRight { PendingRightTable.id eq id }
 
+    override suspend fun countPendingRights(): Long =
+        pendingRightDao.countPendingRights { PendingRightTable.status eq PendingStatus.PENDING.toString() }
 
-    override suspend fun getPendingRights(): List<PendingRight> =
-        pendingRightDao.getPendingRights()
+    override suspend fun getPendingRights(pageSize: Int, pageNumber: Int): List<PendingRight> =
+        pendingRightDao.getPendingRights(pageSize, pageNumber) { PendingRightTable.status eq PendingStatus.PENDING.toString() }
 
-    override suspend fun getPendingRights(address:String): List<PendingRight> =
-        pendingRightDao.getPendingRights { PendingRightTable.owner eq address }
+    override suspend fun countPendingRights(address: String): Long =
+        pendingRightDao.countPendingRights { PendingRightTable.owner eq address }
+
+    override suspend fun getPendingRights(pageSize: Int, pageNumber: Int,address: String): List<PendingRight> =
+        pendingRightDao.getPendingRights(pageSize, pageNumber) { PendingRightTable.owner eq address }
 
     override suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight? =
         pendingRightDao.insertPendingRight(pendingRight)
