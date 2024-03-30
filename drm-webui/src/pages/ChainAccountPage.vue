@@ -5,24 +5,25 @@ import fresh from "~/composables/fresh.ts";
 import {useRoute} from "vue-router";
 import Constant from "~/constant/Constant.ts";
 import {httpService} from "~/server/http.ts";
+import pendingRight from "~/modules/PendingRight.ts";
 
 const addr = ref("")
 const balance = ref(0)
 const initialized = ref(false)
 
+const pendingRights = ref([])
+
 fresh(async (_) => {
   //获取链上地址
-  await TokenUtils.getChainAddress(
-      useRoute().path
-  ).then((result) => {
+  await TokenUtils.getChainAddress(useRoute().path).then((result) => {
     if (result != null) {
       addr.value = result
     }
   })
-  //获取账户余额
   if (addr.value != null && addr.value.length > 0) {
-    httpService.get(
-        Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.ACCOUNT_GET_BALANCE,
+    //获取账户余额
+    await httpService.get(
+        Constant.Api.CHAIN.ACCOUNT.GET_BALANCE,
         {
           params: {
             addr: addr.value
@@ -30,6 +31,18 @@ fresh(async (_) => {
         }
     ).then((data) => {
       balance.value = data[Constant.RespondField.BALANCE]
+    })
+
+    //获取账户待审合约
+    await httpService.get(
+        Constant.Api.CHAIN.RIGHT.ROOT,
+        {
+          params: {
+            addr: addr.value
+          }
+        }
+    ).then((data) => {
+      pendingRights.value = data[Constant.RespondField.RIGHT]
     })
   }
   initialized.value = true
@@ -43,7 +56,7 @@ fresh(async (_) => {
 
       <el-divider/>
 
-      <h1>已部署合约</h1>
+      <h1>链上合约</h1>
 
       <el-tabs>
         <el-tab-pane label="版权合约">
@@ -62,8 +75,7 @@ fresh(async (_) => {
 
       <el-divider/>
 
-      <PendingPanel/>
-
+      <PendingPanel :pendingRights="pendingRights"/>
     </div>
 
     <div v-else>

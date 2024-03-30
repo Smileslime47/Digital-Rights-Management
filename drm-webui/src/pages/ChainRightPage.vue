@@ -2,15 +2,59 @@
 
 import TemplatePage from "~/pages/TemplatePage.vue";
 import {UploadFilled} from "@element-plus/icons-vue";
+import PendingRight from "~/modules/PendingRight.ts";
+import TokenUtils from "~/server/TokenUtils.ts";
+import fresh from "~/composables/fresh.ts";
+import {ElMessage} from "element-plus";
+import routeTo from "~/route/routeTo.ts";
+import {httpService} from "~/server/http.ts";
+import Constant from "~/constant/Constant.ts";
 
 const form = reactive({
   title: "",
   registrationNumber: "",
-  availableTime:[0,0],
+  availableTime: [0, 0],
   description: ""
 })
 
+const addr = ref("")
 
+fresh((_) => {
+  //获取链上账户
+  TokenUtils.getChainAddress(useRoute().path).then((result) => {
+    if (result != null) {
+      addr.value = result
+    } else {
+      ElMessage.error("Need Chain Account.")
+      routeTo.chainAccount()
+    }
+  })
+})
+
+
+const confirmCreate = () => {
+  let right = new PendingRight(
+      0,
+      form.title,
+      addr.value,
+      form.registrationNumber,
+      form.availableTime[0],
+      form.availableTime[1],
+      form.description,
+      "PENDING",
+  )
+  httpService.post(
+      Constant.Api.CHAIN.RIGHT.ROOT,
+      right
+  ).then((data) => {
+    let success = data[Constant.RespondField.SUCCESS]
+    if (success) {
+      ElMessage.success("提交成功！")
+    } else {
+      ElMessage.error("提交失败！")
+    }
+  })
+}
 </script>
 
 <template>
@@ -44,21 +88,19 @@ const form = reactive({
                 drag
                 multiple
             >
-              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+              <el-icon class="el-icon--upload">
+                <upload-filled/>
+              </el-icon>
               <div class="el-upload__text">
                 拖拽文件至此处或者<em>点击上传</em>
               </div>
             </el-upload>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="console.log(form.availableTime)">提交</el-button>
+            <el-button type="primary" @click="confirmCreate">提交</el-button>
           </el-form-item>
         </el-form>
       </el-col>
     </el-row>
   </TemplatePage>
 </template>
-
-<style scoped>
-
-</style>

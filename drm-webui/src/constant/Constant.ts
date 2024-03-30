@@ -23,6 +23,7 @@ const Constant = {
         SELF_PROFILE: "self",
         SUCCESS: "success",
         ADDRESS: "address",
+        RIGHT:"right",
         BALANCE:"balance",
         COUNT:"count"
     },
@@ -31,28 +32,34 @@ const Constant = {
         ASSETS_URL: import.meta.env.VITE_ASSETS_URL,
     },
     Api: {
-        DEBUG_API: "/debug",
-        DEBUG_USER: "/user",
-        DEBUG_STATUS: "/error_status",
-
-        USER_API: "/user",
-        USER_LOGIN: "/login",
-        USER_REGISTER: "/register",
-        USER_CHANGE_PWD: "/change-password",
-
-        CHAIN_API: "/chain",
-
-        CHAIN_ACCOUNT_API: "/account",
-        CHAIN_GET_BY_USER:"/by-user",
-
-        ACCOUNT_NEW_ACCOUNT: "/new-account",
-        ACCOUNT_GET_BALANCE: "/balance",
-        ACCOUNT_CHARGE: "/charge",
-
-        GROUP_API: "/group",
-
-        NOTICE_API:"/notice",
-        NOTICE_COUNT:"/count",
+        DEBUG:{
+            USER: "/debug/user",
+            STATUS: "/debug/error_status",
+        },
+        USER:{
+            ROOT: "/user",
+            LOGIN: "/user/login",
+            REGISTER: "/user/register",
+            CHANGE_PWD: "/user/change-password",
+        },
+        GROUP:{
+            ROOT: "/group",
+        },
+        NOTICE:{
+            ROOT: "/notice",
+            COUNT: "/notice/count",
+        },
+        CHAIN:{
+            ACCOUNT:{
+                NEW_ACCOUNT: "/chain/account/new-account",
+                GET_BALANCE: "/chain/account/balance",
+                GET_BY_USER: "/chain/account/by-user",
+                CHARGE: "/chain/account/charge",
+            },
+            RIGHT:{
+                ROOT:"/chain/right",
+            }
+        },
     }
 }
 export default Constant

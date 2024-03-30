@@ -12,7 +12,7 @@ const passwordForm = reactive({
 const confirmCreate = () => {
   const loadingInstance = ElLoading.service()
   httpService.post(
-      Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.ACCOUNT_NEW_ACCOUNT,
+      Constant.Api.CHAIN.ACCOUNT.NEW_ACCOUNT,
       passwordForm
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]

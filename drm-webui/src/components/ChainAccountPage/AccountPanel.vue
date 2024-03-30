@@ -4,7 +4,7 @@ import Constant from "~/constant/Constant.ts";
 import {ElMessage} from "element-plus";
 import routeTo from "~/route/routeTo.ts";
 
-const props = defineProps<{
+defineProps<{
   addr: String|null,
   balance:number
 }>()
@@ -13,7 +13,7 @@ const chargeValue = ref("")
 
 const confirmCharge = () => {
   httpService.post(
-      Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.ACCOUNT_CHARGE,
+      Constant.Api.CHAIN.ACCOUNT.CHARGE,
       chargeValue.value
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]

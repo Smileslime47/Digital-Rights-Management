@@ -20,6 +20,7 @@ defineProps<{
         <el-descriptions-item label="允许上传版权资源">{{ group.permissionCreateRight }}</el-descriptions-item>
         <el-descriptions-item label="允许获取版权授权">{{ group.permissionCreateLicense }}</el-descriptions-item>
         <el-descriptions-item label="允许创建链上账户">{{ group.permissionCreateChainAccount }}</el-descriptions-item>
+        <el-descriptions-item label="审核版权">{{ group.permissionVerifyRight }}</el-descriptions-item>
       </el-descriptions>
     </el-descriptions-item>
   </el-descriptions>

@@ -25,7 +25,7 @@ fresh(async (_) => {
 })
 const confirmChange = () => {
   httpService.post(
-      Constant.Api.USER_API + Constant.Api.USER_CHANGE_PWD,
+      Constant.Api.USER.CHANGE_PWD,
       changePasswordForm
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]

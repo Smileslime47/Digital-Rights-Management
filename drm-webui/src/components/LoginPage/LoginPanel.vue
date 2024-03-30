@@ -18,7 +18,7 @@ const switchToRegister = () => {
 
 const login = () => {
   httpService.post(
-      Constant.Api.USER_API + Constant.Api.USER_LOGIN,
+      Constant.Api.USER.LOGIN,
       loginForm
   ).then((principleMap) => {
     console.log(principleMap)

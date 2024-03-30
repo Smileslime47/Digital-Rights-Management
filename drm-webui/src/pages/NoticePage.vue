@@ -15,14 +15,14 @@ fresh((route) => {
 
   // Get the total number of notices
   httpService.get(
-      Constant.Api.NOTICE_API + Constant.Api.NOTICE_COUNT,
+      Constant.Api.NOTICE.COUNT,
       {
         params: {filter: filter}
       }
   ).then((data) => maxPage.value = data[Constant.RespondField.COUNT]/Constant.Global.DEFAULT_PAGE_SIZE)
 
   httpService.get(
-      Constant.Api.NOTICE_API,
+      Constant.Api.NOTICE.ROOT,
       {
         params: {
           filter: filter,
@@ -34,7 +34,7 @@ fresh((route) => {
 
 const changeStatus = (id: number, filter: string) => {
   httpService.post(
-      Constant.Api.NOTICE_API,
+      Constant.Api.NOTICE.ROOT,
       {
         noticeId: id,
         targetStatus: filter

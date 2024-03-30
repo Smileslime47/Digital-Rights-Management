@@ -10,10 +10,10 @@ const user = ref(new User())
 const group = ref(new Group())
 const selfProfile = ref(false)
 
-fresh((route) => {
+fresh(async (route) => {
   //获取用户信息
-  httpService.get(
-      Constant.Api.USER_API,
+  await httpService.get(
+      Constant.Api.USER.ROOT,
       {
         params: {
           id: route.params.id
@@ -25,8 +25,8 @@ fresh((route) => {
   })
 
   //获取用户组信息
-  httpService.get(
-      Constant.Api.GROUP_API,
+  await httpService.get(
+      Constant.Api.GROUP.ROOT,
       {
         params: {
           id: user.value.permissionId

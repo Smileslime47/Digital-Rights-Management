@@ -36,25 +36,25 @@ class TokenUtils {
 
         //获取用户信息
         await httpServiceIgnoreStatus.get(
-            Constant.Api.USER_API,
+            Constant.Api.USER.ROOT,
             {params: {id: userLocalId}}
         ).then((data) => this.user = data[Constant.RespondField.USER] as User)
 
         //获取用户组信息
         await httpServiceIgnoreStatus.get(
-            Constant.Api.GROUP_API,
+            Constant.Api.GROUP.ROOT,
             {params: {id: this.user.permissionId}}
         ).then((data) => this.group = data[Constant.RespondField.GROUP] as Group)
 
         //获取未读通知数量
         await httpServiceIgnoreStatus.get(
-            Constant.Api.NOTICE_API + Constant.Api.NOTICE_COUNT,
+            Constant.Api.NOTICE.COUNT,
             {params: {filter: Constant.NoticeFilter.UNREAD}}
         ).then((data) => this.noticeCnt = data[Constant.RespondField.COUNT])
 
         //获取链地址
         await httpServiceIgnoreStatus.get(
-            Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.CHAIN_GET_BY_USER,
+            Constant.Api.CHAIN.ACCOUNT.GET_BY_USER,
             {params: {id: userLocalId}}
         ).then((data) => this.chainAddress = data[Constant.RespondField.ADDRESS])
 

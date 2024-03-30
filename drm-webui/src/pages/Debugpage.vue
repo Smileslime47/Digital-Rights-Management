@@ -7,7 +7,7 @@ import TemplatePage from "~/pages/TemplatePage.vue";
 
 const debugUser = () => {
   httpService.get(
-      Constant.Api.DEBUG_API+Constant.Api.DEBUG_USER,
+      Constant.Api.DEBUG.USER,
   ).then((data) => {
     //@ts-ignore
     let debugUser = data as User
@@ -17,7 +17,7 @@ const debugUser = () => {
 
 const errorStatus = () => {
   httpService.get(
-    Constant.Api.DEBUG_API + Constant.Api.DEBUG_STATUS
+    Constant.Api.DEBUG.STATUS
   ).then((data) => {
     ElMessage.info(data as any)
   })

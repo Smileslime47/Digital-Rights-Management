@@ -27,7 +27,7 @@ const register = () => {
     return
   }
   httpService.post(
-      Constant.Api.USER_API + Constant.Api.USER_REGISTER,
+      Constant.Api.USER.REGISTER,
       registerForm
   ).then((principleMap) => {
     localStorage.setItem(Constant.Authentication.TOKEN_STORAGE, principleMap[Constant.Authentication.TOKEN_STORAGE])

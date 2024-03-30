@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const update = () => {
   httpService.post(
-      Constant.Api.USER_API,
+      Constant.Api.USER.ROOT,
       props.user
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]
