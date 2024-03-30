@@ -32,6 +32,7 @@ object GroupTable : Table("drm_group") {
     val permission_create_right = bool("permission_create_right")
     val permission_create_license = bool("permission_create_license")
     val permission_create_chain_account = bool("permission_create_chain_account")
+    val permission_verify_right = bool("permission_verify_right")
     override val primaryKey = PrimaryKey(id)
 
     fun resultRowToGroup(row: ResultRow) = Group(
@@ -41,7 +42,8 @@ object GroupTable : Table("drm_group") {
         permissionShowProfile = row[permission_show_profile],
         permissionCreateRight = row[permission_create_right],
         permissionCreateLicense = row[permission_create_license],
-        permissionCreateChainAccount = row[permission_create_chain_account]
+        permissionCreateChainAccount = row[permission_create_chain_account],
+        permissionVerifyRight = row[permission_verify_right]
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(group: Group): GroupTable.(statement: T) -> Unit = {
@@ -51,5 +53,6 @@ object GroupTable : Table("drm_group") {
         it[permission_create_right] = group.permissionCreateRight
         it[permission_create_license] = group.permissionCreateLicense
         it[permission_create_chain_account] = group.permissionCreateChainAccount
+        it[permission_verify_right] = group.permissionVerifyRight
     }
 }
