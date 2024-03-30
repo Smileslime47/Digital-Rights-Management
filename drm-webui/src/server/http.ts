@@ -51,6 +51,11 @@ const onFulfilledResponseHandler = (response: AxiosResponse) => {
             ElMessage.error(httpResponse.status.msg)
             return Promise.reject();
         }
+        case 405:{
+            ElMessage.error("Need Chain Account.")
+            routeTo.chainAccount()
+            return Promise.reject();
+        }
         default : {
             ElMessage.error(httpResponse.status.msg)
             return Promise.reject();

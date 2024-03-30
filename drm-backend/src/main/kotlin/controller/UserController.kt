@@ -57,12 +57,6 @@ fun Application.userController() {
                             return@get
                         }
 
-                        //检查用户登陆id
-                        (loginId == null) -> {
-                            call.httpRespond(HttpStatus.UNAUTHORIZED)
-                            return@get
-                        }
-
                         //检查该用户是否有展示权限
                         (loginId != targetId && !groupService.authenticate(
                             targetUser.permissionId,
@@ -153,9 +147,9 @@ fun Application.userController() {
                         }
 
                         //检查登陆用户合法性
-                        (loginUser == null || !passwordEncoder.verifyPassword(
+                        (!passwordEncoder.verifyPassword(
                             changePasswordForm.oldPassword,
-                            loginUser.password
+                            loginUser!!.password
                         )) -> {
                             call.httpRespond(HttpStatus.INVALID_TOKEN with "密码不符")
                             return@post

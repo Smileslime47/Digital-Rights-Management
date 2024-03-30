@@ -2,7 +2,6 @@ package moe._47saikyo.service.impl
 
 import domain.Group
 import domain.User
-import moe._47saikyo.configuration.security.PasswordEncoder
 import moe._47saikyo.dao.GroupDao
 import moe._47saikyo.dao.UserDao
 import moe._47saikyo.mapper.GroupTable
@@ -19,7 +18,6 @@ import org.koin.java.KoinJavaComponent.inject
 class UserServiceImpl : UserService {
     private val userDao: UserDao by inject(UserDao::class.java)
     private val groupDao: GroupDao by inject(GroupDao::class.java)
-    private val passwordEncoder: PasswordEncoder by inject(PasswordEncoder::class.java)
 
     override suspend fun getDebugUser(): User =
         userDao.getUser { UserTable.username eq "DebugUser" } ?: error("找不到用户")

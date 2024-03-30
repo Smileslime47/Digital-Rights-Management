@@ -33,12 +33,6 @@ fun Application.noticeController() {
                     val loginUser = loginId?.let { id -> userService.getUser(id) }
 
                     when {
-                        //检查登陆用户合法性
-                        (loginUser == null) -> {
-                            call.httpRespond(HttpStatus.UNAUTHORIZED)
-                            return@get
-                        }
-
                         //检查过滤器合法性
                         (filterStr == null || filterStr !in GlobalConstant.NOTICE_FILTERS) -> {
                             call.httpRespond(HttpStatus.BAD_REQUEST with "无效的通知过滤器")
@@ -68,12 +62,6 @@ fun Application.noticeController() {
                     val loginUser = loginId?.let { id -> userService.getUser(id) }
 
                     when {
-                        //检查登陆用户合法性
-                        (loginUser == null) -> {
-                            call.httpRespond(HttpStatus.UNAUTHORIZED)
-                            return@get
-                        }
-
                         //检查过滤器合法性
                         (filterStr == null || filterStr !in GlobalConstant.NOTICE_FILTERS) -> {
                             call.httpRespond(HttpStatus.BAD_REQUEST with "无效的通知过滤器")
@@ -111,14 +99,8 @@ fun Application.noticeController() {
                     val notice = noticeService.getNotice(noticeForm.noticeId)
 
                     when {
-                        //检查登陆用户合法性
-                        (loginUser == null) -> {
-                            call.httpRespond(HttpStatus.UNAUTHORIZED)
-                            return@post
-                        }
-
                         //检查通知用户和登陆用户一致性
-                        (notice == null || notice.receiverId != loginUser.id) -> {
+                        (notice == null || notice.receiverId != loginUser!!.id) -> {
                             call.httpRespond(HttpStatus.BAD_REQUEST with "无效的通知ID")
                             return@post
                         }

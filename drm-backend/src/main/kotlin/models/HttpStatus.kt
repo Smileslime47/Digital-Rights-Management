@@ -55,6 +55,9 @@ data class HttpStatus(val code: Int = 200) {
             //资源不存在
             const val NOT_FOUND = 404
 
+            //需要链上账户
+            const val NEED_ACCOUNT = 405
+
             //服务器错误
             const val SERVER_ERROR = 500
         }
@@ -78,6 +81,9 @@ data class HttpStatus(val code: Int = 200) {
 
         //资源不存在
         val NOT_FOUND = HttpStatus(Code.NOT_FOUND, "Not Found")
+
+        //需要链上账户
+        val NEED_ACCOUNT = HttpStatus(Code.NEED_ACCOUNT, "Need Chain Account")
 
         //服务器错误
         val SERVER_ERROR = HttpStatus(Code.SERVER_ERROR, "Server Error")

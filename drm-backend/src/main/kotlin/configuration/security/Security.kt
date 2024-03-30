@@ -28,7 +28,7 @@ import org.koin.java.KoinJavaComponent.inject
 fun Application.configureSecurity() {
     val userService: UserService by inject(UserService::class.java)
     val groupService: GroupService by inject(GroupService::class.java)
-    val walletService:WalletService by inject(WalletService::class.java)
+    val walletService: WalletService by inject(WalletService::class.java)
 
     val jwtSubject = getProperty(Constant.PropertyUrl.JWT_SUBJECT)
     val jwtIssuer = getProperty(Constant.PropertyUrl.JWT_ISSUER)
@@ -69,31 +69,47 @@ fun Application.configureSecurity() {
         //仅检查是否包含token,用于要求登陆
         jwt(Constant.Authentication.NEED_LOGIN) {
             verifier(jwtTemplate)
-            validate { JWTPrincipal(it.payload) }
-            challenge { _, _ ->
-                call.httpRespond(HttpStatus.UNAUTHORIZED)
-            }
-        }
-
-        //验证包含链上账户
-        jwt(Constant.Authentication.NEED_BLOCK_ACCOUNT){
-            verifier(jwtTemplate)
             validate {
-                val userId = it.payload.getClaim(Constant.Authentication.USER_ID_CLAIM).asLong()
-                val wallet = walletService.getWallet(userId)
-                if(wallet?.walletFile != null && wallet.walletFile!!.isNotEmpty()){
+                val loginId = it.payload.getClaim(Constant.Authentication.USER_ID_CLAIM).asLong()
+                val loginUser = loginId?.let { id -> userService.getUser(id) }
+                if (loginId != null && loginUser != null) {
                     JWTPrincipal(it.payload)
-                }else{
+                } else {
                     null
                 }
             }
             challenge { _, _ ->
-                call.httpRespond(HttpStatus.FORBIDDEN with "需要先开通链上账户")
+                call.httpRespond(HttpStatus.UNAUTHORIZED with "未登录或登陆状态无效")
+            }
+        }
+
+        //验证包含链上账户
+        jwt(Constant.Authentication.NEED_BLOCK_ACCOUNT) {
+            verifier(jwtTemplate)
+            validate {
+                val userId = it.payload.getClaim(Constant.Authentication.USER_ID_CLAIM).asLong()
+                val wallet = walletService.getWallet(userId)
+                if (wallet?.walletFile != null && wallet.walletFile!!.isNotEmpty()) {
+                    JWTPrincipal(it.payload)
+                } else {
+                    null
+                }
+            }
+            challenge { _, _ ->
+                call.httpRespond(HttpStatus.NEED_ACCOUNT with "需要先开通链上账户")
             }
         }
 
         jwt(Constant.Authentication.PERMISSION_CREATE_CHAIN_ACCOUNT) {
             authenticateGroupPermission(Group::permissionCreateChainAccount)
+        }
+
+        jwt(Constant.Authentication.PERMISSION_CREATE_RIGHT) {
+            authenticateGroupPermission(Group::permissionCreateRight)
+        }
+
+        jwt(Constant.Authentication.PERMISSION_VERIFY_RIGHT) {
+            authenticateGroupPermission(Group::permissionVerifyRight)
         }
     }
 }

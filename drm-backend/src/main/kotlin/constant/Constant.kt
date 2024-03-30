@@ -23,15 +23,18 @@ object Constant {
         const val NEED_LOGIN = "need_login"
         const val NEED_BLOCK_ACCOUNT = "need_block_account"
         const val PERMISSION_CREATE_CHAIN_ACCOUNT = "permission_create_chain_account"
+        const val PERMISSION_CREATE_RIGHT = "permission_create_right"
+        const val PERMISSION_VERIFY_RIGHT = "permission_verify_right"
     }
 
-    object RespondField{
+    object RespondField {
         const val USER = "user"
         const val GROUP = "group"
         const val NOTICE = "notice"
         const val SELF_PROFILE = "self"
         const val SUCCESS = "success"
         const val ADDRESS = "address"
+        const val RIGHT = "right"
         const val BALANCE = "balance"
         const val COUNT = "count"
     }
