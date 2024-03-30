@@ -57,6 +57,7 @@ class TokenUtils {
             Constant.Api.CHAIN_API + Constant.Api.CHAIN_ACCOUNT_API + Constant.Api.CHAIN_GET_BY_USER,
             {params: {id: userLocalId}}
         ).then((data) => this.chainAddress = data[Constant.RespondField.ADDRESS])
+
         return true
     }
 
@@ -75,22 +76,34 @@ class TokenUtils {
 
     public static async getUser(routeNow: string) {
         await this.checkCache(routeNow)
-        return this.user
+        if (this.initialized)
+            return this.user
+        else
+            return null
     }
 
     public static async getGroup(routeNow: string) {
         await this.checkCache(routeNow)
-        return this.group
+        if (this.initialized)
+            return this.group
+        else
+            return null
     }
 
     public static async getNoticeCnt(routeNow: string) {
         await this.checkCache(routeNow)
-        return this.noticeCnt
+        if (this.initialized)
+            return this.noticeCnt
+        else
+            return null
     }
 
     public static async getChainAddress(routeNow: string) {
         await this.checkCache(routeNow)
-        return this.chainAddress
+        if (this.initialized)
+            return this.chainAddress
+        else
+            return null
     }
 }
 
