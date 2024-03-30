@@ -3,12 +3,18 @@ const Constant = {
         NULL_NUMBER_PLACEHOLDER: 0,
         NULL_STRING_PLACEHOLDER: "undefined",
         DEFAULT_PAGE_SIZE:10,
+        DEFAULT_PAGE:"1",
     },
     NoticeFilter: {
         ALL:"all",
         UNREAD: "unread",
         READ: "read",
         ARCHIVED: "archived"
+    },
+    PendingStatus:{
+        PENDING:"PENDING",
+        CONFIRMED:"CONFIRMED",
+        REJECTED:"REJECTED"
     },
     Authentication: {
         TOKEN_STORAGE: "token",
@@ -58,6 +64,9 @@ const Constant = {
             },
             RIGHT:{
                 ROOT:"/chain/right",
+                VERIFY:"/chain/right/verify",
+                CONFIRM:"/chain/right/verify/confirm",
+                REJECT:"/chain/right/verify/reject"
             }
         },
     }

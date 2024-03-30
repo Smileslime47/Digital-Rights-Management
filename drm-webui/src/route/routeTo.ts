@@ -16,10 +16,11 @@ const routeTo = {
     debug: () => loadAndTo("/Debug"),
     login: () => loadAndTo("/login"),
     profile: (id: Number) => loadAndTo("/profile/" + id),
-    notice: (filter: String, page: Number) => loadAndTo("/notice/" + filter + "/" + page),
+    notice: (filter: String, page: String) => loadAndTo("/notice/" + filter + "/" + page),
     changePassword: () => loadAndTo("/change-password"),
     chainAccount: () => loadAndTo("/chain/account"),
     chainRight: () => loadAndTo("/chain/right"),
+    chainVerify: (page: String) => loadAndTo("/chain/verify/" + page),
     fresh: () => router.go(0)
 }
 

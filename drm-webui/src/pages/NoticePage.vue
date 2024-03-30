@@ -6,31 +6,33 @@ import fresh from "~/composables/fresh.ts";
 import {httpService} from "~/server/http.ts";
 import {ElMessage} from "element-plus";
 
-const maxPage = ref(0)
 const notices = ref([])
+const filter = ref("")
+const maxPage = ref(0)
+const pageNow = ref("")
 
-fresh((route) => {
-  let filter = route.params.filter
-  let page = route.params.page
+watch(pageNow, (newVal) => {
+  routeTo.notice(filter.value, newVal)
+})
 
-  // Get the total number of notices
-  httpService.get(
-      Constant.Api.NOTICE.COUNT,
-      {
-        params: {filter: filter}
-      }
-  ).then((data) => maxPage.value = data[Constant.RespondField.COUNT]/Constant.Global.DEFAULT_PAGE_SIZE)
+fresh(async (route) => {
+  filter.value = <string>route.params.filter
+  pageNow.value = <string>route.params.page
 
   httpService.get(
       Constant.Api.NOTICE.ROOT,
       {
         params: {
-          filter: filter,
-          page: page
+          filter: filter.value,
+          page: pageNow.value
         }
       }
-  ).then((data) => notices.value = data[Constant.RespondField.NOTICE])
+  ).then((data) => {
+    notices.value = data[Constant.RespondField.NOTICE]
+    maxPage.value = Math.ceil(data[Constant.RespondField.COUNT]/Constant.Global.DEFAULT_PAGE_SIZE)
+  })
 })
+
 
 const changeStatus = (id: number, filter: string) => {
   httpService.post(
@@ -94,7 +96,7 @@ const changeStatus = (id: number, filter: string) => {
               </el-button-group>
             </template>
           </el-card>
-          <el-pagination layout="prev, pager, next" :total="maxPage"/>
+          <el-pagination layout="prev, pager, next" :page-count="maxPage" v-model:current-page="pageNow"/>
         </el-space>
       </el-main>
     </el-container>

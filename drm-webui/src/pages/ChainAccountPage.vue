@@ -5,13 +5,10 @@ import fresh from "~/composables/fresh.ts";
 import {useRoute} from "vue-router";
 import Constant from "~/constant/Constant.ts";
 import {httpService} from "~/server/http.ts";
-import pendingRight from "~/modules/PendingRight.ts";
 
 const addr = ref("")
 const balance = ref(0)
 const initialized = ref(false)
-
-const pendingRights = ref([])
 
 fresh(async (_) => {
   //获取链上地址
@@ -31,18 +28,6 @@ fresh(async (_) => {
         }
     ).then((data) => {
       balance.value = data[Constant.RespondField.BALANCE]
-    })
-
-    //获取账户待审合约
-    await httpService.get(
-        Constant.Api.CHAIN.RIGHT.ROOT,
-        {
-          params: {
-            addr: addr.value
-          }
-        }
-    ).then((data) => {
-      pendingRights.value = data[Constant.RespondField.RIGHT]
     })
   }
   initialized.value = true
@@ -75,7 +60,7 @@ fresh(async (_) => {
 
       <el-divider/>
 
-      <PendingPanel :pendingRights="pendingRights"/>
+      <PendingPanel :addr="addr"/>
     </div>
 
     <div v-else>

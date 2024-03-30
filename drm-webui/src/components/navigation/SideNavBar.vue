@@ -3,6 +3,7 @@ import fresh from "~/composables/fresh.ts";
 import routeTo from "~/route/routeTo.ts";
 import TokenUtils from "~/server/TokenUtils.ts";
 import {useRoute} from "vue-router";
+import Constant from "~/constant/Constant.ts";
 
 const userId = ref(0)
 const logged = ref(false)
@@ -28,7 +29,7 @@ fresh((_) => {
     <el-menu-item index="1" @click="routeTo.profile(userId)">
       <span>个人资料</span>
     </el-menu-item>
-    <el-menu-item index="2" @click="routeTo.notice(noticeFilter,1)">
+    <el-menu-item index="2" @click="routeTo.notice(noticeFilter,Constant.Global.DEFAULT_PAGE)">
       <span>通知列表</span>
     </el-menu-item>
     <el-menu-item index="3" @click="routeTo.chainAccount">
@@ -40,7 +41,7 @@ fresh((_) => {
     <el-menu-item index="5" disabled>
       <span>获取授权</span>
     </el-menu-item>
-    <el-menu-item index="6">
+    <el-menu-item index="6" @click="routeTo.chainVerify(Constant.Global.DEFAULT_PAGE)">
       <span>版权审核</span>
     </el-menu-item>
   </el-menu>
