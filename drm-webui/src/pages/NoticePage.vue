@@ -4,7 +4,6 @@ import Constant from "~/constant/Constant.ts";
 import routeTo from "~/route/routeTo.ts";
 import fresh from "~/composables/fresh.ts";
 import {httpService} from "~/server/http.ts";
-import Notice from "~/modules/Notice.ts";
 import {ElMessage} from "element-plus";
 
 const maxPage = ref(0)
@@ -77,6 +76,8 @@ const changeStatus = (id: number, filter: string) => {
           <el-card class="notice">
             <template #header>
               <span>{{ notice.title }}</span>
+              <br/>
+              <el-text>{{ new Date(notice.sentTime).toLocaleDateString() }}</el-text>
             </template>
             <el-text>{{ notice.content }}</el-text>
             <template #footer>
@@ -99,7 +100,3 @@ const changeStatus = (id: number, filter: string) => {
     </el-container>
   </TemplatePage>
 </template>
-
-<style scoped>
-
-</style>

@@ -6,13 +6,11 @@ import {UploadFilled} from "@element-plus/icons-vue";
 const form = reactive({
   title: "",
   registrationNumber: "",
-  availableTime: "",
-  description: "",
+  availableTime:[0,0],
+  description: ""
 })
 
-const confirmCreate = () => {
 
-}
 </script>
 
 <template>
