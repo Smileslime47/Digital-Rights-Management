@@ -1,10 +1,10 @@
 package moe._47saikyo.service.impl
 
+import domain.PendingRight
+import domain.PendingStatus
 import moe._47saikyo.contract.Right
 import moe._47saikyo.dao.PendingRightDao
 import moe._47saikyo.mapper.PendingRightTable
-import domain.PendingRight
-import domain.PendingStatus
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.PendingRightService
 import moe._47saikyo.service.RightService
@@ -21,6 +21,22 @@ class PendingRightServiceImpl : PendingRightService {
 
     override suspend fun getPendingRights(): List<PendingRight> =
         pendingRightDao.getPendingRights()
+
+    override suspend fun getPendingRights(address:String): List<PendingRight> =
+        pendingRightDao.getPendingRights { PendingRightTable.owner eq address }
+
+    override suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight? =
+        pendingRightDao.insertPendingRight(pendingRight)
+
+    override suspend fun confirmPendingRight(id: Long): Boolean {
+        val right = getPendingRight(id)
+        if (right?.status == PendingStatus.PENDING) {
+            right.status = PendingStatus.CONFIRMED
+            return pendingRightDao.updatePendingRight(right)
+        } else {
+            return false
+        }
+    }
 
     override suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): Right? {
         val pendingRight = getPendingRight(id)
@@ -40,16 +56,6 @@ class PendingRightServiceImpl : PendingRightService {
             return right
         } else {
             return null
-        }
-    }
-
-    override suspend fun confirmPendingRight(id: Long): Boolean {
-        val right = getPendingRight(id)
-        if (right?.status == PendingStatus.PENDING) {
-            right.status = PendingStatus.CONFIRMED
-            return pendingRightDao.updatePendingRight(right)
-        } else {
-            return false
         }
     }
 

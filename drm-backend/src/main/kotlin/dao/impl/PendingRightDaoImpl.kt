@@ -19,6 +19,9 @@ class PendingRightDaoImpl :PendingRightDao{
     override suspend fun getPendingRights(): List<PendingRight> =
         transaction { PendingRightTable.selectAll().map(PendingRightTable::resultRowToPendingRight) }
 
+    override suspend fun getPendingRights(where: SqlExpressionBuilder.() -> Op<Boolean>): List<PendingRight> =
+        transaction { PendingRightTable.select(where).map(PendingRightTable::resultRowToPendingRight) }
+
     override suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight? =
         transaction {
             PendingRightTable.insert(PendingRightTable.getStatementBinder(pendingRight)).resultedValues?.singleOrNull()?.let(PendingRightTable::resultRowToPendingRight)

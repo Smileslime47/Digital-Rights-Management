@@ -42,7 +42,7 @@ object PendingRightTable : Table("drm_pending_right") {
         issueTime = row[issue_time],
         expireTime = row[expire_time],
         description = row[description],
-        status = PendingStatus.fromString(row[status])
+        status = PendingStatus.fromString(row[status]),
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(pendingRight: PendingRight): PendingRightTable.(T) -> Unit = {

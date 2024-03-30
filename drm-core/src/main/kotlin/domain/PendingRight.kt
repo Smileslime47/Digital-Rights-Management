@@ -8,5 +8,5 @@ data class PendingRight(
     val issueTime: Long,
     val expireTime: Long,
     val description: String,
-    var status: PendingStatus
+    var status: PendingStatus,
 )

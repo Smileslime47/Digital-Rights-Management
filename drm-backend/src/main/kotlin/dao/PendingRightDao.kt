@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.SqlExpressionBuilder
 interface PendingRightDao {
     suspend fun getPendingRight(where: SqlExpressionBuilder.() -> Op<Boolean>): PendingRight?
     suspend fun getPendingRights(): List<PendingRight>
+    suspend fun getPendingRights(where: SqlExpressionBuilder.() -> Op<Boolean>): List<PendingRight>
     suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight?
     suspend fun updatePendingRight(pendingRight: PendingRight): Boolean
     suspend fun deletePendingRight(pendingRight: PendingRight): Boolean
