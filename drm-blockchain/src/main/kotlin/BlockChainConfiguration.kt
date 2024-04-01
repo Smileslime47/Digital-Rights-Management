@@ -1,46 +1,36 @@
 package moe._47saikyo
 
 import constant.GlobalConstant
+import org.web3j.tx.gas.DefaultGasProvider
+import java.math.BigInteger
 
-class BlockChainConfiguration {
+/**
+ * 区块链配置
+ *
+ * @author 刘一邦
+ */
+data class BlockChainConfiguration (
     //以太坊端点地址
-    var socket: String = GlobalConstant.NULL_PLACEHOLDER
-        private set
-
+    val socket:         String = GlobalConstant.NULL_PLACEHOLDER,
     //银行账户的KeyFile路径
-    var walletSource: String = GlobalConstant.NULL_PLACEHOLDER
-        private set
-
+    val walletSource:   String = GlobalConstant.NULL_PLACEHOLDER,
     //银行账户密码
-    var walletPassword: String = GlobalConstant.NULL_PLACEHOLDER
-        private set
-
+    val walletPassword: String = GlobalConstant.NULL_PLACEHOLDER,
+    //GasPrice
+    val gasPrice:       BigInteger = DefaultGasProvider().gasPrice,
+    //GasLimit
+    val gasLimit:       BigInteger = DefaultGasProvider().gasLimit,
     //区块链的链ID,用于开启txManager
-    var chainId: Long = 0L
-        private set
-
+    val chainId:        Long = 0L,
     //DRManager地址
-    var managerAddress: String? = null
-        private set
-
-    fun withSocket(socket: String): BlockChainConfiguration {
-        this.socket = socket
-        return this
-    }
-
-    fun withChain(id: Long): BlockChainConfiguration {
-        this.chainId = id
-        return this
-    }
-
-    fun withBankWallet(source: String, password: String): BlockChainConfiguration {
-        this.walletSource = source
-        this.walletPassword = password
-        return this
-    }
-
-    fun withManager(addr: String): BlockChainConfiguration {
-        this.managerAddress = addr
-        return this
-    }
+    val managerAddress: String? = null
+){
+    constructor(builder: BlockChainConfigurationBuilder) : this(
+        builder.socket,
+        builder.walletSource,
+        builder.walletPassword,
+        builder.gasPrice,
+        builder.gasLimit,
+        builder.chainId,
+        builder.managerAddress)
 }

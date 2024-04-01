@@ -5,15 +5,15 @@ pragma solidity >=0.7.0 <0.9.0;
 import "./Right.sol";
 import "./License.sol";
 
-struct Entry {
-    string key;
-    address value;
-}
+    struct Entry {
+        string key;
+        address value;
+    }
 
-struct IterableMap {
-    mapping(string => uint) keys;
-    Entry[] entries;
-}
+    struct IterableMap {
+        mapping(string => uint) keys;
+        Entry[] entries;
+    }
 
 contract DRManager {
     mapping(address => IterableMap) private rightMap;
@@ -23,17 +23,25 @@ contract DRManager {
         add(rightMap[msg.sender], right.getTitle(), address(right));
     }
 
-    function getRight(string memory rightName) view external returns (Right){
-        return Right(get(rightMap[msg.sender], rightName));
+    function getRight(address owner, string memory rightName) view public returns (Right){
+        return Right(get(rightMap[owner], rightName));
     }
 
-    function getAllRights() view external returns (Right[] memory){
-        uint len = getLength(rightMap[msg.sender]);
+    function getRight(string memory rightName) view public returns (Right){
+        return getRight(msg.sender, rightName);
+    }
+
+    function getRights(address owner) view public returns (Right[] memory){
+        uint len = getLength(rightMap[owner]);
         Right[] memory res = new Right[](len);
         for (uint i = 0; i < len; i++) {
-            res[i] = Right(get(rightMap[msg.sender], i));
+            res[i] = Right(get(rightMap[owner], i));
         }
         return res;
+    }
+
+    function getRights() view public returns (Right[] memory){
+        return getRights(msg.sender);
     }
 
     /**
