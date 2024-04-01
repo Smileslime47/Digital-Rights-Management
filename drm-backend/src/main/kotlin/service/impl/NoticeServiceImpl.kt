@@ -1,7 +1,7 @@
 package moe._47saikyo.service.impl
 
 import domain.Notice
-import domain.NoticeStatus
+import enums.NoticeStatus
 import moe._47saikyo.dao.NoticeDao
 import moe._47saikyo.mapper.NoticeTable
 import moe._47saikyo.service.NoticeService

@@ -1,7 +1,7 @@
 package moe._47saikyo.mapper
 
 import domain.PendingRight
-import domain.PendingStatus
+import enums.PendingStatus
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -32,6 +32,7 @@ object PendingRightTable : Table("drm_pending_right") {
     val expire_time = long("expire_time")
     val description = text("description")
     val status = varchar("status", 128)
+    val estimate_price = long("estimate_price").nullable()
     override val primaryKey = PrimaryKey(id)
 
     fun resultRowToPendingRight(row: ResultRow) = PendingRight(
@@ -43,6 +44,7 @@ object PendingRightTable : Table("drm_pending_right") {
         expireTime = row[expire_time],
         description = row[description],
         status = PendingStatus.fromString(row[status]),
+        estimatePrice = row[estimate_price]
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(pendingRight: PendingRight): PendingRightTable.(T) -> Unit = {
@@ -53,5 +55,6 @@ object PendingRightTable : Table("drm_pending_right") {
         it[expire_time] = pendingRight.expireTime
         it[description] = pendingRight.description
         it[status] = PendingStatus.toString(pendingRight.status)
+        it[estimate_price] = pendingRight.estimatePrice
     }
 }

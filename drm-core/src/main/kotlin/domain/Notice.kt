@@ -1,6 +1,7 @@
 package domain
 
 import constant.GlobalConstant
+import enums.NoticeStatus
 
 data class Notice(
     var id: Long = 0,

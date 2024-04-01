@@ -1,5 +1,7 @@
 package domain
 
+import enums.PendingStatus
+
 data class PendingRight(
     val id:Long,
     val title: String,
@@ -9,4 +11,5 @@ data class PendingRight(
     val expireTime: Long,
     val description: String,
     var status: PendingStatus,
+    var estimatePrice:Long? = null,
 )

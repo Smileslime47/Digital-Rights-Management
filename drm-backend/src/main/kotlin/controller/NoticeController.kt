@@ -2,13 +2,11 @@ package moe._47saikyo.controller
 
 import constant.GlobalConstant
 import domain.Notice
-import domain.NoticeStatus
-import io.ktor.http.*
+import enums.NoticeStatus
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
@@ -16,7 +14,6 @@ import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.NoticeService
 import moe._47saikyo.service.UserService
 import org.koin.java.KoinJavaComponent.inject
-import kotlin.text.get
 
 fun Application.noticeController() {
     val noticeService: NoticeService by inject(NoticeService::class.java)
