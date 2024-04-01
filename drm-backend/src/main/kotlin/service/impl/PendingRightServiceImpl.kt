@@ -1,7 +1,7 @@
 package moe._47saikyo.service.impl
 
 import domain.PendingRight
-import domain.PendingStatus
+import enums.PendingStatus
 import moe._47saikyo.contract.Right
 import moe._47saikyo.dao.PendingRightDao
 import moe._47saikyo.mapper.PendingRightTable
@@ -20,6 +20,16 @@ import java.math.BigInteger
 class PendingRightServiceImpl : PendingRightService {
     private val pendingRightDao: PendingRightDao by KoinJavaComponent.inject(PendingRightDao::class.java)
     private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
+
+    override fun convertToDeployForm(pendingRight: PendingRight): RightDeployForm =
+        RightDeployForm(
+            title = pendingRight.title,
+            registrationNumber = pendingRight.registrationNumber,
+            issueTime = pendingRight.issueTime.toBigInteger(),
+            expireTime = pendingRight.expireTime.toBigInteger(),
+            description = pendingRight.description
+        )
+
     override suspend fun getPendingRight(id: Long): PendingRight? =
         pendingRightDao.getPendingRight { PendingRightTable.id eq id }
 
@@ -42,6 +52,17 @@ class PendingRightServiceImpl : PendingRightService {
         val right = getPendingRight(id)
         if (right?.status == PendingStatus.PENDING) {
             right.status = PendingStatus.CONFIRMED
+            return pendingRightDao.updatePendingRight(right)
+        } else {
+            return false
+        }
+    }
+
+    override suspend fun estimatePendingRight(id: Long,estimatePrice:Long): Boolean {
+        val right = getPendingRight(id)
+        if (right?.status == PendingStatus.PENDING) {
+            right.status = PendingStatus.CONFIRMED
+            right.estimatePrice = estimatePrice
             return pendingRightDao.updatePendingRight(right)
         } else {
             return false

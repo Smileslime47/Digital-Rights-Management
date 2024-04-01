@@ -3,7 +3,7 @@ package moe._47saikyo.controller
 import domain.Group
 import domain.Notice
 import domain.PendingRight
-import domain.PendingStatus
+import enums.PendingStatus
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -14,8 +14,10 @@ import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.*
+import moe._47saikyo.utils.CryptoUtils
 import org.koin.java.KoinJavaComponent.inject
 import java.math.BigInteger
+import java.util.*
 
 fun Application.chainRightController() {
     val accountService: AccountService by inject(AccountService::class.java)
@@ -59,6 +61,7 @@ fun Application.chainRightController() {
 
             authenticate(Constant.Authentication.NEED_LOGIN) {
                 authenticate(Constant.Authentication.NEED_BLOCK_ACCOUNT) {
+                    //部署版权
                     post("/deploy") {
                         //获取表单
                         data class Form(
@@ -70,12 +73,16 @@ fun Application.chainRightController() {
 
                         //获取信息
                         val loginId = call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)?.asLong()
-                        val walletFileContent = walletService.getWallet(loginId!!)?.walletFile
                         val pwd = form.password
                         val pendingId = form.pendingId
 
+                        //获取Base64钱包文件
+                        val dbWallet = walletService.getWallet(loginId!!)
+                        //解密钱包文件
+                        val walletFileJson = walletService.decryptWallet(dbWallet!!, pwd)
+
                         //获取txManager
-                        val txManager = accountService.getTxManager(pwd, walletFileContent!!)
+                        val txManager = accountService.getTxManager(pwd, walletFileJson)
 
                         //获取pendingRight并生成部署表单
                         val pendingRight = pendingRightService.getPendingRight(pendingId)
@@ -168,29 +175,42 @@ fun Application.chainRightController() {
                                 }
                             }
 
+                            //获取钱包实体对象
                             val ownerWallet = walletService.getWallet(targetRight!!.owner)
+
+                            //获取pendingRight并生成部署表单
+                            val deployForm = pendingRightService.convertToDeployForm(targetRight)
+
+                            //获取估算Gas
+                            val estimateGas = rightService.estimate(ownerWallet!!.address, deployForm)
 
                             noticeService.insertNotice(
                                 Notice(
                                     title = "版权审核通知",
                                     content = "您的版权申请:${targetRight.title}已通过审核,需要您填写区块链账户密码完成合约部署。",
-                                    receiverId = ownerWallet!!.userId,
+                                    receiverId = ownerWallet.userId,
                                     targetRoute = "/chain/account"
                                 )
                             )
 
                             //发送通知
                             when (pendingRightService.confirmPendingRight(targetRight.id)) {
-                                true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
+                                true -> call.httpRespond(
+                                    data = mapOf(
+                                        Constant.RespondField.SUCCESS to true,
+                                        Constant.RespondField.PRICE to estimateGas
+                                    )
+                                )
                                 false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                             }
                         }
 
                         post("/verify/reject") {
                             data class Form(
-                                val pendingRightId:Int,
-                                val rejectReason:String
+                                val pendingRightId: Int,
+                                val rejectReason: String
                             )
+
                             val form = call.receive<Form>()
                             val targetRightId = form.pendingRightId
                             val targetRight = pendingRightService.getPendingRight(targetRightId.toLong())

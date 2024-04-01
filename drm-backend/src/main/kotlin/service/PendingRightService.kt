@@ -2,6 +2,7 @@ package moe._47saikyo.service
 
 import domain.PendingRight
 import moe._47saikyo.contract.Right
+import moe._47saikyo.models.RightDeployForm
 import org.web3j.tx.TransactionManager
 
 /**
@@ -11,6 +12,14 @@ import org.web3j.tx.TransactionManager
 
  */
 interface PendingRightService {
+    /**
+     * 将待审核版权转换为部署表单
+     *
+     * @param pendingRight 待审核版权
+     * @return 部署表单
+     */
+    fun convertToDeployForm(pendingRight: PendingRight):RightDeployForm
+
     /**
      * 根据ID获取待审核版权
      *
@@ -41,7 +50,7 @@ interface PendingRightService {
      * @param address 用户地址
      * @return 待审核版权数量
      */
-    suspend fun countPendingRights(address:String): Long
+    suspend fun countPendingRights(address: String): Long
 
     /**
      * 获取用户的待审核版权
@@ -49,7 +58,7 @@ interface PendingRightService {
      * @param address 用户地址
      * @return 待审核版权
      */
-    suspend fun getPendingRights(pageSize: Int, pageNumber: Int,address:String): List<PendingRight>
+    suspend fun getPendingRights(pageSize: Int, pageNumber: Int, address: String): List<PendingRight>
 
     /**
      * 插入待审核版权
@@ -68,13 +77,23 @@ interface PendingRightService {
     suspend fun confirmPendingRight(id: Long): Boolean
 
     /**
-     * 部署待审核版权，将状态从*CONFIRMED*改为*DEPLOYED*
+     * 估算待审核版权，将状态从*CONFIRMED*改为*ESTIMATED*
+     *
+     * @param id 待审核版权ID
+     * @param estimatePrice 估算价格
+     * @return 是否估算成功
+     */
+    suspend fun estimatePendingRight(id: Long, estimatePrice: Long): Boolean
+
+
+    /**
+     * 部署待审核版权，将状态从*ESTIMATED*改为*DEPLOYED*
      *
      * @param id 待审核版权ID
      * @param transactionManager 交易管理器
      * @return 已部署版权
      */
-    suspend fun deployPendingRight(id: Long,transactionManager: TransactionManager): Right?
+    suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): Right?
 
     /**
      * 拒绝待审核版权，将状态从*PENDING*改为*REJECTED*

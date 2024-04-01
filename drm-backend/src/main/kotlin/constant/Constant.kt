@@ -37,6 +37,7 @@ object Constant {
         const val RIGHT = "right"
         const val BALANCE = "balance"
         const val COUNT = "count"
+        const val PRICE = "price"
     }
 
     object PropertyUrl {
@@ -54,5 +55,8 @@ object Constant {
         const val CHAIN_PASSWORD = "chain.password"
         const val CHAIN_WALLET_FILE = "chain.walletFile"
         const val CHAIN_ID = "chain.chainId"
+        const val CHAIN_MANAGER = "chain.manager"
+        const val CHAIN_GAS_PRICE = "chain.gasPrice"
+        const val CHAIN_GAS_LIMIT = "chain.gasLimit"
     }
 }
