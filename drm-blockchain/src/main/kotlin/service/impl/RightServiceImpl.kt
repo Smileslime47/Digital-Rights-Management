@@ -1,13 +1,10 @@
 package moe._47saikyo.service.impl
 
-import moe._47saikyo.BlockChain
-import moe._47saikyo.Estimate
+import moe._47saikyo.*
 import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.Right
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.RightService
-import moe._47saikyo.string
-import moe._47saikyo.uint32
 import org.web3j.abi.FunctionEncoder
 import org.web3j.tx.TransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
@@ -16,21 +13,18 @@ import java.math.BigInteger
 class RightServiceImpl : RightService {
     override fun estimate(from: String, form: RightDeployForm): BigInteger {
         val binCode = Right.BINARY
-        val gasPrice = BlockChain.gasProvider.gasPrice
-        val gasLimit = BlockChain.gasProvider.gasLimit
 
         val encodedConstructor = FunctionEncoder.encodeConstructor(
             listOf(
-                string(form.title), string(form.registrationNumber), uint32(form.issueTime), uint32(form.expireTime), string(form.description)
+                string(form.title),
+                string(form.registrationNumber),
+                uint64(form.issueTime),
+                uint64(form.expireTime),
+                string(form.description)
             )
         )
 
-        return Estimate.estimateDeploy(
-            from,
-            gasPrice,
-            gasLimit,
-            binCode + encodedConstructor
-        )
+        return Estimate.estimateDeploy("$binCode$encodedConstructor")
     }
 
     override fun addRight(transactionManager: TransactionManager, form: RightDeployForm): Right {

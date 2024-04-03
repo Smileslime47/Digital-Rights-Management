@@ -8,8 +8,8 @@ contract License {
     string private rightName;
     address private owner;
     bool private available;
-    uint32 private issueTime;
-    uint32 private expireTime;
+    uint64 private issueTime;
+    uint64 private expireTime;
 
     //constructor
     constructor(string memory _rightName, uint32 _issueTime, uint32 _expireTime) {

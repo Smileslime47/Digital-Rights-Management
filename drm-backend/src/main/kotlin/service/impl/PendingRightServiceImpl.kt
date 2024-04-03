@@ -42,23 +42,13 @@ class PendingRightServiceImpl : PendingRightService {
     override suspend fun countPendingRights(address: String): Long =
         pendingRightDao.countPendingRights { PendingRightTable.owner eq address }
 
-    override suspend fun getPendingRights(pageSize: Int, pageNumber: Int,address: String): List<PendingRight> =
+    override suspend fun getPendingRights(pageSize: Int, pageNumber: Int, address: String): List<PendingRight> =
         pendingRightDao.getPendingRights(pageSize, pageNumber) { PendingRightTable.owner eq address }
 
     override suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight? =
         pendingRightDao.insertPendingRight(pendingRight)
 
-    override suspend fun confirmPendingRight(id: Long): Boolean {
-        val right = getPendingRight(id)
-        if (right?.status == PendingStatus.PENDING) {
-            right.status = PendingStatus.CONFIRMED
-            return pendingRightDao.updatePendingRight(right)
-        } else {
-            return false
-        }
-    }
-
-    override suspend fun estimatePendingRight(id: Long,estimatePrice:Long): Boolean {
+    override suspend fun confirmPendingRight(id: Long, estimatePrice: Long): Boolean {
         val right = getPendingRight(id)
         if (right?.status == PendingStatus.PENDING) {
             right.status = PendingStatus.CONFIRMED

@@ -12,9 +12,9 @@ contract Right {
     //登记号
     string private registrationNumber;
     //发行时间
-    uint32 private issueTime;
+    uint64 private issueTime;
     //到期时间
-    uint32 private expireTime;
+    uint64 private expireTime;
     //版权描述
     string private description;
     //是否可用
@@ -22,7 +22,7 @@ contract Right {
     //授权列表
     License[] private licenses;
 
-    constructor(string memory _title, string memory _registrationNumber, uint32 _issueTime, uint32 _expireTime, string memory _description) {
+    constructor(string memory _title, string memory _registrationNumber, uint64 _issueTime, uint64 _expireTime, string memory _description) {
         title = _title;
         owner = msg.sender;
         registrationNumber = _registrationNumber;
