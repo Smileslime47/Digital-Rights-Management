@@ -1,7 +1,7 @@
 package moe._47saikyo.service.impl
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import moe._47saikyo.BlockChain
+import moe._47saikyo.CurrencyConverter
 import moe._47saikyo.exception.BlockChainNotConnectedException
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.utils.CryptoUtils
@@ -15,7 +15,6 @@ import org.web3j.tx.TransactionManager
 import org.web3j.tx.Transfer
 import org.web3j.utils.Convert
 import java.math.BigDecimal
-import java.math.BigInteger
 
 /**
  * 以太坊账户Service类
@@ -56,10 +55,15 @@ class AccountServiceImpl : AccountService {
      * @param addr 查询账户地址
      * @return 账户余额（单位为Wei——1Wei = 1e-18 Eth）
      */
-    override fun getBalance(addr: String): BigInteger =
+    override fun getBalance(addr: String): BigDecimal =
         if (!BlockChain.connected)
             throw BlockChainNotConnectedException("BlockChain not connected")
-        else BlockChain.web3jInstance!!.ethGetBalance(addr, DefaultBlockParameterName.LATEST).send().balance
+        else {
+            CurrencyConverter.weiToEther(
+                BlockChain.web3jInstance!!.ethGetBalance(addr, DefaultBlockParameterName.LATEST).send().balance
+            )
+        }
+
 
     /**
      * 通过银行账户向指定账户转账
@@ -72,8 +76,7 @@ class AccountServiceImpl : AccountService {
     override fun chargeFromBank(addr: String, value: String): Boolean {
         try {
             Transfer(BlockChain.web3jInstance, BlockChain.bankTxManager)
-                .sendFunds(addr, BigDecimal(value), Convert.Unit.WEI).send()
-
+                .sendFunds(addr, BigDecimal(value), Convert.Unit.ETHER).send()
             return true
         } catch (e: Exception) {
             return false

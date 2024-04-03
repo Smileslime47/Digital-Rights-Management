@@ -31,11 +31,11 @@ const confirmCharge = () => {
     <h1>链上账户管理</h1>
     <el-descriptions>
       <el-descriptions-item label="区块链地址">{{ addr }}</el-descriptions-item>
-      <el-descriptions-item label="账户余额">{{ balance }} Wei</el-descriptions-item>
+      <el-descriptions-item label="账户余额">{{ balance }} ETH</el-descriptions-item>
       <el-descriptions-item label="充值">
         <el-space>
           <el-input v-model="chargeValue" style="width: 240px" placeholder="Please input">
-            <template #append>Wei</template>
+            <template #append>ETH</template>
           </el-input>
           <el-button text bg type="primary" @click="confirmCharge">确认</el-button>
         </el-space>

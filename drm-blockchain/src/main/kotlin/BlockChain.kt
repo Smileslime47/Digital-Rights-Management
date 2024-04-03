@@ -41,6 +41,13 @@ object BlockChain {
             throw BlockChainNotConnectedException("Block chain not connected,can not get web3j instance.")
         } else field
 
+    //银行账户地址
+    var bankAddress: String? = null
+        private set
+        get() = if (field == null) {
+            throw BlockChainNotConnectedException("Block chain not connected,can not get bankAddress.")
+        } else field
+
     //银行账户凭证
     var bankCredentials: Credentials? = null
         private set
@@ -86,6 +93,7 @@ object BlockChain {
 
             //加载银行账户
             bankCredentials = WalletUtils.loadCredentials(configuration.walletPassword, configuration.walletSource)
+            bankAddress = bankCredentials!!.address
             bankTxManager = RawTransactionManager(
                 web3jInstance, bankCredentials, configuration.chainId
             )
