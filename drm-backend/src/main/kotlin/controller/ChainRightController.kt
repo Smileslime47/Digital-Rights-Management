@@ -158,7 +158,10 @@ fun Application.chainRightController() {
                         }
 
                         post("/verify/confirm") {
-                            val targetRightId = call.receive<Int>()
+                            data class Form(
+                                val rightId:Int
+                            )
+                            val targetRightId = call.receive<Form>().rightId
                             val targetRight = pendingRightService.getPendingRight(targetRightId.toLong())
 
                             when {
@@ -194,7 +197,7 @@ fun Application.chainRightController() {
                             )
 
                             //发送通知
-                            when (pendingRightService.confirmPendingRight(targetRight.id)) {
+                            when (pendingRightService.confirmPendingRight(targetRight.id,estimateGas.toLong())) {
                                 true -> call.httpRespond(
                                     data = mapOf(
                                         Constant.RespondField.SUCCESS to true,

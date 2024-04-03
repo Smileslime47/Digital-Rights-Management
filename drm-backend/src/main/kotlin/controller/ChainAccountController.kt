@@ -59,7 +59,7 @@ fun Application.chainAccountController() {
                     val targetId = if (targetIdStr?.matches(Regex("[0-9]+")) == true) targetIdStr.toLong() else null
                     val targetWallet = targetId?.let { id -> walletService.getWallet(id) }
 
-                    call.httpRespond(data = mapOf(Constant.RespondField.ADDRESS to targetWallet!!.address))
+                    call.httpRespond(data = mapOf(Constant.RespondField.ADDRESS to targetWallet?.address))
                 }
 
                 //要求登陆并且有链上账户

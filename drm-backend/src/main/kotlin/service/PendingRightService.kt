@@ -72,18 +72,10 @@ interface PendingRightService {
      * 认证待审核版权，将状态从*PENDING*改为*CONFIRMED*
      *
      * @param id 待审核版权ID
+     * @param estimatePrice 估价
      * @return 是否确认成功
      */
-    suspend fun confirmPendingRight(id: Long): Boolean
-
-    /**
-     * 估算待审核版权，将状态从*CONFIRMED*改为*ESTIMATED*
-     *
-     * @param id 待审核版权ID
-     * @param estimatePrice 估算价格
-     * @return 是否估算成功
-     */
-    suspend fun estimatePendingRight(id: Long, estimatePrice: Long): Boolean
+    suspend fun confirmPendingRight(id: Long, estimatePrice: Long): Boolean
 
 
     /**

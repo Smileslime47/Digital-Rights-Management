@@ -6,6 +6,7 @@ import moe._47saikyo.BlockChainConfiguration
 import moe._47saikyo.BlockChainConfigurationBuilder
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.constant.getProperty
+import java.math.BigInteger
 
 /**
  * 配置连接以太坊区块链
@@ -27,10 +28,10 @@ fun Application.configureBlockChain() {
                 password = getProperty(Constant.PropertyUrl.CHAIN_PASSWORD)!!
             )
             //自定义Gas价格和Gas限制
-//            .withGasProvider(
-//                gasPrice = getProperty(Constant.PropertyUrl.CHAIN_GAS_PRICE)!!.toBigInteger(),
-//                gasLimit = getProperty(Constant.PropertyUrl.CHAIN_GAS_LIMIT)!!.toBigInteger()
-//            )
+            .withGasProvider(
+                gasPrice = getProperty(Constant.PropertyUrl.CHAIN_GAS_PRICE)!!.toBigInteger(),
+                gasLimit = getProperty(Constant.PropertyUrl.CHAIN_GAS_LIMIT)!!.toBigInteger()
+            )
             .withManager(getProperty(Constant.PropertyUrl.CHAIN_MANAGER)!!)
             .build()
     )

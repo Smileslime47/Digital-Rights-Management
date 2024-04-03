@@ -25,6 +25,10 @@ const getPendingRights = (addr: String, page: String) => {
   })
 }
 
+const deploy = () => {
+  console.log("deploy")
+}
+
 watch(pageNow, (newVal) => {
   getPendingRights(props.addr, newVal)
 })
@@ -42,11 +46,16 @@ onMounted(() => {
         <el-table-column type="expand">
           <template #default="props">
             <el-row v-if="props.row.status === Constant.PendingStatus.CONFIRMED">
-              <el-col :span="18">
+              <el-col :span="16">
                 <el-input placeholder="区块链账户密码"/>
               </el-col>
-              <el-col :offset="1" :span="4">
-                <el-button type="primary" text bg class="smooth-button">确认部署</el-button>
+              <el-col :offset="1" :span="2">
+                <el-text>预估部署价格：</el-text>
+                <br/>
+                <el-text>{{ props.row.estimatePrice/1e18 }} ETH</el-text>
+              </el-col>
+              <el-col :offset="1" :span="2">
+                <el-button type="primary" text bg class="smooth-button" @click="deploy">确认部署</el-button>
               </el-col>
             </el-row>
             <el-text v-else>请耐心等待审核。</el-text>

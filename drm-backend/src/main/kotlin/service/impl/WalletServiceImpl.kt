@@ -45,11 +45,19 @@ class WalletServiceImpl : WalletService {
     override suspend fun getWallets(): List<Wallet> =
         walletDao.getWallets()
 
-    override suspend fun insertWallet(wallet: Wallet): Wallet? =
-        walletDao.insertWallet(wallet)
+    override suspend fun insertWallet(wallet: Wallet): Wallet? {
+        if(!wallet.address.startsWith("0x")){
+            wallet.address = "0x${wallet.address}"
+        }
+        return walletDao.insertWallet(wallet)
+    }
 
-    override suspend fun updateWallet(wallet: Wallet): Boolean =
-        walletDao.updateWallet(wallet)
+    override suspend fun updateWallet(wallet: Wallet): Boolean {
+        if(!wallet.address.startsWith("0x")){
+            wallet.address = "0x${wallet.address}"
+        }
+        return walletDao.updateWallet(wallet)
+    }
 
     override suspend fun deleteWallet(wallet: Wallet): Boolean =
         walletDao.deleteWallet(wallet)
