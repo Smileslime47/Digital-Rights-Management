@@ -1,11 +1,18 @@
 package moe._47saikyo.service.impl
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import moe._47saikyo.*
-import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.Right
+import moe._47saikyo.models.RightData
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.RightService
 import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.FunctionReturnDecoder
+import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.Function
+import org.web3j.crypto.Credentials
+import org.web3j.protocol.core.DefaultBlockParameterName
+import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.TransactionManager
 import org.web3j.tx.gas.DefaultGasProvider
 import java.math.BigInteger
@@ -39,27 +46,37 @@ class RightServiceImpl : RightService {
             form.description
         ).send()
 
-        val manager = DRManager.load(BlockChain.managerAddr, BlockChain.web3jInstance, transactionManager, BlockChain.gasProvider)
-
-        manager.addRight(right.contractAddress).send()
+        BlockChain.managerByBank!!.addRight(transactionManager.fromAddress,right.contractAddress).send()
 
         return right
     }
 
-    override fun getRight(transactionManager: TransactionManager, rightAddr: String): Right =
-        Right.load(rightAddr, BlockChain.web3jInstance, transactionManager, BlockChain.gasProvider)
+    override fun getRight(rightAddr: String): RightData {
+        //创建函数调用交易
+        val function = Function("serialize", emptyList(), listOf(TypeReference.makeTypeReference("string")))
+        val transaction = Transaction.createFunctionCallTransaction(
+            BlockChain.bankAddress,
+            BlockChain.getNextNonce(BlockChain.bankAddress!!),
+            BlockChain.gasProvider.gasPrice,
+            BlockChain.gasProvider.gasLimit,
+            rightAddr,
+            BigInteger.ZERO,
+            FunctionEncoder.encode(function)
+        )
 
-    override fun getRights(transactionManager: TransactionManager, owner: String): List<Right> {
-        val manager = BlockChain.managerByBank
-        val rights = manager?.getRights(owner)?.send()
+        //发送交易并获取结果
+        val result = BlockChain.web3jInstance!!.ethCall(transaction, DefaultBlockParameterName.LATEST).send().value
 
-        for (right in rights!!) {
-            val rightAddr = right.toString()
-            val rightContract = getRight(transactionManager, rightAddr)
+        //获取函数返回值
+        val json = FunctionReturnDecoder.decode(result, function.outputParameters)[0].value as String
 
-            val json = rightContract.serialize()
+        //解析json并返回
+        return jacksonObjectMapper().readerFor(RightData::class.java).readValue(json)
+    }
 
-        }
-        TODO()
+    override fun getRights(owner: String): List<RightData> {
+        val rights = BlockChain.managerByBank?.getRights(owner)?.send()
+
+        return rights?.map { getRight(it.toString()) } ?: emptyList()
     }
 }
