@@ -19,19 +19,23 @@ contract DRManager {
     mapping(address => IterableMap) private rightMap;
     mapping(address => IterableMap) private licenseMap;
 
-    function addRight(Right right) external {
-        add(rightMap[msg.sender], right.getTitle(), address(right));
+    function addRight(address owner,Right right) public {
+        add(rightMap[owner], right.getTitle(), address(right));
     }
 
-    function getRight(address owner, string memory rightName) view public returns (Right){
+    function addRight(Right right) public {
+        addRight(msg.sender,right);
+    }
+
+    function getRight(address owner,string memory rightName) view public returns (Right){
         return Right(get(rightMap[owner], rightName));
     }
 
     function getRight(string memory rightName) view public returns (Right){
-        return getRight(msg.sender, rightName);
+        return getRight(msg.sender,rightName);
     }
 
-    function getRights(address owner) view public returns (Right[] memory){
+    function getRights(address owner) view public returns(Right[] memory){
         uint len = getLength(rightMap[owner]);
         Right[] memory res = new Right[](len);
         for (uint i = 0; i < len; i++) {
