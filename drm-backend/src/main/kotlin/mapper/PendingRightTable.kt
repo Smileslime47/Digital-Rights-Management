@@ -24,15 +24,17 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
  * @since 2024/01/07
  */
 object PendingRightTable : Table("drm_pending_right") {
-    val id = long("id").autoIncrement()
-    val title = varchar("title", 128)
-    val owner = varchar("owner", 128)
-    val registration_number = varchar("registration_number", 128)
-    val issue_time = long("issue_time")
-    val expire_time = long("expire_time")
-    val description = text("description")
-    val status = varchar("status", 128)
-    val estimate_price = long("estimate_price").nullable()
+    val id                      = long("id")                .autoIncrement()
+    val title                   = varchar("title", 128)
+    val owner                   = varchar("owner", 128)
+    val registration_number     = varchar("registration_number", 128)
+    val issue_time              = long("issue_time")
+    val expire_time             = long("expire_time")
+    val description             = text("description")
+    val status                  = varchar("status", 128)
+    val estimate_price          = long("estimate_price")    .nullable()
+    val comment                 = text("comment")           .nullable()
+    val create_time             = long("create_time")
     override val primaryKey = PrimaryKey(id)
 
     fun resultRowToPendingRight(row: ResultRow) = PendingRight(
@@ -44,7 +46,9 @@ object PendingRightTable : Table("drm_pending_right") {
         expireTime = row[expire_time],
         description = row[description],
         status = PendingStatus.fromString(row[status]),
-        estimatePrice = row[estimate_price]
+        estimatePrice = row[estimate_price],
+        comment = row[comment],
+        createTime = row[create_time]
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(pendingRight: PendingRight): PendingRightTable.(T) -> Unit = {
@@ -56,5 +60,7 @@ object PendingRightTable : Table("drm_pending_right") {
         it[description] = pendingRight.description
         it[status] = PendingStatus.toString(pendingRight.status)
         it[estimate_price] = pendingRight.estimatePrice
+        it[comment] = pendingRight.comment
+        it[create_time] = pendingRight.createTime
     }
 }

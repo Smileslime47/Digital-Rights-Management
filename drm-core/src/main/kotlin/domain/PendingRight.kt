@@ -12,4 +12,6 @@ data class PendingRight(
     val description: String,
     var status: PendingStatus,
     var estimatePrice:Long? = null,
+    var comment:String? = null,
+    var createTime:Long
 )

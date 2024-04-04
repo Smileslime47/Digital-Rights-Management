@@ -53,6 +53,7 @@ class PendingRightServiceImpl : PendingRightService {
         if (right?.status == PendingStatus.PENDING) {
             right.status = PendingStatus.CONFIRMED
             right.estimatePrice = estimatePrice
+            right.comment = "已审核通过，请在确认部署价格后输入密码并确认部署。"
             return pendingRightDao.updatePendingRight(right)
         } else {
             return false
@@ -80,10 +81,11 @@ class PendingRightServiceImpl : PendingRightService {
         }
     }
 
-    override suspend fun rejectPendingRight(id: Long): Boolean {
+    override suspend fun rejectPendingRight(id: Long, rejectReason: String): Boolean {
         val right = getPendingRight(id)
         if (right?.status == PendingStatus.PENDING) {
             right.status = PendingStatus.REJECTED
+            right.comment = rejectReason
             return pendingRightDao.updatePendingRight(right)
         } else {
             return false

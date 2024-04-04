@@ -91,7 +91,8 @@ interface PendingRightService {
      * 拒绝待审核版权，将状态从*PENDING*改为*REJECTED*
      *
      * @param id 待审核版权ID
+     * @param rejectReason 拒绝原因
      * @return 是否拒绝成功
      */
-    suspend fun rejectPendingRight(id: Long): Boolean
+    suspend fun rejectPendingRight(id: Long,rejectReason:String): Boolean
 }
