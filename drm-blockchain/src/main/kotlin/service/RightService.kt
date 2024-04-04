@@ -13,16 +13,12 @@ import java.math.BigInteger
  */
 interface RightService {
     /**
-     * 估算版权合约所需的gas
+     * 估算部署合约所需的gas
      *
-     * @param from 发送者地址
      * @param form 版权部署表单
      * @return 估算的gas
      */
-    fun estimate(
-        from: String,
-        form: RightDeployForm
-    ): BigInteger
+    fun estimate(form: RightDeployForm): BigInteger
 
     /**
      * 添加版权合约
@@ -51,5 +47,5 @@ interface RightService {
      * @param owner 用户地址
      * @return 版权合约列表
      */
-    fun getRights(owner:String): List<Right>
+    fun getRights(transactionManager: TransactionManager, owner: String): List<Right>
 }

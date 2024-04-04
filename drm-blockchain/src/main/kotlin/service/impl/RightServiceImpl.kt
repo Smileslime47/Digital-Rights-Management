@@ -11,7 +11,7 @@ import org.web3j.tx.gas.DefaultGasProvider
 import java.math.BigInteger
 
 class RightServiceImpl : RightService {
-    override fun estimate(from: String, form: RightDeployForm): BigInteger {
+    override fun estimate(form: RightDeployForm): BigInteger {
         val binCode = Right.BINARY
 
         val encodedConstructor = FunctionEncoder.encodeConstructor(
@@ -49,10 +49,17 @@ class RightServiceImpl : RightService {
     override fun getRight(transactionManager: TransactionManager, rightAddr: String): Right =
         Right.load(rightAddr, BlockChain.web3jInstance, transactionManager, BlockChain.gasProvider)
 
-    override fun getRights(owner: String): List<Right> {
-//        val manager = BlockChain.managerByBank
-//        val rights = manager?.getRights(owner)?.send()
-//        return rights!!.toList()
+    override fun getRights(transactionManager: TransactionManager, owner: String): List<Right> {
+        val manager = BlockChain.managerByBank
+        val rights = manager?.getRights(owner)?.send()
+
+        for (right in rights!!) {
+            val rightAddr = right.toString()
+            val rightContract = getRight(transactionManager, rightAddr)
+
+            val json = rightContract.serialize()
+
+        }
         TODO()
     }
 }
