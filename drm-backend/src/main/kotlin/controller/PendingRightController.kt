@@ -80,28 +80,16 @@ fun Application.pendingRightController() {
 
                         //获取Base64钱包文件
                         val dbWallet = walletService.getWallet(loginId!!)
-                        //解密钱包文件g
+                        //解密钱包文件
                         val walletFileJson = walletService.decryptWallet(dbWallet!!, pwd)
 
                         //获取txManager
                         val txManager = accountService.getTxManager(pwd, walletFileJson)
 
-                        //获取pendingRight并生成部署表单
-                        val pendingRight = pendingRightService.getPendingRight(pendingId)
-                        val deployForm = RightDeployForm(
-                            title = pendingRight!!.title,
-                            registrationNumber = pendingRight.registrationNumber,
-                            issueTime = BigInteger.valueOf(pendingRight.issueTime),
-                            expireTime = BigInteger.valueOf(pendingRight.expireTime),
-                            description = pendingRight.description,
-                        )
+                        //部署合约
+                        val right = pendingRightService.deployPendingRight(pendingId, txManager)
 
-                        //部署版权
-                        val right = rightService.addRight(txManager, deployForm)
-                        val manager = DRManager.load(BlockChain.managerAddr, BlockChain.web3jInstance, txManager, BlockChain.gasProvider)
-                        manager.addRight(right.contractAddress)
-
-                        call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to right.contractAddress))
+                        call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to right?.contractAddress))
                     }
 
                     authenticate(Constant.Authentication.PERMISSION_CREATE_RIGHT) {
@@ -194,7 +182,7 @@ fun Application.pendingRightController() {
                             val deployForm = pendingRightService.convertToDeployForm(targetRight)
 
                             //获取估算Gas —— 估算Gas = 部署合约费用 + 调用Manager的Add Right函数费用
-                            val estimateGas = rightService.estimate(deployForm).add(BlockChainConstant.ManagerGas.ADD_RIGHT)
+                            val estimateGas = rightService.estimate(deployForm).toLong()
 
                             noticeService.insertNotice(
                                 Notice(
@@ -206,7 +194,7 @@ fun Application.pendingRightController() {
                             )
 
                             //发送通知
-                            when (pendingRightService.confirmPendingRight(targetRight.id, estimateGas.toLong())) {
+                            when (pendingRightService.confirmPendingRight(targetRight.id, estimateGas * BlockChain.gasProvider.gasPrice.toLong())) {
                                 true -> call.httpRespond(
                                     data = mapOf(
                                         Constant.RespondField.SUCCESS to true,

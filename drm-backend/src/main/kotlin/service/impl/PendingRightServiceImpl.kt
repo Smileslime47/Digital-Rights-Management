@@ -2,6 +2,8 @@ package moe._47saikyo.service.impl
 
 import domain.PendingRight
 import enums.PendingStatus
+import moe._47saikyo.BlockChain
+import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.Right
 import moe._47saikyo.dao.PendingRightDao
 import moe._47saikyo.mapper.PendingRightTable

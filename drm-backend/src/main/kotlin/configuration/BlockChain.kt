@@ -27,11 +27,11 @@ fun Application.configureBlockChain() {
                 source = walletFilePath!!,
                 password = getProperty(Constant.PropertyUrl.CHAIN_PASSWORD)!!
             )
-            //自定义Gas价格和Gas限制
-            .withGasProvider(
-                gasPrice = getProperty(Constant.PropertyUrl.CHAIN_GAS_PRICE)!!.toBigInteger(),
-                gasLimit = getProperty(Constant.PropertyUrl.CHAIN_GAS_LIMIT)!!.toBigInteger()
-            )
+//            //自定义Gas价格和Gas限制
+//            .withGasProvider(
+//                gasPrice = getProperty(Constant.PropertyUrl.CHAIN_GAS_PRICE)!!.toBigInteger(),
+//                gasLimit = getProperty(Constant.PropertyUrl.CHAIN_GAS_LIMIT)!!.toBigInteger()
+//            )
             .withManager(getProperty(Constant.PropertyUrl.CHAIN_MANAGER)!!)
             .build()
     )

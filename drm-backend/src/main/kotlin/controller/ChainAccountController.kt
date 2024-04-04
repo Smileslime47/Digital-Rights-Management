@@ -66,11 +66,14 @@ fun Application.chainAccountController() {
                 authenticate(Constant.Authentication.NEED_BLOCK_ACCOUNT){
                     //从银行充值
                     post("/charge") {
-                        val value = call.receive<String>()
+                        data class Form(
+                            val value: String
+                        )
+
+                        val value = call.receive<Form>().value
                         val loginId =
                             call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
                                 ?.asLong()
-                        val loginUser = loginId?.let { id -> userService.getUser(id) }
                         val loginWallet = loginId?.let { id -> walletService.getWallet(id) }
 
                         when (accountService.chargeFromBank(loginWallet!!.address, value)) {
