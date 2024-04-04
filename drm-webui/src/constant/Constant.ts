@@ -57,6 +57,7 @@ const Constant = {
         },
         PENDING_RIGHT:{
             ROOT:"/pending-right",
+            DEPLOY:"/pending-right/deploy",
             VERIFY:"/pending-right/verify",
             CONFIRM:"/pending-right/verify/confirm",
             REJECT:"/pending-right/verify/reject"

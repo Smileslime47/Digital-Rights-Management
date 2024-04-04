@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
+import {ElMessage} from "element-plus";
 
 const props = defineProps<{
   addr: string,
@@ -8,6 +9,8 @@ const props = defineProps<{
 const pendingRights = ref([])
 const maxPage = ref(0)
 const pageNow = ref("1")
+
+const chainPassword = ref("")
 
 const getPendingRights = (addr: String, page: String) => {
   //获取账户待审合约
@@ -25,8 +28,21 @@ const getPendingRights = (addr: String, page: String) => {
   })
 }
 
-const deploy = () => {
-  console.log("deploy")
+const deploy = (id: number) => {
+  httpService.post(
+      Constant.Api.PENDING_RIGHT.DEPLOY,
+      {
+        password: chainPassword.value,
+        pendingId: id
+      },
+  ).then((data) => {
+    let success = data[Constant.RespondField.SUCCESS]
+    if (success) {
+      ElMessage.success("部署成功！")
+    } else {
+      ElMessage.error("部署失败！")
+    }
+  })
 }
 
 watch(pageNow, (newVal) => {
@@ -49,14 +65,15 @@ onMounted(() => {
               <el-text>{{ props.row.comment }}</el-text>
               <el-row v-if="props.row.status === Constant.PendingStatus.CONFIRMED">
                 <el-col :span="16">
-                  <el-input placeholder="区块链账户密码"/>
+                  <el-input v-model="chainPassword" placeholder="区块链账户密码"/>
                 </el-col>
                 <el-col :offset="1" :span="4">
                   <el-text>预估部署价格：</el-text>
-                  <el-text>{{ props.row.estimatePrice/1e18 }} ETH</el-text>
+                  <el-text>{{ props.row.estimatePrice / 1e18 }} ETH</el-text>
                 </el-col>
                 <el-col :offset="1" :span="2">
-                  <el-button type="primary" text bg class="smooth-button" @click="deploy">确认部署</el-button>
+                  <el-button type="primary" text bg class="smooth-button" @click="deploy(props.row.id)">确认部署
+                  </el-button>
                 </el-col>
               </el-row>
             </el-space>

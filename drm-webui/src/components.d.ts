@@ -8,6 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AccountPanel: typeof import('./components/ChainAccountPage/AccountPanel.vue')['default']
+    ChainPanel: typeof import('./components/ChainAccountPage/ChainPanel.vue')['default']
+    ChainRightPanel: typeof import('./components/ChainAccountPage/ChainRightPanel.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
     ElAside: typeof import('element-plus/es')['ElAside']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
