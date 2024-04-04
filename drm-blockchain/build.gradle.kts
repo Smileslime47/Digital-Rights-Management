@@ -1,3 +1,4 @@
+val kotlin_version:String by project
 val koin_version: String by project
 val logback_version: String by project
 val web3j_version: String by project
@@ -22,11 +23,15 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     //web3j
     implementation("org.web3j:core:$web3j_version")
+    //jackson kotlin反序列化支持
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.16.+")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
 }
 
 tasks.test {
     useJUnitPlatform()
 }
+
 kotlin {
     jvmToolchain(21)
 }
