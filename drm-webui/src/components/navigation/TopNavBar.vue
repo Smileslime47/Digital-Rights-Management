@@ -32,6 +32,7 @@ fresh(async (_) => {
       useRoute().path
   ).then((result) => {
     if (result != null) {
+      console.log(result)
       logged.value = true
       nickname.value = result.nickname
       userId.value = result.id

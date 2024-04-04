@@ -9,15 +9,16 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
+import moe._47saikyo.BlockChain
+import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.constant.Constant
+import moe._47saikyo.contract.DRManager
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.*
-import moe._47saikyo.utils.CryptoUtils
 import org.koin.java.KoinJavaComponent.inject
 import java.math.BigInteger
-import java.util.*
 
 fun Application.chainRightController() {
     val accountService: AccountService by inject(AccountService::class.java)
@@ -78,7 +79,7 @@ fun Application.chainRightController() {
 
                         //获取Base64钱包文件
                         val dbWallet = walletService.getWallet(loginId!!)
-                        //解密钱包文件
+                        //解密钱包文件g
                         val walletFileJson = walletService.decryptWallet(dbWallet!!, pwd)
 
                         //获取txManager
@@ -96,6 +97,8 @@ fun Application.chainRightController() {
 
                         //部署版权
                         val right = rightService.addRight(txManager, deployForm)
+                        val manager = DRManager.load(BlockChain.managerAddr, BlockChain.web3jInstance, txManager, BlockChain.gasProvider)
+                        manager.addRight(right.contractAddress)
 
                         call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to right.contractAddress))
                     }
@@ -159,8 +162,9 @@ fun Application.chainRightController() {
 
                         post("/verify/confirm") {
                             data class Form(
-                                val rightId:Int
+                                val rightId: Int
                             )
+
                             val targetRightId = call.receive<Form>().rightId
                             val targetRight = pendingRightService.getPendingRight(targetRightId.toLong())
 
@@ -184,26 +188,27 @@ fun Application.chainRightController() {
                             //获取pendingRight并生成部署表单
                             val deployForm = pendingRightService.convertToDeployForm(targetRight)
 
-                            //获取估算Gas
-                            val estimateGas = rightService.estimate(ownerWallet!!.address, deployForm)
+                            //获取估算Gas —— 估算Gas = 部署合约费用 + 调用Manager的Add Right函数费用
+                            val estimateGas = rightService.estimate(deployForm).add(BlockChainConstant.ManagerGas.ADD_RIGHT)
 
                             noticeService.insertNotice(
                                 Notice(
                                     title = "版权审核通知",
                                     content = "您的版权申请:${targetRight.title}已通过审核,需要您填写区块链账户密码完成合约部署。",
-                                    receiverId = ownerWallet.userId,
+                                    receiverId = ownerWallet!!.userId,
                                     targetRoute = "/chain/account"
                                 )
                             )
 
                             //发送通知
-                            when (pendingRightService.confirmPendingRight(targetRight.id,estimateGas.toLong())) {
+                            when (pendingRightService.confirmPendingRight(targetRight.id, estimateGas.toLong())) {
                                 true -> call.httpRespond(
                                     data = mapOf(
                                         Constant.RespondField.SUCCESS to true,
                                         Constant.RespondField.PRICE to estimateGas
                                     )
                                 )
+
                                 false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                             }
                         }
@@ -244,7 +249,7 @@ fun Application.chainRightController() {
                             )
 
                             //发送通知
-                            when (pendingRightService.rejectPendingRight(targetRight.id)) {
+                            when (pendingRightService.rejectPendingRight(targetRight.id, form.rejectReason)) {
                                 true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
                                 false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                             }

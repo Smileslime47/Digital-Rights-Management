@@ -12,7 +12,7 @@ const pageNow = ref("1")
 const getPendingRights = (addr: String, page: String) => {
   //获取账户待审合约
   httpService.get(
-      Constant.Api.CHAIN.RIGHT.ROOT,
+      Constant.Api.PENDING_RIGHT.ROOT,
       {
         params: {
           addr: addr,
@@ -45,20 +45,21 @@ onMounted(() => {
       <el-table style="width: 100%" :data="pendingRights" stripe>
         <el-table-column type="expand">
           <template #default="props">
-            <el-row v-if="props.row.status === Constant.PendingStatus.CONFIRMED">
-              <el-col :span="16">
-                <el-input placeholder="区块链账户密码"/>
-              </el-col>
-              <el-col :offset="1" :span="2">
-                <el-text>预估部署价格：</el-text>
-                <br/>
-                <el-text>{{ props.row.estimatePrice/1e18 }} ETH</el-text>
-              </el-col>
-              <el-col :offset="1" :span="2">
-                <el-button type="primary" text bg class="smooth-button" @click="deploy">确认部署</el-button>
-              </el-col>
-            </el-row>
-            <el-text v-else>请耐心等待审核。</el-text>
+            <el-space direction="vertical" style="width:100%" fill>
+              <el-text>{{ props.row.comment }}</el-text>
+              <el-row v-if="props.row.status === Constant.PendingStatus.CONFIRMED">
+                <el-col :span="16">
+                  <el-input placeholder="区块链账户密码"/>
+                </el-col>
+                <el-col :offset="1" :span="4">
+                  <el-text>预估部署价格：</el-text>
+                  <el-text>{{ props.row.estimatePrice/1e18 }} ETH</el-text>
+                </el-col>
+                <el-col :offset="1" :span="2">
+                  <el-button type="primary" text bg class="smooth-button" @click="deploy">确认部署</el-button>
+                </el-col>
+              </el-row>
+            </el-space>
           </template>
         </el-table-column>
         <el-table-column prop="title" label="版权标题"/>
@@ -72,6 +73,11 @@ onMounted(() => {
         <el-table-column prop="expireTime" label="到期时间">
           <template #default="scope">
             {{ new Date(scope.row.expireTime).toLocaleDateString() }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="createTime" label="申请时间">
+          <template #default="scope">
+            {{ new Date(scope.row.createTime).toLocaleString() }}
           </template>
         </el-table-column>
         <el-table-column prop="description" label="版权描述"/>

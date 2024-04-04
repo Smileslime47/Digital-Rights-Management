@@ -55,6 +55,12 @@ const Constant = {
             ROOT: "/notice",
             COUNT: "/notice/count",
         },
+        PENDING_RIGHT:{
+            ROOT:"/pending-right",
+            VERIFY:"/pending-right/verify",
+            CONFIRM:"/pending-right/verify/confirm",
+            REJECT:"/pending-right/verify/reject"
+        },
         CHAIN:{
             ACCOUNT:{
                 NEW_ACCOUNT: "/chain/account/new-account",

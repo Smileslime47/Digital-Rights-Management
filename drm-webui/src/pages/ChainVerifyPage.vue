@@ -14,8 +14,8 @@ const maxPage = ref(0)
 const pageNow = ref("")
 
 const RejectForm = reactive({
-  pendingRightId:0,
-  rejectReason:""
+  pendingRightId: 0,
+  rejectReason: ""
 })
 
 watch(pageNow, (newVal) => {
@@ -27,7 +27,7 @@ fresh(async (route) => {
 
   //获取账户待审合约
   await httpService.get(
-      Constant.Api.CHAIN.RIGHT.VERIFY,
+      Constant.Api.PENDING_RIGHT.VERIFY,
       {
         params: {
           page: pageNow.value
@@ -43,8 +43,8 @@ fresh(async (route) => {
 
 const confirm = (rightId: number) => {
   httpService.post(
-      Constant.Api.CHAIN.RIGHT.CONFIRM,
-      rightId
+      Constant.Api.PENDING_RIGHT.CONFIRM,
+      {rightId},
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]
     if (success) {
@@ -57,7 +57,7 @@ const confirm = (rightId: number) => {
 
 const reject = () => {
   httpService.post(
-      Constant.Api.CHAIN.RIGHT.REJECT,
+      Constant.Api.PENDING_RIGHT.REJECT,
       RejectForm
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]
@@ -70,7 +70,7 @@ const reject = () => {
   rejectWindowVisible.value = false
 }
 
-const handleRejectButton = (rightId:number) => {
+const handleRejectButton = (rightId: number) => {
   rejectWindowVisible.value = true
   RejectForm.pendingRightId = rightId
 }

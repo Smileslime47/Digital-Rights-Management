@@ -34,4 +34,5 @@ fun Application.modules() {
     chainAccountController()
     chainRightController()
     noticeController()
+    pendingRightController()
 }
