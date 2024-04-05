@@ -3,6 +3,7 @@ package moe._47saikyo.controller
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.routing.*
+import moe._47saikyo.configuration.security.authenticateRequired
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
@@ -14,7 +15,7 @@ fun Application.groupController() {
 
     routing {
         route("/group") {
-            authenticate(Constant.Authentication.NEED_LOGIN) {
+            authenticateRequired(Constant.Authentication.NEED_LOGIN) {
                 get {
                     //检查参数格式
                     val targetIdStr = call.request.queryParameters["id"]

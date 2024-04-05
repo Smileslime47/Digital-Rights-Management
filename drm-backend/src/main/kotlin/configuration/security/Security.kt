@@ -45,21 +45,20 @@ fun Application.configureSecurity() {
         .withAudience(jwtAudience)
         .build()
 
-    val authenticateGroupPermission: ((group: Group) -> Boolean) -> (JWTAuthenticationProvider.Config) -> Unit =
+    val authenticateGroupPermission: ((group: Group) -> Boolean) -> JWTAuthenticationProvider.Config.() -> Unit =
         { condition ->
             {
-                it.verifier(jwtTemplate)
-                it.validate { jwtCredential ->
-                    val groupStr = jwtCredential.payload.claims[Constant.Authentication.GROUP_ID_CLAIM]
+                verifier(jwtTemplate)
+                validate {
+                    val groupStr = it.payload.claims[Constant.Authentication.GROUP_ID_CLAIM]
                     val groupId = groupStr?.asLong() ?: return@validate null
-                    val group = groupService.getGroup(groupId)
-                    if (group != null && condition(group)) {
-                        JWTPrincipal(jwtCredential.payload)
+                    if (groupService.authenticate(groupId, condition)) {
+                        JWTPrincipal(it.payload)
                     } else {
-                        null
+                        throw Exception()
                     }
                 }
-                it.challenge { _, _ ->
+                challenge { _, _ ->
                     call.respond(HttpResponse(HttpStatus.FORBIDDEN))
                 }
             }
@@ -75,7 +74,7 @@ fun Application.configureSecurity() {
                 if (loginId != null && loginUser != null) {
                     JWTPrincipal(it.payload)
                 } else {
-                    null
+                    throw Exception()
                 }
             }
             challenge { _, _ ->
@@ -89,10 +88,10 @@ fun Application.configureSecurity() {
             validate {
                 val userId = it.payload.getClaim(Constant.Authentication.USER_ID_CLAIM).asLong()
                 val wallet = walletService.getWallet(userId)
-                if (wallet?.walletFile != null && wallet.walletFile!!.isNotEmpty()) {
+                if (wallet?.walletFile != null && wallet.walletFile.isNotEmpty()) {
                     JWTPrincipal(it.payload)
                 } else {
-                    null
+                    throw Exception()
                 }
             }
             challenge { _, _ ->
@@ -100,17 +99,11 @@ fun Application.configureSecurity() {
             }
         }
 
-        jwt(Constant.Authentication.PERMISSION_CREATE_CHAIN_ACCOUNT) {
-            authenticateGroupPermission(Group::permissionCreateChainAccount)
-        }
+        jwt(Constant.Authentication.PERMISSION_CREATE_CHAIN_ACCOUNT, authenticateGroupPermission(Group::permissionCreateChainAccount))
 
-        jwt(Constant.Authentication.PERMISSION_CREATE_RIGHT) {
-            authenticateGroupPermission(Group::permissionCreateRight)
-        }
+        jwt(Constant.Authentication.PERMISSION_CREATE_RIGHT, authenticateGroupPermission(Group::permissionCreateRight))
 
-        jwt(Constant.Authentication.PERMISSION_VERIFY_RIGHT) {
-            authenticateGroupPermission(Group::permissionVerifyRight)
-        }
+        jwt(Constant.Authentication.PERMISSION_VERIFY_RIGHT, authenticateGroupPermission(Group::permissionVerifyRight))
     }
 }
 
@@ -119,16 +112,24 @@ fun Application.configureSecurity() {
  *
  * @author 刘一邦
  */
-fun Route.authenticateAfterLogin(
-    vararg configurations: String? = arrayOf(null),
-    optional: Boolean = false,
+fun Route.authenticateAll(
+    configurations: List<String>,
     build: Route.() -> Unit
-): Route {
-    return authenticate(Constant.Authentication.NEED_LOGIN) {
-        authenticate(
-            configurations = configurations,
-            strategy = if (optional) AuthenticationStrategy.Optional else AuthenticationStrategy.FirstSuccessful,
-            build = build
-        )
+): Route =
+    if (configurations.size > 1) {
+        authenticate(configurations[0]) {
+            authenticateAll(configurations.drop(1), build)
+        }
+    } else {
+        authenticate(configurations[0]) {
+            build()
+        }
     }
-}
+
+/**
+ * 鉴权策略
+ */
+fun Route.authenticateRequired(
+    vararg configurations: String? = arrayOf(null),
+    build: Route.() -> Unit
+): Route = authenticate(configurations = configurations, strategy = AuthenticationStrategy.Required, build)

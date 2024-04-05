@@ -10,15 +10,12 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import moe._47saikyo.BlockChain
-import moe._47saikyo.constant.BlockChainConstant
+import moe._47saikyo.configuration.security.authenticateRequired
 import moe._47saikyo.constant.Constant
-import moe._47saikyo.contract.DRManager
 import moe._47saikyo.models.HttpStatus
-import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.*
 import org.koin.java.KoinJavaComponent.inject
-import java.math.BigInteger
 
 fun Application.pendingRightController() {
     val accountService: AccountService by inject(AccountService::class.java)
@@ -61,8 +58,8 @@ fun Application.pendingRightController() {
                 )
             }
 
-            authenticate(Constant.Authentication.NEED_LOGIN) {
-                authenticate(Constant.Authentication.NEED_BLOCK_ACCOUNT) {
+            authenticateRequired(Constant.Authentication.NEED_LOGIN) {
+                authenticateRequired(Constant.Authentication.NEED_BLOCK_ACCOUNT) {
                     //部署版权
                     post("/deploy") {
                         //获取表单
@@ -92,7 +89,7 @@ fun Application.pendingRightController() {
                         call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to right?.contractAddress))
                     }
 
-                    authenticate(Constant.Authentication.PERMISSION_CREATE_RIGHT) {
+                    authenticateRequired(Constant.Authentication.PERMISSION_CREATE_RIGHT) {
                         //创建新的版权申请
                         post {
                             val targetRight = call.receive<PendingRight>()
@@ -128,7 +125,7 @@ fun Application.pendingRightController() {
                     }
 
                     //版权审核路由
-                    authenticate(Constant.Authentication.PERMISSION_VERIFY_RIGHT) {
+                    authenticateRequired(Constant.Authentication.PERMISSION_VERIFY_RIGHT) {
                         //查询待审核版权
                         get("/verify") {
                             val pageNumberStr = call.request.queryParameters["page"]

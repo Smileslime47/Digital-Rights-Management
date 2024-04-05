@@ -7,7 +7,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
-import moe._47saikyo.configuration.security.authenticateAfterLogin
+import moe._47saikyo.configuration.security.authenticateRequired
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
@@ -48,7 +48,7 @@ fun Application.chainAccountController() {
             }
 
             //要求登陆
-            authenticate(Constant.Authentication.NEED_LOGIN) {
+            authenticateRequired(Constant.Authentication.NEED_LOGIN) {
                 /**
                  * 获取用户链上账户地址
                  * 在不存在链上账户时，返回null
@@ -63,7 +63,7 @@ fun Application.chainAccountController() {
                 }
 
                 //要求登陆并且有链上账户
-                authenticate(Constant.Authentication.NEED_BLOCK_ACCOUNT){
+                authenticateRequired(Constant.Authentication.NEED_BLOCK_ACCOUNT){
                     //从银行充值
                     post("/charge") {
                         data class Form(
@@ -84,7 +84,7 @@ fun Application.chainAccountController() {
                 }
 
                 //要求登陆并且有权创建链上账户
-                authenticate(Constant.Authentication.PERMISSION_CREATE_CHAIN_ACCOUNT){
+                authenticateRequired(Constant.Authentication.PERMISSION_CREATE_CHAIN_ACCOUNT){
                     //创建链上账户
                     post("/new-account") {
                         data class PasswordForm(

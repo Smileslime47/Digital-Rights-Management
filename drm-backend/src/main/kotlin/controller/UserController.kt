@@ -11,6 +11,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
 import moe._47saikyo.configuration.security.PasswordEncoder
+import moe._47saikyo.configuration.security.authenticateRequired
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.constant.getProperties
@@ -36,7 +37,7 @@ fun Application.userController() {
 
     routing {
         route("/user") {
-            authenticate(Constant.Authentication.NEED_LOGIN) {
+            authenticateRequired(Constant.Authentication.NEED_LOGIN) {
                 get {
                     val targetIdStr = call.request.queryParameters["id"]
                     val targetId = if (targetIdStr?.matches(Regex("[0-9]+")) == true) targetIdStr.toLong() else null

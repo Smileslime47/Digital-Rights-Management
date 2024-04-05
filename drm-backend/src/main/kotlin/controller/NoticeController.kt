@@ -8,6 +8,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.request.*
 import io.ktor.server.routing.*
+import moe._47saikyo.configuration.security.authenticateRequired
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
@@ -21,7 +22,7 @@ fun Application.noticeController() {
 
     routing {
         route("/notice") {
-            authenticate(Constant.Authentication.NEED_LOGIN) {
+            authenticateRequired(Constant.Authentication.NEED_LOGIN) {
                 //获取通知数量
                 get("/count") {
                     val filterStr = call.request.queryParameters["filter"]
