@@ -1,0 +1,35 @@
+version: '3'
+services:
+  ipfs_forward_nginx:
+    image: nginx:latest
+    container_name: ipfs_forward_nginx
+    ports:
+      - '5001:5001'
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+  ipfs_node_0:
+    image: ipfs/go-ipfs:latest
+    container_name: ipfs_node_0
+    volumes:
+      - ./ipfs/node0/staging:/export
+      - ./ipfs/node0/data:/data/ipfs
+    ports:
+      - '4002:4001'
+      - '8081:8080'
+      - '5002:5001'
+    command: >
+      daemon --migrate=true --agent-version-suffix=docker &
+      && ipfs bootstrap rm all && read -n -1 -p ""
+  ipfs_node_1:
+    image: ipfs/go-ipfs:latest
+    container_name: ipfs_node_1
+    volumes:
+      - ./ipfs/node1/staging:/export
+      - ./ipfs/node1/data:/data/ipfs
+    ports:
+      - '4003:4001'
+      - '8082:8080'
+      - '5003:5001'
+    command: >
+      daemon --migrate=true --agent-version-suffix=docker &
+      && ipfs bootstrap rm all && read -n -1 -p ""
