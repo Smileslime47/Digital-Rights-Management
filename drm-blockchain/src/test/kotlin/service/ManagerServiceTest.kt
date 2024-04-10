@@ -4,7 +4,7 @@ import moe._47saikyo.BlockChain
 import moe._47saikyo.BlockChainConfigurationBuilder
 import moe._47saikyo.Estimate
 import moe._47saikyo.address
-import moe._47saikyo.configuration.KoinBlockChainConfiguration
+import moe._47saikyo.configuration.koin.KoinBlockChainConfiguration
 import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.service.ManagerService
 import org.koin.core.context.startKoin
