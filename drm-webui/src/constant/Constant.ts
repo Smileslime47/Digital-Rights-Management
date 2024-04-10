@@ -31,7 +31,8 @@ const Constant = {
         ADDRESS: "address",
         RIGHT:"right",
         BALANCE:"balance",
-        COUNT:"count"
+        COUNT:"count",
+        HASH:"hash",
     },
     Property: {
         BASE_URL: import.meta.env.VITE_BASE_URL,
@@ -76,6 +77,9 @@ const Constant = {
                 REJECT:"/chain/right/verify/reject"
             }
         },
+        IPFS:{
+            ROOT:"/ipfs",
+        }
     }
 }
 export default Constant

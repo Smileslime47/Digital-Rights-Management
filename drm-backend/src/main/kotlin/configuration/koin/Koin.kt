@@ -1,7 +1,7 @@
 package moe._47saikyo.configuration.koin
 
 import io.ktor.server.application.*
-import moe._47saikyo.configuration.KoinBlockChainConfiguration
+import configuration.koin.KoinIpfsConfiguration
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
@@ -16,5 +16,6 @@ fun Application.configureKoin(){
         slf4jLogger()
         modules(KoinBackendConfiguration.module)
         modules(KoinBlockChainConfiguration.module)
+        modules(KoinIpfsConfiguration.module)
     }
 }

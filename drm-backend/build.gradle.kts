@@ -26,6 +26,7 @@ application {
 dependencies {
     implementation(project("::drm-core"))
     implementation(project("::drm-blockchain"))
+    implementation(project("::drm-ipfs"))
     //依赖注入
     implementation("io.insert-koin:koin-ktor:$koin_version")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_version")

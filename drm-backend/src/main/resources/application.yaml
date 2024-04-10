@@ -21,10 +21,13 @@ JWT:
 chain:
   socket: "http://192.168.10.108:8545"
   address: "0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe"
-  manager: "0xb65881ac2417778c8495128892d900e1a9fd19d1"
+  manager: "0x5e10e07433ae5419c798902b219b76f5cd6eef8d"
   password: "1234567890"
   walletFile: "/KeyStore/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json"
   chainId: 721
 #  gasPrice: 500000
 #  # 0xffffffff
 #  gasLimit: 4294967295
+
+IPFS:
+  address: "/ip4/127.0.0.1/tcp/5001"

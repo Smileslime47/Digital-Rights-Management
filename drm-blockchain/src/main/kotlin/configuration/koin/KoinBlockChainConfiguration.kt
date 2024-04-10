@@ -1,4 +1,4 @@
-package moe._47saikyo.configuration
+package moe._47saikyo.configuration.koin
 
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.ManagerService

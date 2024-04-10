@@ -4,6 +4,7 @@ import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import moe._47saikyo.configuration.configureBlockChain
 import moe._47saikyo.configuration.configureHTTP
+import moe._47saikyo.configuration.configureIpfs
 import moe._47saikyo.configuration.configureSerialization
 import moe._47saikyo.configuration.exposed.configureDataSource
 import moe._47saikyo.configuration.koin.configureKoin
@@ -28,6 +29,8 @@ fun Application.modules() {
     configureDataSource()
     //区块链API配置
     configureBlockChain()
+    //IPFS配置
+    configureIpfs()
     //项目内配置
     userController()
     groupController()
@@ -35,4 +38,5 @@ fun Application.modules() {
     chainRightController()
     noticeController()
     pendingRightController()
+    ipfsController()
 }
