@@ -10,10 +10,6 @@ plugins {
 group = "moe._47saikyo"
 version = "1.0-SNAPSHOT"
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project("::drm-core"))
     //依赖注入

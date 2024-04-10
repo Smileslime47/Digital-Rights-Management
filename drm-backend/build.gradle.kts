@@ -23,10 +23,6 @@ application {
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
 
-repositories {
-    mavenCentral()
-}
-
 dependencies {
     implementation(project("::drm-core"))
     implementation(project("::drm-blockchain"))
@@ -50,6 +46,8 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:$logback_version")
     //web3j
     implementation("org.web3j:core:$web3j_version")
+    //IPFS
+    implementation("com.github.ipfs:java-ipfs-http-client:1.4.4")
     //Dao层框架——Exposed
     implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
     implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
