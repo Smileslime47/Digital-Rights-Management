@@ -2,7 +2,7 @@ package moe._47saikyo.dao.impl
 
 import moe._47saikyo.dao.PendingRightDao
 import moe._47saikyo.mapper.PendingRightTable
-import domain.PendingRight
+import moe._47saikyo.domain.PendingRight
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction

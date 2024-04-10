@@ -1,7 +1,6 @@
 package moe._47saikyo.controller
 
 import io.ktor.server.application.*
-import io.ktor.server.auth.*
 import io.ktor.server.routing.*
 import moe._47saikyo.configuration.security.authenticateRequired
 import moe._47saikyo.constant.Constant

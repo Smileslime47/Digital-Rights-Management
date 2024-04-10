@@ -1,8 +1,6 @@
 package moe._47saikyo.service
 
-import domain.Wallet
-import moe._47saikyo.utils.CryptoUtils
-import java.util.*
+import moe._47saikyo.domain.Wallet
 
 /**
  * WalletService接口
@@ -17,7 +15,7 @@ interface WalletService {
      * @param phrase 密钥短语
      * @return 解密后的walletFile Json文本
      */
-    fun decryptWallet(wallet:Wallet,phrase:String):String
+    fun decryptWallet(wallet: Wallet, phrase:String):String
 
     /**
      * 获取钱包

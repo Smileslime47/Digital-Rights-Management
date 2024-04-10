@@ -1,6 +1,6 @@
-package domain
+package moe._47saikyo.domain
 
-import enums.PendingStatus
+import moe._47saikyo.enums.PendingStatus
 
 data class PendingRight(
     val id:Long,

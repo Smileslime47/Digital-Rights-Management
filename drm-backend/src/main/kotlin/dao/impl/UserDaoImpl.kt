@@ -1,6 +1,6 @@
 package moe._47saikyo.dao.impl
 
-import domain.User
+import moe._47saikyo.domain.User
 import moe._47saikyo.dao.UserDao
 import moe._47saikyo.mapper.UserTable
 import org.jetbrains.exposed.sql.*

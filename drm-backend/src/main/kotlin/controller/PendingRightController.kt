@@ -1,9 +1,9 @@
 package moe._47saikyo.controller
 
-import domain.Group
-import domain.Notice
-import domain.PendingRight
-import enums.PendingStatus
+import moe._47saikyo.domain.Group
+import moe._47saikyo.domain.Notice
+import moe._47saikyo.domain.PendingRight
+import moe._47saikyo.enums.PendingStatus
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*

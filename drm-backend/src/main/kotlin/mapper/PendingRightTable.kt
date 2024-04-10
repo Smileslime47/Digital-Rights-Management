@@ -1,7 +1,8 @@
 package moe._47saikyo.mapper
 
-import domain.PendingRight
-import enums.PendingStatus
+
+import moe._47saikyo.domain.PendingRight
+import moe._47saikyo.enums.PendingStatus
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.statements.UpdateBuilder

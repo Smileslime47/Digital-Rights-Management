@@ -1,7 +1,7 @@
 package moe._47saikyo.service
 
-import domain.PendingRight
 import moe._47saikyo.contract.Right
+import moe._47saikyo.domain.PendingRight
 import moe._47saikyo.models.RightDeployForm
 import org.web3j.tx.TransactionManager
 

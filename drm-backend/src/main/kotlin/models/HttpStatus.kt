@@ -1,6 +1,6 @@
 package moe._47saikyo.models
 
-import constant.GlobalConstant
+import moe._47saikyo.constant.GlobalConstant
 
 /**
  * Http自定义状态码，建议使用伴生对象内的预设内容

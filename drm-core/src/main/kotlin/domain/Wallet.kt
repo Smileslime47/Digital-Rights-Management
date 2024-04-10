@@ -1,6 +1,6 @@
-package domain
+package moe._47saikyo.domain
 
-import constant.GlobalConstant
+import moe._47saikyo.constant.GlobalConstant
 
 data class Wallet(
     var id: Long = 0,

@@ -1,7 +1,8 @@
-package domain
+package moe._47saikyo.domain
 
-import constant.GlobalConstant
-import enums.NoticeStatus
+import moe._47saikyo.constant.GlobalConstant
+import moe._47saikyo.enums.NoticeStatus
+
 
 data class Notice(
     var id: Long = 0,

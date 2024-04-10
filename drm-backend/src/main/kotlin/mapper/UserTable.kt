@@ -1,7 +1,7 @@
 package moe._47saikyo.mapper
 
-import constant.GlobalConstant
-import domain.User
+import moe._47saikyo.constant.GlobalConstant
+import moe._47saikyo.domain.User
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
 

@@ -1,8 +1,8 @@
 package moe._47saikyo.mapper
 
-import constant.GlobalConstant
-import domain.Notice
-import enums.NoticeStatus
+import moe._47saikyo.constant.GlobalConstant
+import moe._47saikyo.domain.Notice
+import moe._47saikyo.enums.NoticeStatus
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.statements.UpdateBuilder
@@ -47,6 +47,6 @@ object NoticeTable : Table("drm_notice"){
         it[receiver_id] = notice.receiverId
         it[sent_time] = notice.sentTime
         it[status] = notice.status.toString()
-        it[target_route] = notice.targetRoute?:GlobalConstant.EMPTY_STRING
+        it[target_route] = notice.targetRoute?: GlobalConstant.EMPTY_STRING
     }
 }

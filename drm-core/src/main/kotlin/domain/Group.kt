@@ -1,4 +1,4 @@
-package domain
+package moe._47saikyo.domain
 
 data class Group(
     var id: Long = 0,

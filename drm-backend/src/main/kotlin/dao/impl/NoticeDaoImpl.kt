@@ -1,6 +1,6 @@
 package moe._47saikyo.dao.impl
 
-import domain.Notice
+import moe._47saikyo.domain.Notice
 import moe._47saikyo.dao.NoticeDao
 import moe._47saikyo.mapper.NoticeTable
 import org.jetbrains.exposed.sql.*

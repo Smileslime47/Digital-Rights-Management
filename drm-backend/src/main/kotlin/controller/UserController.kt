@@ -2,9 +2,9 @@ package moe._47saikyo.controller
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import domain.Group
-import domain.Notice
-import domain.User
+import moe._47saikyo.domain.Group
+import moe._47saikyo.domain.Notice
+import moe._47saikyo.domain.User
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*

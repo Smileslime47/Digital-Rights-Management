@@ -1,6 +1,6 @@
 package moe._47saikyo.dao
 
-import domain.Group
+import moe._47saikyo.domain.Group
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 

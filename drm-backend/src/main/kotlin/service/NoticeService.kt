@@ -1,6 +1,6 @@
 package moe._47saikyo.service
 
-import domain.Notice
+import moe._47saikyo.domain.Notice
 
 /**
  * NoticeService接口

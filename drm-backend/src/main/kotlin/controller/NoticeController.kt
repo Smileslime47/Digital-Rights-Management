@@ -1,8 +1,8 @@
 package moe._47saikyo.controller
 
-import constant.GlobalConstant
-import domain.Notice
-import enums.NoticeStatus
+import moe._47saikyo.constant.GlobalConstant
+import moe._47saikyo.domain.Notice
+import moe._47saikyo.enums.NoticeStatus
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*

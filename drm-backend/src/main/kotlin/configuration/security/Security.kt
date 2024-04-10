@@ -2,7 +2,6 @@ package moe._47saikyo.configuration.security
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import domain.Group
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -11,6 +10,7 @@ import io.ktor.server.routing.*
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.constant.getProperty
+import moe._47saikyo.domain.Group
 import moe._47saikyo.models.HttpResponse
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService

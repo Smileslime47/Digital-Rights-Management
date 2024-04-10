@@ -1,13 +1,12 @@
 package moe._47saikyo.service.impl
 
-import domain.PendingRight
-import enums.PendingStatus
-import moe._47saikyo.BlockChain
-import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.Right
 import moe._47saikyo.dao.PendingRightDao
+import moe._47saikyo.domain.PendingRight
+import moe._47saikyo.enums.PendingStatus
 import moe._47saikyo.mapper.PendingRightTable
 import moe._47saikyo.models.RightDeployForm
+import moe._47saikyo.service.ManagerService
 import moe._47saikyo.service.PendingRightService
 import moe._47saikyo.service.RightService
 import org.koin.java.KoinJavaComponent
@@ -22,6 +21,7 @@ import java.math.BigInteger
 class PendingRightServiceImpl : PendingRightService {
     private val pendingRightDao: PendingRightDao by KoinJavaComponent.inject(PendingRightDao::class.java)
     private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
+    private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
 
     override fun convertToDeployForm(pendingRight: PendingRight): RightDeployForm =
         RightDeployForm(
@@ -72,6 +72,7 @@ class PendingRightServiceImpl : PendingRightService {
                 expireTime = BigInteger.valueOf(pendingRight.expireTime),
                 description = pendingRight.description
             )
+
             val right = rightService.addRight(transactionManager, form)
 
             pendingRight.status = PendingStatus.DEPLOYED

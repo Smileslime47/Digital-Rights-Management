@@ -1,6 +1,6 @@
 package moe._47saikyo
 
-import constant.GlobalConstant
+import moe._47saikyo.constant.GlobalConstant
 import org.web3j.tx.gas.DefaultGasProvider
 import java.math.BigInteger
 

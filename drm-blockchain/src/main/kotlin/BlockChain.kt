@@ -1,6 +1,5 @@
 package moe._47saikyo
 
-import constant.GlobalConstant
 import moe._47saikyo.contract.DRManager
 import moe._47saikyo.exception.BlockChainNotConnectedException
 import org.slf4j.Logger
@@ -11,7 +10,6 @@ import org.web3j.protocol.admin.Admin
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.response.EthGetTransactionCount
 import org.web3j.protocol.http.HttpService
-import org.web3j.tx.Contract
 import org.web3j.tx.RawTransactionManager
 import org.web3j.tx.TransactionManager
 import org.web3j.tx.gas.DefaultGasProvider

@@ -1,7 +1,7 @@
 package moe._47saikyo.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import domain.Wallet
+import moe._47saikyo.domain.Wallet
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
@@ -57,7 +57,7 @@ fun Application.chainAccountController() {
                 get("/by-user") {
                     val targetIdStr = call.request.queryParameters["id"]
                     val targetId = if (targetIdStr?.matches(Regex("[0-9]+")) == true) targetIdStr.toLong() else null
-                    val targetWallet = targetId?.let { id -> walletService.getWallet(id) }
+                    val targetWallet:Wallet? = targetId?.let { id -> walletService.getWallet(id) }
 
                     call.httpRespond(data = mapOf(Constant.RespondField.ADDRESS to targetWallet?.address))
                 }

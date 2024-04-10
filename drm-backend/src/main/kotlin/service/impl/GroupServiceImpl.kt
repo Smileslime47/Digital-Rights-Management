@@ -1,7 +1,7 @@
 package moe._47saikyo.service.impl
 
-import domain.Group
 import moe._47saikyo.dao.GroupDao
+import moe._47saikyo.domain.Group
 import moe._47saikyo.mapper.GroupTable
 import moe._47saikyo.service.GroupService
 import org.koin.java.KoinJavaComponent

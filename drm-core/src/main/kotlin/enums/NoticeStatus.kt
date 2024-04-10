@@ -1,6 +1,6 @@
-package enums
+package moe._47saikyo.enums
 
-import constant.GlobalConstant
+import moe._47saikyo.constant.GlobalConstant
 import java.util.*
 
 enum class NoticeStatus {

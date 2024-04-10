@@ -1,4 +1,4 @@
-package constant
+package moe._47saikyo.constant
 
 object GlobalConstant {
     const val NULL_PLACEHOLDER = "undefined"

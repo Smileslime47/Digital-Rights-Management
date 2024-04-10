@@ -1,6 +1,6 @@
 package moe._47saikyo.service.impl
 
-import domain.Wallet
+import moe._47saikyo.domain.Wallet
 import moe._47saikyo.dao.WalletDao
 import moe._47saikyo.mapper.WalletTable
 import moe._47saikyo.service.WalletService

@@ -1,6 +1,6 @@
 package moe._47saikyo.dao.impl
 
-import domain.Wallet
+import moe._47saikyo.domain.Wallet
 import moe._47saikyo.dao.WalletDao
 import moe._47saikyo.mapper.WalletTable
 import org.jetbrains.exposed.sql.*

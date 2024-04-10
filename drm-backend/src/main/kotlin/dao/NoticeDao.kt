@@ -1,7 +1,6 @@
 package moe._47saikyo.dao
 
-import domain.Notice
-import domain.PendingRight
+import moe._47saikyo.domain.Notice
 import org.jetbrains.exposed.sql.Op
 import org.jetbrains.exposed.sql.SqlExpressionBuilder
 

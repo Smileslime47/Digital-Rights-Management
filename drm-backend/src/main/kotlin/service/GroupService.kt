@@ -1,6 +1,7 @@
 package moe._47saikyo.service
 
-import domain.Group
+import moe._47saikyo.domain.Group
+
 
 /**
  * GroupService接口

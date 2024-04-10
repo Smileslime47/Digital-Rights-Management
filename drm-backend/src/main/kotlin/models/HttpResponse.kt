@@ -1,8 +1,8 @@
 package moe._47saikyo.models
 
-import constant.GlobalConstant
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import moe._47saikyo.constant.GlobalConstant
 
 /**
  * Http响应体，建议在任何时候都将数据封装在该对象中
