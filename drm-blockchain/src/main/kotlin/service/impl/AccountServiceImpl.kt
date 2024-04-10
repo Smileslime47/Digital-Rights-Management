@@ -4,7 +4,6 @@ import moe._47saikyo.BlockChain
 import moe._47saikyo.CurrencyConverter
 import moe._47saikyo.exception.BlockChainNotConnectedException
 import moe._47saikyo.service.AccountService
-import moe._47saikyo.utils.CryptoUtils
 import org.web3j.crypto.Keys
 import org.web3j.crypto.Wallet
 import org.web3j.crypto.WalletFile
@@ -31,13 +30,21 @@ class AccountServiceImpl : AccountService {
             throw BlockChainNotConnectedException("BlockChain not connected")
         else BlockChain.web3jInstance!!.personalNewAccount(password).send().result
 
-    override fun getBalance(addr: String): BigDecimal =
+    override fun getBalance(addr: String): BigDecimal {
+        return getBalance(addr, Convert.Unit.ETHER)
+    }
+
+    override fun getBalance(addr: String,unit:Convert.Unit): BigDecimal =
         if (!BlockChain.connected)
             throw BlockChainNotConnectedException("BlockChain not connected")
         else {
-            CurrencyConverter.weiToEther(
-                BlockChain.web3jInstance!!.ethGetBalance(addr, DefaultBlockParameterName.LATEST).send().balance
-            )
+            when(unit){
+                Convert.Unit.ETHER -> CurrencyConverter.weiToEther(
+                    BlockChain.web3jInstance!!.ethGetBalance(addr, DefaultBlockParameterName.LATEST).send().balance
+                )
+                Convert.Unit.WEI -> BlockChain.web3jInstance!!.ethGetBalance(addr, DefaultBlockParameterName.LATEST).send().balance.toBigDecimal()
+                else -> throw IllegalArgumentException("Unsupported unit")
+            }
         }
 
     override fun chargeFromBank(addr: String, value: String): Boolean {

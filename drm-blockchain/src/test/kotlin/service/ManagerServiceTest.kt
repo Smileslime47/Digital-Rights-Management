@@ -6,19 +6,16 @@ import moe._47saikyo.Estimate
 import moe._47saikyo.address
 import moe._47saikyo.configuration.KoinBlockChainConfiguration
 import moe._47saikyo.constant.BlockChainConstant
-import moe._47saikyo.service.impl.RightServiceImpl
+import moe._47saikyo.service.ManagerService
 import org.koin.core.context.startKoin
+import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.LoggerFactory
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
-/**
- * RightServiceTest
- *
- * @author 刘一邦
- */
-class RightServiceTest {
-    private val logger = LoggerFactory.getLogger(RightServiceTest::class.java)
+class ManagerServiceTest {
+    private val logger = LoggerFactory.getLogger(ManagerServiceTest::class.java)
+    private val managerService: ManagerService by inject(ManagerService::class.java)
 
     /**
      * 初始化区块链连接
@@ -41,25 +38,17 @@ class RightServiceTest {
         )
     }
 
-    /**
-     * 测试获取指定owner版权列表
-     */
     @Test
-    fun getRightsTest() {
-        logger.info(RightServiceImpl().getRights("0x31e582af2d0baeaa563a908eca1af273caeb7c0e").toString())
-    }
-
-    @Test
-    fun testAddGas(){
+    fun testAddGas() {
         assert(
             Estimate.estimateCall(
-                "0xc190cb0662ae5a22f944557b2c0063cbcc6091ee",
-                "addLicense",
+                "0xb65881ac2417778c8495128892d900e1a9fd19d1",
+                "addRight",
                 listOf(
                     address(BlockChainConstant.ADDRESS_PLACEHOLDER)
                 ),
                 emptyList()
-            ) == BlockChainConstant.Gas.RIGHT_ADD//66014L
+            ) == BlockChainConstant.Gas.MANAGER_ADD//21432L
         )
     }
 }

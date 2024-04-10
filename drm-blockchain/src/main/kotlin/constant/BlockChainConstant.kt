@@ -12,12 +12,13 @@ object BlockChainConstant {
     const val ADDRESS_PLACEHOLDER = "0xffffffffffffffffffffffffffffffffffffffff"
 
     // 调用Manager合约函数的固定Gas开销
-    object ManagerGas {
-        val ADD_RIGHT = BigInteger.valueOf(21432L)
+    object Gas {
+        val MANAGER_ADD: BigInteger = BigInteger.valueOf(21432L)
+        val RIGHT_ADD: BigInteger = BigInteger.valueOf(66014L)
     }
 
     // Solidity类型关键字
-    object SolidityType{
+    object SolidityType {
         const val STRING = "string"
         const val ADDRESS = "address"
         const val BOOL = "bool"

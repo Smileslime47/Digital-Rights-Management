@@ -5,6 +5,7 @@ import moe._47saikyo.service.impl.AccountServiceImpl
 import moe._47saikyo.utils.CryptoUtils
 import org.web3j.crypto.WalletFile
 import org.web3j.tx.TransactionManager
+import org.web3j.utils.Convert
 import java.math.BigDecimal
 import java.math.BigInteger
 
@@ -46,6 +47,15 @@ interface AccountService {
      * @return 账户余额（单位为Wei——1Wei = 1e-18 Eth）
      */
     fun getBalance(addr: String): BigDecimal
+
+    /**
+     * 获取区块链指定账户余额
+     *
+     * @param addr 查询账户地址
+     * @param unit 余额单位
+     * @return 账户余额
+     */
+    fun getBalance(addr: String,unit: Convert.Unit): BigDecimal
 
     /**
      * 通过银行账户向指定账户转账

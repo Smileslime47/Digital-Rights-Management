@@ -1,9 +1,9 @@
 package moe._47saikyo.service
 
+import moe._47saikyo.annotation.ViewFunction
 import moe._47saikyo.contract.Right
 import moe._47saikyo.models.RightData
 import moe._47saikyo.models.RightDeployForm
-import org.web3j.crypto.Credentials
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
@@ -19,7 +19,7 @@ interface RightService {
      * @param form 版权部署表单
      * @return 估算的gas
      */
-    fun estimate(form: RightDeployForm): BigInteger
+    fun estimateDeploy(form: RightDeployForm): BigInteger
 
     /**
      * 添加版权合约
@@ -34,12 +34,14 @@ interface RightService {
     ): Right
 
     /**
-     * 获取版权合约
+     * 获取版权合约的纯数据对象
      *
      * @param rightAddr 版权合约地址
-     * @return 版权合约
+     * @return 纯数据对象
      */
-    fun getRight(rightAddr: String): RightData
+    fun getPureData(
+        rightAddr: String
+    ): RightData
 
     /**
      * 获取用户的版权
@@ -47,5 +49,8 @@ interface RightService {
      * @param owner 用户地址
      * @return 版权合约列表
      */
-    fun getRights(owner: String): List<RightData>
+    @ViewFunction
+    fun getRights(
+        owner:String
+    ): List<RightData>
 }

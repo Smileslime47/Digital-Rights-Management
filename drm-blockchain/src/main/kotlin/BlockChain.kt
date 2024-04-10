@@ -66,13 +66,6 @@ object BlockChain {
             throw BlockChainNotConnectedException("Block chain not connected,can not get TransactionManager.")
         } else field
 
-    //由Bank账户登陆的DRManager合约
-    var managerByBank: DRManager? = null
-        private set
-        get() = if (field == null) {
-            throw BlockChainNotConnectedException("Block chain not connected,can not get DRManager contract.")
-        } else field
-
     //DRManager地址
     var managerAddr: String = ""
         private set
@@ -103,12 +96,10 @@ object BlockChain {
 
             //加载或部署DRManager合约
             if (configuration.managerAddress == null) {
-                managerByBank = DRManager.deploy(web3jInstance, bankTxManager, gasProvider).send()
-                managerAddr = managerByBank?.contractAddress!!
+                managerAddr = DRManager.deploy(web3jInstance, bankTxManager, gasProvider).send().contractAddress
                 logger.info("Deployed DRManager contract at $managerAddr")
             } else {
-                managerByBank = DRManager.load(configuration.managerAddress, web3jInstance, bankTxManager, gasProvider)
-                managerAddr = managerByBank?.contractAddress!!
+                managerAddr = DRManager.load(configuration.managerAddress, web3jInstance, bankTxManager, gasProvider).contractAddress
                 logger.info("Loaded DRManager contract at $managerAddr")
             }
 
