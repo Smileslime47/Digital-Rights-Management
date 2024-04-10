@@ -19,7 +19,7 @@ import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService
 import moe._47saikyo.service.NoticeService
 import moe._47saikyo.service.UserService
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.ktor.ext.inject
 import java.util.*
 
 /**
@@ -29,10 +29,10 @@ import java.util.*
  * @since 2024/01/05
  */
 fun Application.userController() {
-    val userService: UserService by inject(UserService::class.java)
-    val groupService: GroupService by inject(GroupService::class.java)
-    val noticeService: NoticeService by inject(NoticeService::class.java)
-    val passwordEncoder: PasswordEncoder by inject(PasswordEncoder::class.java)
+    val userService: UserService by inject()
+    val groupService: GroupService by inject()
+    val noticeService: NoticeService by inject()
+    val passwordEncoder: PasswordEncoder by inject()
     val properties = getProperties()
 
     routing {

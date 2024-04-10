@@ -14,11 +14,11 @@ import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.NoticeService
 import moe._47saikyo.service.UserService
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.ktor.ext.inject
 
 fun Application.noticeController() {
-    val noticeService: NoticeService by inject(NoticeService::class.java)
-    val userService: UserService by inject(UserService::class.java)
+    val noticeService: NoticeService by inject()
+    val userService: UserService by inject()
 
     routing {
         route("/notice") {

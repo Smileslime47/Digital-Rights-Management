@@ -6,10 +6,10 @@ import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.*
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.ktor.ext.inject
 
 fun Application.chainRightController() {
-    val rightService: RightService by inject(RightService::class.java)
+    val rightService: RightService by inject()
 
     routing {
         route("/chain/right") {

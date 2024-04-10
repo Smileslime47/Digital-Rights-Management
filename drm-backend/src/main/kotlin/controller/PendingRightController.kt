@@ -15,16 +15,16 @@ import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.*
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.ktor.ext.inject
 
 fun Application.pendingRightController() {
-    val accountService: AccountService by inject(AccountService::class.java)
-    val walletService: WalletService by inject(WalletService::class.java)
-    val rightService: RightService by inject(RightService::class.java)
-    val pendingRightService: PendingRightService by inject(PendingRightService::class.java)
-    val userService: UserService by inject(UserService::class.java)
-    val groupService: GroupService by inject(GroupService::class.java)
-    val noticeService: NoticeService by inject(NoticeService::class.java)
+    val pendingRightService: PendingRightService by inject()
+    val accountService: AccountService by inject()
+    val noticeService: NoticeService by inject()
+    val walletService: WalletService by inject()
+    val rightService: RightService by inject()
+    val groupService: GroupService by inject()
+    val userService: UserService by inject()
 
     routing {
         route("/pending-right") {
@@ -179,7 +179,7 @@ fun Application.pendingRightController() {
                             val deployForm = pendingRightService.convertToDeployForm(targetRight)
 
                             //获取估算Gas —— 估算Gas = 部署合约费用 + 调用Manager的Add Right函数费用
-                            val estimateGas = rightService.estimate(deployForm).toLong()
+                            val estimateGas = rightService.estimateDeploy(deployForm).toLong()
 
                             noticeService.insertNotice(
                                 Notice(

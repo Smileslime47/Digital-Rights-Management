@@ -15,7 +15,7 @@ import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.UserService
 import moe._47saikyo.service.WalletService
 import moe._47saikyo.utils.CryptoUtils
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.ktor.ext.inject
 import java.util.*
 
 /**
@@ -24,9 +24,9 @@ import java.util.*
  * @author 刘一邦
  */
 fun Application.chainAccountController() {
-    val userService: UserService by inject(UserService::class.java)
-    val walletService: WalletService by inject(WalletService::class.java)
-    val accountService: AccountService by inject(AccountService::class.java)
+    val userService: UserService by inject()
+    val walletService: WalletService by inject()
+    val accountService: AccountService by inject()
 
     routing {
         route("/chain/account") {
