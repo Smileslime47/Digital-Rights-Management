@@ -5,7 +5,7 @@ import {UploadFilled} from "@element-plus/icons-vue";
 import PendingRight from "~/modules/PendingRight.ts";
 import TokenUtils from "~/server/TokenUtils.ts";
 import fresh from "~/composables/fresh.ts";
-import {ElMessage} from "element-plus";
+import {ElMessage, UploadInstance} from "element-plus";
 import routeTo from "~/route/routeTo.ts";
 import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
@@ -18,6 +18,10 @@ const form = reactive({
 })
 
 const addr = ref("")
+
+const uploadUrl = Constant.Property.BASE_URL+ Constant.Api.IPFS.ROOT
+const uploadRef  = ref<UploadInstance>()
+
 
 fresh((_) => {
   //获取链上账户
@@ -43,6 +47,9 @@ const confirmCreate = () => {
       form.description,
       "PENDING",
   )
+
+  uploadRef.value!.submit()
+
   httpService.post(
       Constant.Api.CHAIN.RIGHT.ROOT,
       right
@@ -55,6 +62,11 @@ const confirmCreate = () => {
     }
   })
 }
+
+const onUploadSuccess = (response) => {
+  console.log(response)
+}
+
 </script>
 
 <template>
@@ -87,6 +99,10 @@ const confirmCreate = () => {
                 style="width:100%"
                 drag
                 multiple
+                :auto-upload="false"
+                ref="uploadRef"
+                :action=uploadUrl
+                :on-success=onUploadSuccess
             >
               <el-icon class="el-icon--upload">
                 <upload-filled/>

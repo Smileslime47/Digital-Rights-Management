@@ -74,8 +74,8 @@ const changeStatus = (id: number, filter: string) => {
       </el-aside>
       <el-main>
         <h1>通知列表</h1>
-        <el-space fill direction="vertical" style="width:100%" v-for="notice in notices">
-          <el-card class="notice">
+        <el-space fill direction="vertical" style="width:100%">
+          <el-card class="notice" v-for="notice in notices">
             <template #header>
               <span>{{ notice.title }}</span>
               <br/>
@@ -96,8 +96,8 @@ const changeStatus = (id: number, filter: string) => {
               </el-button-group>
             </template>
           </el-card>
-          <el-pagination layout="prev, pager, next" :page-count="maxPage" v-model:current-page="pageNow"/>
         </el-space>
+        <el-pagination style="margin-top:10px" layout="prev, pager, next" :page-count="maxPage" v-model:current-page="pageNow"/>
       </el-main>
     </el-container>
   </TemplatePage>
