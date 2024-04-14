@@ -12,6 +12,8 @@ import moe._47saikyo.BlockChain
  * 因此在调用View函数时，传入任意一个TransactionManager对象即可，如[BlockChain.bankTxManager]
  *
  * 考虑到用户的交互体验，不建议在调用view函数时要求用户输入密码认证来获取用户自身的TransactionManager
+ *
+ * @author 刘一邦
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)

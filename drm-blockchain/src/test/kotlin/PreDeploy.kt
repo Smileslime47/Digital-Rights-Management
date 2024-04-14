@@ -1,5 +1,6 @@
 import moe._47saikyo.BlockChain
 import moe._47saikyo.BlockChainConfigurationBuilder
+import moe._47saikyo.configuration.koin.KoinBlockChainConfiguration
 import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.License
 import moe._47saikyo.contract.Right
@@ -8,6 +9,7 @@ import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.impl.AccountServiceImpl
 import moe._47saikyo.service.impl.LicenseServiceImpl
 import moe._47saikyo.service.impl.RightServiceImpl
+import org.koin.core.context.startKoin
 import org.slf4j.LoggerFactory
 import org.web3j.utils.Convert
 import java.math.BigInteger
@@ -27,14 +29,18 @@ class PreDeploy {
      */
     @BeforeTest
     fun setup() {
+        startKoin {
+            modules(KoinBlockChainConfiguration.module)
+        }
+
         BlockChain.connect(
             BlockChainConfigurationBuilder()
-                .withChain("http://192.168.10.108:8545", 721)
+                .withChain("http://localhost:8545", 721)
                 .withBankWallet(
                     "/home/smile_slime_47/Projekt/Digital-Rights-Management/drm-blockchain/src/test/resources/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json",
                     "1234567890"
                 )
-                .withManager("0x5e10e07433ae5419c798902b219b76f5cd6eef8d")
+                .withManager("0xac842a5ba235d60798f8d891228f5ec4ea94e19a")
                 .build()
         )
     }
@@ -42,7 +48,7 @@ class PreDeploy {
     /**
      * 预部署测试用DRManager合约
      *
-     * 上一次部署成功地址：0x5e10e07433ae5419c798902b219b76f5cd6eef8d
+     * 上一次部署成功地址：0xac842a5ba235d60798f8d891228f5ec4ea94e19a
      */
     @Test
     fun deployManager() {
@@ -58,7 +64,7 @@ class PreDeploy {
     /**
      * 部署测试用版权合约
      *
-     * 上一次部署成功地址：0xc190cb0662ae5a22f944557b2c0063cbcc6091ee
+     * 上一次部署成功地址：0x5e10e07433ae5419c798902b219b76f5cd6eef8d
      */
     @Test
     fun deployRight() {
@@ -67,23 +73,19 @@ class PreDeploy {
             "0721",
             BigInteger.valueOf(System.currentTimeMillis()),
             BigInteger.valueOf(System.currentTimeMillis() + 360000L),
-            "TestRightDescription"
+            "TestRightDescription",
+            "TestRightFileName",
+            "TestRightFileHash"
         )
 
         val estimateCost = RightServiceImpl().estimateDeploy(form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
 
         val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
-        val right = Right.deploy(
-            BlockChain.web3jInstance,
-            BlockChain.bankTxManager,
-            BlockChain.gasProvider,
-            form.title,
-            form.registrationNumber,
-            form.issueTime,
-            form.expireTime,
-            form.description
-        ).send()
+        val right = RightServiceImpl().addRight(
+            BlockChain.bankTxManager!!,
+            form
+        )
 
         val newBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
