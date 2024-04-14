@@ -31,6 +31,7 @@ onMounted(() => {
   <el-tabs>
     <el-tab-pane label="版权合约">
       <el-table style="width: 100%" :data="chainRights" stripe>
+        <el-table-column prop="addr" label="地址"/>
         <el-table-column prop="title" label="版权标题"/>
         <el-table-column prop="owner" label="版权所有人"/>
         <el-table-column prop="registrationNumber" label="版权登记号"/>

@@ -19,8 +19,8 @@ const routeTo = {
     notice: (filter: String, page: String) => loadAndTo("/notice/" + filter + "/" + page),
     changePassword: () => loadAndTo("/change-password"),
     chainAccount: () => loadAndTo("/chain/account"),
-    chainRight: () => loadAndTo("/chain/right"),
     chainVerify: (page: String) => loadAndTo("/chain/verify/" + page),
+    createRight: () => loadAndTo("/chain/right/create"),
     fresh: () => router.go(0)
 }
 

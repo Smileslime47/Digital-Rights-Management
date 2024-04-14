@@ -35,13 +35,8 @@ const deploy = (id: number) => {
         password: chainPassword.value,
         pendingId: id
       },
-  ).then((data) => {
-    let success = data[Constant.RespondField.SUCCESS]
-    if (success) {
-      ElMessage.success("部署成功！")
-    } else {
-      ElMessage.error("部署失败！")
-    }
+  ).then((_) => {
+    ElMessage.success("部署成功！")
   })
 }
 
