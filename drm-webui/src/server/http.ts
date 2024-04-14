@@ -33,6 +33,11 @@ const onFulfilledRequestHandler = (config: InternalAxiosRequestConfig) => {
 }
 
 const onFulfilledResponseHandler = (response: AxiosResponse) => {
+    if(response.status == 500) {
+        ElMessage.error("Back-end Server Error.Please contact with admin.")
+        return Promise.reject();
+    }
+
     let httpResponse = response.data as HttpResponse
     if (httpResponse.status.code == 200) {
         return httpResponse.data;
