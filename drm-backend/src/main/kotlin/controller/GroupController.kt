@@ -9,6 +9,11 @@ import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.GroupService
 import org.koin.ktor.ext.inject
 
+/**
+ * User Group Controller
+ *
+ * @author 刘一邦
+ */
 fun Application.groupController() {
     val groupService: GroupService by inject()
 

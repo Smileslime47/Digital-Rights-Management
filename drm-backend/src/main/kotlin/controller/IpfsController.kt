@@ -9,6 +9,11 @@ import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.IpfsService
 import org.koin.ktor.ext.inject
 
+/**
+ * IPFS Controller
+ *
+ * @author 刘一邦
+ */
 fun Application.ipfsController() {
     val ipfsService: IpfsService by inject()
 

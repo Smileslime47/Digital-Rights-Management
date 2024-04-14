@@ -55,11 +55,11 @@ fun Application.configureSecurity() {
                     if (groupService.authenticate(groupId, condition)) {
                         JWTPrincipal(it.payload)
                     } else {
-                        throw Exception()
+                        null
                     }
                 }
                 challenge { _, _ ->
-                    call.respond(HttpResponse(HttpStatus.FORBIDDEN))
+                    call.respond(HttpResponse(HttpStatus.FORBIDDEN with "需要权限：$condition"))
                 }
             }
         }

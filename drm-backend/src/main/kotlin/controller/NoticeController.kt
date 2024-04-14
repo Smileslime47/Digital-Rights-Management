@@ -16,6 +16,11 @@ import moe._47saikyo.service.NoticeService
 import moe._47saikyo.service.UserService
 import org.koin.ktor.ext.inject
 
+/**
+ * Notice Controller
+ *
+ * @author 刘一邦
+ */
 fun Application.noticeController() {
     val noticeService: NoticeService by inject()
     val userService: UserService by inject()
