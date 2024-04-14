@@ -30,7 +30,9 @@ class RightServiceImpl : RightService {
                 string(form.registrationNumber),
                 uint64(form.issueTime),
                 uint64(form.expireTime),
-                string(form.description)
+                string(form.description),
+                string(form.fileName),
+                string(form.fileHash)
             )
         )
 
@@ -50,7 +52,9 @@ class RightServiceImpl : RightService {
             form.registrationNumber,
             form.issueTime,
             form.expireTime,
-            form.description
+            form.description,
+            form.fileName,
+            form.fileHash
         ).send()
 
         managerService.addRight(transactionManager,right)

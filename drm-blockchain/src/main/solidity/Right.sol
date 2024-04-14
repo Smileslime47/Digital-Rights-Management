@@ -26,6 +26,10 @@ contract Right {
     string private description;
     //授权列表
     License[] private licenses;
+    //文件名
+    string private fileName;
+    //文件哈希
+    string private fileHash;
 
     /**
      * 构造器
@@ -35,14 +39,26 @@ contract Right {
      * @param _issueTime 发行时间
      * @param _expireTime 到期时间
      * @param _description 版权描述
+     * @param _fileName 文件名
+     * @param _fileHash 文件哈希
      */
-    constructor(string memory _title, string memory _registrationNumber, uint64 _issueTime, uint64 _expireTime, string memory _description) {
+    constructor(
+        string memory _title,
+        string memory _registrationNumber,
+        uint64 _issueTime,
+        uint64 _expireTime,
+        string memory _description,
+        string memory _fileName,
+        string memory _fileHash
+    ) {
         addr = address(this);
         title = _title;
         registrationNumber = _registrationNumber;
         issueTime = _issueTime;
         expireTime = _expireTime;
         description = _description;
+        fileName = _fileName;
+        fileHash = _fileHash;
 
         owner = msg.sender;
         addr = address(this);
@@ -58,11 +74,29 @@ contract Right {
     }
 
     /**
+     * 获取授权列表
+     *
+     * @return 授权列表
+     */
+    function getLicenses() view public returns (License[] memory) {
+        return licenses;
+    }
+
+    /**
+     * 获取文件哈希地址
+     *
+     * @return 哈希地址
+     */
+    function getFileHash() view public returns (string memory) {
+        return fileHash;
+    }
+
+    /**
      * 获取合约登记号，用于生成主键
      *
      * @return 合约登记号
      */
-    function getKey() view public returns (string memory) {
+    function getRegistrationNumber() view public returns (string memory) {
         return registrationNumber;
     }
 
@@ -81,6 +115,8 @@ contract Right {
         result = string(abi.encodePacked(result, "\"issueTime\":\"", uint2str(issueTime), "\","));
         result = string(abi.encodePacked(result, "\"expireTime\":\"", uint2str(expireTime), "\","));
         result = string(abi.encodePacked(result, "\"description\":\"", description, "\","));
+        result = string(abi.encodePacked(result, "\"fileName\":\"", fileName, "\","));
+        result = string(abi.encodePacked(result, "\"fileHash\":\"", fileHash, "\","));
         result = string(abi.encodePacked(result, "\"licenses\":["));
         for (uint i = 0; i < licenses.length; i++) {
             result = string(abi.encodePacked(result, licenses[i].serialize()));

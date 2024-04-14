@@ -8,5 +8,7 @@ data class RightData(
     val issueTime: Long = 0,
     val expireTime: Long = 0,
     val description: String = "",
+    val fileName: String = "",
+    val fileHash: String = "",
     val licenses: List<String> = emptyList(),
 )

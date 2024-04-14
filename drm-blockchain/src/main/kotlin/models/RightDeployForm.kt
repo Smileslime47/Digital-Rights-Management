@@ -7,5 +7,7 @@ data class RightDeployForm(
     val registrationNumber:String,
     val issueTime:BigInteger,
     val expireTime:BigInteger,
-    val description:String
+    val description:String?,
+    val fileName:String,
+    val fileHash:String,
 )

@@ -1,5 +1,6 @@
 package moe._47saikyo.service.impl
 
+import moe._47saikyo.constant.GlobalConstant
 import moe._47saikyo.contract.Right
 import moe._47saikyo.dao.PendingRightDao
 import moe._47saikyo.domain.PendingRight
@@ -29,7 +30,9 @@ class PendingRightServiceImpl : PendingRightService {
             registrationNumber = pendingRight.registrationNumber,
             issueTime = pendingRight.issueTime.toBigInteger(),
             expireTime = pendingRight.expireTime.toBigInteger(),
-            description = pendingRight.description
+            description = pendingRight.description ?: GlobalConstant.EMPTY_STRING,
+            fileName = pendingRight.fileName,
+            fileHash = pendingRight.fileHash
         )
 
     override suspend fun getPendingRight(id: Long): PendingRight? =
@@ -70,7 +73,9 @@ class PendingRightServiceImpl : PendingRightService {
                 registrationNumber = pendingRight.registrationNumber,
                 issueTime = BigInteger.valueOf(pendingRight.issueTime),
                 expireTime = BigInteger.valueOf(pendingRight.expireTime),
-                description = pendingRight.description
+                description = pendingRight.description,
+                fileName = pendingRight.fileName,
+                fileHash = pendingRight.fileHash
             )
 
             val right = rightService.addRight(transactionManager, form)
