@@ -19,7 +19,10 @@ import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
 class RightServiceImpl : RightService {
-    private val managerService:ManagerService by inject(ManagerService::class.java)
+    private val managerService: ManagerService by inject(ManagerService::class.java)
+    override fun searchByTitle(title: String): List<String> =
+        managerService.searchByTitle(title)
+
 
     override fun estimateDeploy(form: RightDeployForm): BigInteger {
         val binCode = Right.BINARY
@@ -27,6 +30,7 @@ class RightServiceImpl : RightService {
         val encodedConstructor = FunctionEncoder.encodeConstructor(
             listOf(
                 string(form.title),
+                string(form.owner),
                 string(form.registrationNumber),
                 uint64(form.issueTime),
                 uint64(form.expireTime),
@@ -49,6 +53,7 @@ class RightServiceImpl : RightService {
             transactionManager,
             BlockChain.gasProvider,
             form.title,
+            form.owner,
             form.registrationNumber,
             form.issueTime,
             form.expireTime,
@@ -57,7 +62,7 @@ class RightServiceImpl : RightService {
             form.fileHash
         ).send()
 
-        managerService.addRight(transactionManager,right)
+        managerService.addRight(transactionManager, right)
 
         return right
     }
@@ -97,6 +102,6 @@ class RightServiceImpl : RightService {
     }
 
     @ViewFunction
-    override fun getRights(owner:String): List<RightData> =
-         managerService.getRights(owner).map { getPureData(it) }
+    override fun getRights(owner: String): List<RightData> =
+        managerService.getRights(owner).map { getPureData(it) }
 }

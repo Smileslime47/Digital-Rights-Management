@@ -4,6 +4,7 @@ import java.math.BigInteger
 
 data class RightDeployForm(
     val title:String,
+    val owner:String,
     val registrationNumber:String,
     val issueTime:BigInteger,
     val expireTime:BigInteger,

@@ -1,8 +1,9 @@
 package moe._47saikyo.models
 
 data class RightData(
-    val addr:String = "",
+    val addr: String = "",
     val title: String = "",
+    val deployer: String = "",
     val owner: String = "",
     val registrationNumber: String = "",
     val issueTime: Long = 0,

@@ -14,8 +14,10 @@ contract Right {
     address private addr;
     //作品名称
     string private title;
+    //版权部署者
+    address private deployer;
     //版权所有者
-    address private owner;
+    string private owner;
     //登记号
     string private registrationNumber;
     //发行时间
@@ -35,6 +37,7 @@ contract Right {
      * 构造器
      *
      * @param _title 作品名称
+     * @param _owner 版权所有者
      * @param _registrationNumber 登记号
      * @param _issueTime 发行时间
      * @param _expireTime 到期时间
@@ -44,6 +47,7 @@ contract Right {
      */
     constructor(
         string memory _title,
+        string memory _owner,
         string memory _registrationNumber,
         uint64 _issueTime,
         uint64 _expireTime,
@@ -53,6 +57,7 @@ contract Right {
     ) {
         addr = address(this);
         title = _title;
+        owner = _owner;
         registrationNumber = _registrationNumber;
         issueTime = _issueTime;
         expireTime = _expireTime;
@@ -60,7 +65,7 @@ contract Right {
         fileName = _fileName;
         fileHash = _fileHash;
 
-        owner = msg.sender;
+        deployer = msg.sender;
         addr = address(this);
     }
 
@@ -71,6 +76,15 @@ contract Right {
      */
     function addLicense(License _license) public {
         licenses.push(_license);
+    }
+
+    /**
+     * 获取合约地址
+     *
+     * @return 合约地址
+     */
+    function getTitle() view public returns (string memory) {
+        return title;
     }
 
     /**
@@ -107,10 +121,10 @@ contract Right {
      */
     function serialize() view public returns (string memory) {
         string memory result = "{";
-
         result = string(abi.encodePacked(result, "\"addr\":\"", addr2str(addr), "\","));
         result = string(abi.encodePacked(result, "\"title\":\"", title, "\","));
-        result = string(abi.encodePacked(result, "\"owner\":\"", addr2str(owner), "\","));
+        result = string(abi.encodePacked(result, "\"deployer\":\"", addr2str(deployer), "\","));
+        result = string(abi.encodePacked(result, "\"owner\":\"", owner, "\","));
         result = string(abi.encodePacked(result, "\"registrationNumber\":\"", registrationNumber, "\","));
         result = string(abi.encodePacked(result, "\"issueTime\":\"", uint2str(issueTime), "\","));
         result = string(abi.encodePacked(result, "\"expireTime\":\"", uint2str(expireTime), "\","));

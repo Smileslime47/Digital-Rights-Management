@@ -22,11 +22,11 @@ import java.math.BigInteger
 class PendingRightServiceImpl : PendingRightService {
     private val pendingRightDao: PendingRightDao by KoinJavaComponent.inject(PendingRightDao::class.java)
     private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
-    private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
 
     override fun convertToDeployForm(pendingRight: PendingRight): RightDeployForm =
         RightDeployForm(
             title = pendingRight.title,
+            owner = pendingRight.owner,
             registrationNumber = pendingRight.registrationNumber,
             issueTime = pendingRight.issueTime.toBigInteger(),
             expireTime = pendingRight.expireTime.toBigInteger(),
@@ -45,10 +45,10 @@ class PendingRightServiceImpl : PendingRightService {
         pendingRightDao.getPendingRights(pageSize, pageNumber) { PendingRightTable.status eq PendingStatus.PENDING.toString() }
 
     override suspend fun countPendingRights(address: String): Long =
-        pendingRightDao.countPendingRights { PendingRightTable.owner eq address }
+        pendingRightDao.countPendingRights { PendingRightTable.deployer eq address }
 
     override suspend fun getPendingRights(pageSize: Int, pageNumber: Int, address: String): List<PendingRight> =
-        pendingRightDao.getPendingRights(pageSize, pageNumber) { PendingRightTable.owner eq address }
+        pendingRightDao.getPendingRights(pageSize, pageNumber) { PendingRightTable.deployer eq address }
 
     override suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight? =
         pendingRightDao.insertPendingRight(pendingRight)
@@ -70,6 +70,7 @@ class PendingRightServiceImpl : PendingRightService {
         if (pendingRight?.status == PendingStatus.CONFIRMED) {
             val form = RightDeployForm(
                 title = pendingRight.title,
+                owner = pendingRight.owner,
                 registrationNumber = pendingRight.registrationNumber,
                 issueTime = BigInteger.valueOf(pendingRight.issueTime),
                 expireTime = BigInteger.valueOf(pendingRight.expireTime),

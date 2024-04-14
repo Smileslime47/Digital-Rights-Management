@@ -35,8 +35,9 @@ const deploy = (id: number) => {
         password: chainPassword.value,
         pendingId: id
       },
-  ).then((_) => {
-    ElMessage.success("部署成功！")
+  ).then((data) => {
+    let cost = data[Constant.RespondField.COST]
+    ElMessage.success("部署成功,实际花费" + cost + " WEI。")
   })
 }
 
@@ -76,6 +77,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column prop="title" label="版权标题"/>
         <el-table-column prop="owner" label="版权所有人"/>
+        <el-table-column prop="deployer" label="版权部署人"/>
         <el-table-column prop="registrationNumber" label="版权登记号"/>
         <el-table-column label="发行时间">
           <template #default="scope">

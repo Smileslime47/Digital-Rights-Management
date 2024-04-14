@@ -34,6 +34,7 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
 object PendingRightTable : Table("drm_pending_right") {
     val id                      = long("id").autoIncrement()
     val title                   = varchar("title", 128)
+    val deployer                = varchar("deployer", 128)
     val owner                   = varchar("owner", 128)
     val registration_number     = varchar("registration_number", 128).uniqueIndex()
     val issue_time              = long("issue_time")
@@ -50,6 +51,7 @@ object PendingRightTable : Table("drm_pending_right") {
     fun resultRowToPendingRight(row: ResultRow) = PendingRight(
         id = row[id],
         title = row[title],
+        deployer = row[deployer],
         owner = row[owner],
         registrationNumber = row[registration_number],
         issueTime = row[issue_time],
@@ -65,6 +67,7 @@ object PendingRightTable : Table("drm_pending_right") {
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(pendingRight: PendingRight): PendingRightTable.(T) -> Unit = {
         it[title] = pendingRight.title
+        it[deployer] = pendingRight.deployer
         it[owner] = pendingRight.owner
         it[registration_number] = pendingRight.registrationNumber
         it[issue_time] = pendingRight.issueTime

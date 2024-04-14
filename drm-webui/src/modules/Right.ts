@@ -1,8 +1,9 @@
 import Constant from "~/constant/Constant.ts";
 
-class PendingRight {
-    id: number = Constant.Global.NULL_NUMBER_PLACEHOLDER;
+class Right {
+    addr: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     title: string = Constant.Global.NULL_STRING_PLACEHOLDER;
+    deployer: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     owner: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     registrationNumber: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     issueTime: number = Constant.Global.NULL_NUMBER_PLACEHOLDER;
@@ -10,15 +11,11 @@ class PendingRight {
     description: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     fileName: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     fileHash: string = Constant.Global.NULL_STRING_PLACEHOLDER;
-    status: string = Constant.Global.NULL_STRING_PLACEHOLDER;
-    estimatePrice: number = Constant.Global.NULL_NUMBER_PLACEHOLDER;
-    comment: string = "请耐心等待审核。";
-    createTime: number = new Date().getTime();
 
     //all-args
     constructor(
-        id: number,
         title: string,
+        deployer: string,
         owner: string,
         registrationNumber: string,
         issueTime: number,
@@ -26,10 +23,9 @@ class PendingRight {
         description: string,
         fileName: string,
         fileHash: string,
-        status: string
     ) {
-        this.id = id;
         this.title = title;
+        this.deployer = deployer;
         this.owner = owner;
         this.registrationNumber = registrationNumber;
         this.issueTime = issueTime;
@@ -37,23 +33,21 @@ class PendingRight {
         this.description = description;
         this.fileName = fileName;
         this.fileHash = fileHash;
-        this.status = status;
     }
 }
 
-export const EmptyPendingRight = () => {
-    return new PendingRight(
+export const EmptyRight = () => {
+    return new Right(
+        Constant.Global.NULL_STRING_PLACEHOLDER,
+        Constant.Global.NULL_STRING_PLACEHOLDER,
+        Constant.Global.NULL_STRING_PLACEHOLDER,
+        Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_NUMBER_PLACEHOLDER,
-        Constant.Global.NULL_STRING_PLACEHOLDER,
-        Constant.Global.NULL_STRING_PLACEHOLDER,
-        Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_NUMBER_PLACEHOLDER,
-        Constant.Global.NULL_NUMBER_PLACEHOLDER,
-        Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
     )
 }
 
-export default PendingRight
+export default Right

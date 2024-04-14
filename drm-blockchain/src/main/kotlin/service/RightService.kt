@@ -14,6 +14,15 @@ import java.math.BigInteger
  */
 interface RightService {
     /**
+     * 通过版权标题搜索版权合约地址
+     *
+     * @param title 版权标题
+     * @return 版权合约地址列表
+     */
+    @ViewFunction
+    fun searchByTitle(title: String): List<String>
+
+    /**
      * 估算部署合约所需的gas
      *
      * @param form 版权部署表单
@@ -39,9 +48,8 @@ interface RightService {
      * @param rightAddr 版权合约地址
      * @return 纯数据对象
      */
-    fun getPureData(
-        rightAddr: String
-    ): RightData
+    @ViewFunction
+    fun getPureData(rightAddr: String): RightData
 
     /**
      * 获取用户的版权
@@ -50,7 +58,5 @@ interface RightService {
      * @return 版权合约列表
      */
     @ViewFunction
-    fun getRights(
-        owner:String
-    ): List<RightData>
+    fun getRights(owner:String): List<RightData>
 }

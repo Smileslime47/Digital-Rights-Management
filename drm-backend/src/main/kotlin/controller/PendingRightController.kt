@@ -17,6 +17,11 @@ import moe._47saikyo.models.httpRespond
 import moe._47saikyo.service.*
 import org.koin.ktor.ext.inject
 
+/**
+ * Pending Right Controller
+ *
+ * @author 刘一邦
+ */
 fun Application.pendingRightController() {
     val pendingRightService: PendingRightService by inject()
     val accountService: AccountService by inject()
@@ -84,9 +89,14 @@ fun Application.pendingRightController() {
                         val txManager = accountService.getTxManager(pwd, walletFileJson)
 
                         //部署合约
+                        val oldBalance = accountService.getBalance(dbWallet.address)
                         val right = pendingRightService.deployPendingRight(pendingId, txManager)
+                        val newBalance = accountService.getBalance(dbWallet.address)
 
-                        call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to right?.contractAddress))
+                        call.httpRespond(data = mapOf(
+                            Constant.RespondField.COST to newBalance - oldBalance,
+                            Constant.RespondField.RIGHT to right?.contractAddress
+                        ))
                     }
 
                     authenticateRequired(Constant.Authentication.PERMISSION_CREATE_RIGHT) {
@@ -101,7 +111,7 @@ fun Application.pendingRightController() {
 
                             when {
                                 //版权申请人和登陆用户一致性
-                                (loginAddr != targetRight.owner) -> {
+                                (loginAddr != targetRight.deployer) -> {
                                     call.httpRespond(HttpStatus.FORBIDDEN with "无权代理他人申请版权")
                                     return@post
                                 }
@@ -173,7 +183,7 @@ fun Application.pendingRightController() {
                             }
 
                             //获取钱包实体对象
-                            val ownerWallet = walletService.getWallet(targetRight!!.owner)
+                            val ownerWallet = walletService.getWallet(targetRight!!.deployer)
 
                             //获取pendingRight并生成部署表单
                             val deployForm = pendingRightService.convertToDeployForm(targetRight)
@@ -193,10 +203,7 @@ fun Application.pendingRightController() {
                             //发送通知
                             when (pendingRightService.confirmPendingRight(targetRight.id, estimateGas * BlockChain.gasProvider.gasPrice.toLong())) {
                                 true -> call.httpRespond(
-                                    data = mapOf(
-                                        Constant.RespondField.SUCCESS to true,
-                                        Constant.RespondField.PRICE to estimateGas
-                                    )
+                                    data = mapOf(Constant.RespondField.SUCCESS to true,)
                                 )
 
                                 false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
@@ -228,7 +235,7 @@ fun Application.pendingRightController() {
                                 }
                             }
 
-                            val ownerWallet = walletService.getWallet(targetRight!!.owner)
+                            val ownerWallet = walletService.getWallet(targetRight!!.deployer)
 
                             noticeService.insertNotice(
                                 Notice(

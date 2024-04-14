@@ -17,8 +17,8 @@ import kotlin.test.Test
  *
  * @author 刘一邦
  */
-class RightServiceTest {
-    private val logger = LoggerFactory.getLogger(RightServiceTest::class.java)
+class PendingRightServiceTest {
+    private val logger = LoggerFactory.getLogger(PendingRightServiceTest::class.java)
 
     /**
      * 初始化区块链连接
@@ -31,7 +31,7 @@ class RightServiceTest {
 
         BlockChain.connect(
             BlockChainConfigurationBuilder()
-                .withChain("http://192.168.10.108:8545", 721)
+                .withChain("http://localhost:8545", 721)
                 .withBankWallet(
                     "/home/smile_slime_47/Projekt/Digital-Rights-Management/drm-blockchain/src/test/resources/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json",
                     "1234567890"
@@ -46,8 +46,7 @@ class RightServiceTest {
      */
     @Test
     fun getRightsTest() {
-        logger.info(RightServiceImpl().getPureData("0x5e10e07433ae5419c798902b219b76f5cd6eef8d").toString())
-        logger.info(RightServiceImpl().getRights("0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe").toString())
+        logger.info(RightServiceImpl().getRights("0x31e582af2d0baeaa563a908eca1af273caeb7c0e").toString())
     }
 
     @Test
