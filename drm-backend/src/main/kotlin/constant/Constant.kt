@@ -39,6 +39,7 @@ object Constant {
         const val COUNT = "count"
         const val PRICE = "price"
         const val HASH = "hash"
+        const val NAME = "name"
     }
 
     object PropertyUrl {

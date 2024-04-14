@@ -17,30 +17,22 @@ fun Application.ipfsController() {
             post {
                 val multipartData = call.receiveMultipart()
 
-                var fileDescription = ""
                 var fileName = ""
                 var fileHash = ""
                 var fileBytes: ByteArray
 
                 multipartData.forEachPart { part ->
-                    when (part) {
-                        is PartData.FormItem -> {
-                            fileDescription = part.value
-                        }
-
-                        is PartData.FileItem -> {
-                            fileName = part.originalFileName as String
-                            fileBytes = part.streamProvider().readBytes()
-//                            File("uploads/$fileName").writeBytes(fileBytes)
-                            fileHash = ipfsService.upload(fileBytes)
-                        }
-
-                        else -> {}
+                    if (part is PartData.FileItem) {
+                        fileName = part.originalFileName?:"UnnamedFile"
+                        fileBytes = part.streamProvider().readBytes()
+                        fileHash = ipfsService.upload(fileBytes)
                     }
                     part.dispose()
                 }
 
+
                 call.httpRespond(data = mapOf(
+                    Constant.RespondField.NAME to fileName,
                     Constant.RespondField.HASH to fileHash
                 ))
             }
