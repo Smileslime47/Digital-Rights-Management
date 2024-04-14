@@ -44,7 +44,7 @@ interface AccountService {
      * 获取区块链指定账户余额
      *
      * @param addr 查询账户地址
-     * @return 账户余额（单位为Wei——1Wei = 1e-18 Eth）
+     * @return 账户余额（单位为Eth——1Wei = 1e-18 Eth）
      */
     fun getBalance(addr: String): BigDecimal
 

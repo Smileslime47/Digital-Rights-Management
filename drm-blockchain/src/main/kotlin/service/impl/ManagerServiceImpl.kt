@@ -6,10 +6,63 @@ import moe._47saikyo.annotation.ViewFunction
 import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.License
 import moe._47saikyo.contract.Right
+import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.ManagerService
 import org.web3j.tx.TransactionManager
 
 class ManagerServiceImpl : ManagerService {
+    override fun getRightByTitle(title: String): String {
+        val manager = DRManager.load(
+            BlockChain.managerAddr,
+            BlockChain.web3jInstance,
+            @TxManagerPlaceholder
+            BlockChain.bankTxManager,
+            BlockChain.gasProvider
+        )
+
+        return manager.getRightByTitle(title).send().toString()
+    }
+
+    override fun getRightByRegistrationNumber(registrationNumber: String): String {
+        val manager = DRManager.load(
+            BlockChain.managerAddr,
+            BlockChain.web3jInstance,
+            @TxManagerPlaceholder
+            BlockChain.bankTxManager,
+            BlockChain.gasProvider
+        )
+
+        return manager.getRightByRegistrationNumber(registrationNumber).send().toString()
+    }
+
+    override fun getRightByFileHash(fileHash: String): String {
+        val manager = DRManager.load(
+            BlockChain.managerAddr,
+            BlockChain.web3jInstance,
+            @TxManagerPlaceholder
+            BlockChain.bankTxManager,
+            BlockChain.gasProvider
+        )
+
+        return manager.getRightByFileHash(fileHash).send().toString()
+    }
+
+    override fun canInsertRight(rightDeployForm: RightDeployForm): Boolean {
+        val manager = DRManager.load(
+            BlockChain.managerAddr,
+            BlockChain.web3jInstance,
+            @TxManagerPlaceholder
+            BlockChain.bankTxManager,
+            BlockChain.gasProvider
+        )
+
+        return manager.canInsertRight(
+            rightDeployForm.title,
+            rightDeployForm.registrationNumber,
+            rightDeployForm.fileHash
+        ).send()
+    }
+
     override fun addRight(transactionManager: TransactionManager, right: Right): Boolean {
         val manager = DRManager.load(
             BlockChain.managerAddr,
