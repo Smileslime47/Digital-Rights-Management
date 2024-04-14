@@ -4,7 +4,7 @@ import fresh from "~/composables/fresh.ts";
 import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
 import routeTo from "~/route/routeTo.ts";
-import PendingRight from "~/modules/PendingRight.ts";
+import Right from "~/modules/Right.ts";
 import {ElMessage} from "element-plus";
 import {reactive} from "vue";
 

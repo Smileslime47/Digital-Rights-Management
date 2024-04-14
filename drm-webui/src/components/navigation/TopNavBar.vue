@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import githubIcon from "~/assets/icons/github.svg"
 import webIcon from "~/assets/icons/web-icon.svg"
-import msgIcon from "~/assets/icons/message.svg"
 import routeTo from "~/route/routeTo.ts";
 import fresh from "~/composables/fresh.ts";
 import {useRoute} from "vue-router";
+import { Search } from '@element-plus/icons-vue'
 import TokenUtils from "~/server/TokenUtils.ts";
 import Constant from "~/constant/Constant.ts";
 
@@ -16,6 +16,9 @@ const nickname = ref("")
 const userId = ref(0)
 const logged = ref(false)
 const noticeCnt = ref(0)
+
+const searchContent = ref("")
+
 const route = useRoute()
 
 const logout = () => {
@@ -63,11 +66,20 @@ fresh(async (_) => {
         <el-text size="large" class="mx-1">Digital Rights Manager</el-text>
       </el-space>
     </el-menu-item>
+    <el-menu-item index="1">
+      <el-input
+          v-model="searchContent"
+          placeholder="搜索版权标题">
+        <template #append>
+          <el-button :icon="Search" @click="routeTo.searchRight(searchContent)"/>
+        </template>
+      </el-input>
+    </el-menu-item>
 
     <div class="flex-grow"/>
 
     <!--Profile/登入按钮-->
-    <el-sub-menu v-if="logged" index="1" @click="routeTo.profile(userId)">
+    <el-sub-menu v-if="logged" index="2" @click="routeTo.profile(userId)">
       <template #title>
         <el-text>{{ nickname }}</el-text>
       </template>
@@ -81,7 +93,7 @@ fresh(async (_) => {
       </el-menu-item>
       <el-menu-item @click="logout" divided>登出</el-menu-item>
     </el-sub-menu>
-    <el-menu-item v-else index="1" @click="routeTo.login()">
+    <el-menu-item v-else index="2" @click="routeTo.login()">
       <el-text>登入/注册</el-text>
     </el-menu-item>
 

@@ -10,7 +10,9 @@ const routes: RouteRecordRaw[] = [
     {path: '/change-password', name: 'ChangePassword', component: () => import('~/pages/PasswordPage.vue')},
     {path: '/chain/account', name: 'ChainAccount', component: () => import('~/pages/ChainAccountPage.vue')},
     {path: '/chain/right/create', name: 'CreateRight', component: () => import('~/pages/CreateRightPage.vue')},
+    {path: '/chain/right/:addr', name: 'ChainRight', component: () => import('~/pages/ChainRightPage.vue')},
     {path: '/chain/verify/:page', name: 'ChainVerify', component: () => import('~/pages/ChainVerifyPage.vue')},
+    {path: '/search/right/:title', name: 'SearchRight', component: () => import('~/pages/SearchRightPage.vue')},
 ]
 
 export default routes

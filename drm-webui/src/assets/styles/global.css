@@ -1,10 +1,10 @@
-span, p, h1, h2, h3, h4, h5, h6, label {
+span, p, h1, h2, h3, h4, h5, h6, label, input {
     font-family: "SF Pro", "PingFang SC", sans-serif;
 }
 
-h1{
+h1 {
     font-size: 2.2rem;
-    margin-top:0;
+    margin-top: 0;
 }
 
 body {
@@ -19,12 +19,16 @@ body {
     border-radius: 25px !important;
 }
 
-.el-card.notice{
-    border-radius:10px !important;
+.el-card.notice {
+    border-radius: 10px !important;
 }
 
 .el-input__wrapper {
     border-radius: 50px !important;
+}
+
+.el-input-group__append {
+    border-radius: 0 50px 50px 0 !important;
 }
 
 .el-input-group--append > .el-input__wrapper {
@@ -32,18 +36,28 @@ body {
     border-bottom-right-radius: 0 !important;
 }
 
+.wide-input {
+    width: 50% !important;
+    height: 50px;
+    font-size: 25px !important;
+}
+
+.wide-input > .el-input__wrapper {
+    padding-left: 25px !important;
+}
+
 .horizontal-center {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .vertical-center {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 .text-center {
@@ -55,11 +69,11 @@ body {
 }
 
 .large-text {
-    font-size: 32px
+    font-size: 32px !important;
 }
 
 .medium-text {
-    font-size: 20px
+    font-size: 20px !important
 }
 
 .hero-text {

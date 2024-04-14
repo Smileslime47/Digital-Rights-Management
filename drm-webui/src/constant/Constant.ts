@@ -2,19 +2,19 @@ const Constant = {
     Global: {
         NULL_NUMBER_PLACEHOLDER: 0,
         NULL_STRING_PLACEHOLDER: "undefined",
-        DEFAULT_PAGE_SIZE:10,
-        DEFAULT_PAGE:"1",
+        DEFAULT_PAGE_SIZE: 10,
+        DEFAULT_PAGE: "1",
     },
     NoticeFilter: {
-        ALL:"all",
+        ALL: "all",
         UNREAD: "unread",
         READ: "read",
         ARCHIVED: "archived"
     },
-    PendingStatus:{
-        PENDING:"PENDING",
-        CONFIRMED:"CONFIRMED",
-        REJECTED:"REJECTED"
+    PendingStatus: {
+        PENDING: "PENDING",
+        CONFIRMED: "CONFIRMED",
+        REJECTED: "REJECTED"
     },
     Authentication: {
         TOKEN_STORAGE: "token",
@@ -25,60 +25,63 @@ const Constant = {
     RespondField: {
         USER: "user",
         GROUP: "group",
-        NOTICE:"notice",
+        NOTICE: "notice",
         SELF_PROFILE: "self",
         SUCCESS: "success",
         ADDRESS: "address",
-        RIGHT:"right",
-        BALANCE:"balance",
-        COUNT:"count",
-        HASH:"hash",
+        RIGHT: "right",
+        BALANCE: "balance",
+        COST: "cost",
+        COUNT: "count",
+        HASH: "hash",
     },
     Property: {
         BASE_URL: import.meta.env.VITE_BASE_URL,
         ASSETS_URL: import.meta.env.VITE_ASSETS_URL,
     },
     Api: {
-        DEBUG:{
+        DEBUG: {
             USER: "/debug/user",
             STATUS: "/debug/error_status",
         },
-        USER:{
+        USER: {
             ROOT: "/user",
             LOGIN: "/user/login",
             REGISTER: "/user/register",
             CHANGE_PWD: "/user/change-password",
         },
-        GROUP:{
+        GROUP: {
             ROOT: "/group",
         },
-        NOTICE:{
+        NOTICE: {
             ROOT: "/notice",
             COUNT: "/notice/count",
         },
-        PENDING_RIGHT:{
-            ROOT:"/pending-right",
-            DEPLOY:"/pending-right/deploy",
-            VERIFY:"/pending-right/verify",
-            CONFIRM:"/pending-right/verify/confirm",
-            REJECT:"/pending-right/verify/reject"
+        PENDING_RIGHT: {
+            ROOT: "/pending-right",
+            DEPLOY: "/pending-right/deploy",
+            VERIFY: "/pending-right/verify",
+            CONFIRM: "/pending-right/verify/confirm",
+            REJECT: "/pending-right/verify/reject"
         },
-        CHAIN:{
-            ACCOUNT:{
+        CHAIN: {
+            ACCOUNT: {
                 NEW_ACCOUNT: "/chain/account/new-account",
                 GET_BALANCE: "/chain/account/balance",
                 GET_BY_USER: "/chain/account/by-user",
                 CHARGE: "/chain/account/charge",
             },
-            RIGHT:{
-                ROOT:"/chain/right",
-                VERIFY:"/chain/right/verify",
-                CONFIRM:"/chain/right/verify/confirm",
-                REJECT:"/chain/right/verify/reject"
+            RIGHT: {
+                ROOT: "/chain/right",
+                OWNER: "/chain/right/owner",
+                VERIFY: "/chain/right/verify",
+                CONFIRM: "/chain/right/verify/confirm",
+                REJECT: "/chain/right/verify/reject",
+                SEARCH: "/chain/right/search"
             }
         },
-        IPFS:{
-            ROOT:"/ipfs",
+        IPFS: {
+            ROOT: "/ipfs",
         }
     }
 }

@@ -2,16 +2,18 @@
 
 import TemplatePage from "~/pages/TemplatePage.vue";
 import {UploadFilled} from "@element-plus/icons-vue";
-import PendingRight from "~/modules/PendingRight.ts";
 import TokenUtils from "~/server/TokenUtils.ts";
 import fresh from "~/composables/fresh.ts";
 import {ElMessage, UploadInstance} from "element-plus";
 import routeTo from "~/route/routeTo.ts";
 import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
+import IpfsResponseBody from "~/modules/IpfsResponseBody.ts";
+import PendingRight from "~/modules/PendingRight.ts";
 
 const form = reactive({
   title: "",
+  owner: "",
   registrationNumber: "",
   availableTime: [0, 0],
   description: ""
@@ -19,8 +21,8 @@ const form = reactive({
 
 const addr = ref("")
 
-const uploadUrl = Constant.Property.BASE_URL+ Constant.Api.IPFS.ROOT
-const uploadRef  = ref<UploadInstance>()
+const uploadUrl = Constant.Property.BASE_URL + Constant.Api.IPFS.ROOT
+const uploadRef = ref<UploadInstance>()
 
 
 fresh((_) => {
@@ -37,22 +39,31 @@ fresh((_) => {
 
 
 const confirmCreate = () => {
-  let right = new PendingRight(
+  uploadRef.value!.submit()
+}
+
+const onUploadSuccess = (response) => {
+  //提取Ipfs文件信息
+  let ipfsResponseBody = response.data as IpfsResponseBody
+
+  //生成合约部署表单
+  let pendingRight = new PendingRight(
       0,
       form.title,
-      addr.value,
+      form.owner,
       form.registrationNumber,
       form.availableTime[0],
       form.availableTime[1],
       form.description,
+      ipfsResponseBody.name,
+      ipfsResponseBody.hash,
       "PENDING",
   )
 
-  uploadRef.value!.submit()
-
+  //发送合约部署审核请求
   httpService.post(
-      Constant.Api.CHAIN.RIGHT.ROOT,
-      right
+      Constant.Api.PENDING_RIGHT.ROOT,
+      pendingRight
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]
     if (success) {
@@ -61,10 +72,6 @@ const confirmCreate = () => {
       ElMessage.error("提交失败！")
     }
   })
-}
-
-const onUploadSuccess = (response) => {
-  console.log(response)
 }
 
 </script>
@@ -77,6 +84,9 @@ const onUploadSuccess = (response) => {
         <el-form :model="form" label-width="80px">
           <el-form-item label="版权名称">
             <el-input v-model="form.title"></el-input>
+          </el-form-item>
+          <el-form-item label="所有人">
+            <el-input v-model="form.owner"></el-input>
           </el-form-item>
           <el-form-item label="登记号">
             <el-input v-model="form.registrationNumber"></el-input>
