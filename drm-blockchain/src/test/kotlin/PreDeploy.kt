@@ -40,7 +40,7 @@ class PreDeploy {
                     "/home/smile_slime_47/Projekt/Digital-Rights-Management/drm-blockchain/src/test/resources/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json",
                     "1234567890"
                 )
-                .withManager("0xac842a5ba235d60798f8d891228f5ec4ea94e19a")
+                .withManager("0xef563dee888cb304dd660b9f6e6b261f1a2295d2")
                 .build()
         )
     }
@@ -48,7 +48,7 @@ class PreDeploy {
     /**
      * 预部署测试用DRManager合约
      *
-     * 上一次部署成功地址：0xac842a5ba235d60798f8d891228f5ec4ea94e19a
+     * 上一次部署成功地址：0xef563dee888cb304dd660b9f6e6b261f1a2295d2
      */
     @Test
     fun deployManager() {
@@ -70,6 +70,7 @@ class PreDeploy {
     fun deployRight() {
         val form = RightDeployForm(
             "TestRight",
+            "testOwner",
             "0721",
             BigInteger.valueOf(System.currentTimeMillis()),
             BigInteger.valueOf(System.currentTimeMillis() + 360000L),

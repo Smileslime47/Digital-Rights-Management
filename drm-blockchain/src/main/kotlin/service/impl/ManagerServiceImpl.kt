@@ -11,7 +11,8 @@ import moe._47saikyo.service.ManagerService
 import org.web3j.tx.TransactionManager
 
 class ManagerServiceImpl : ManagerService {
-    override fun getRightByTitle(title: String): String {
+    @ViewFunction
+    override fun searchByTitle(title: String): List<String> {
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
@@ -20,9 +21,10 @@ class ManagerServiceImpl : ManagerService {
             BlockChain.gasProvider
         )
 
-        return manager.getRightByTitle(title).send().toString()
+        return manager.searchByTitle(title).send()?.map { it.toString() } ?: emptyList()
     }
 
+    @ViewFunction
     override fun getRightByRegistrationNumber(registrationNumber: String): String {
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -35,6 +37,7 @@ class ManagerServiceImpl : ManagerService {
         return manager.getRightByRegistrationNumber(registrationNumber).send().toString()
     }
 
+    @ViewFunction
     override fun getRightByFileHash(fileHash: String): String {
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -47,6 +50,7 @@ class ManagerServiceImpl : ManagerService {
         return manager.getRightByFileHash(fileHash).send().toString()
     }
 
+    @ViewFunction
     override fun canInsertRight(rightDeployForm: RightDeployForm): Boolean {
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -57,7 +61,6 @@ class ManagerServiceImpl : ManagerService {
         )
 
         return manager.canInsertRight(
-            rightDeployForm.title,
             rightDeployForm.registrationNumber,
             rightDeployForm.fileHash
         ).send()

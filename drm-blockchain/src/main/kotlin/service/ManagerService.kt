@@ -19,16 +19,20 @@ import java.math.BigInteger
         ManagerService的相关操作应当被封装在RightService及LicenseService中
         """)
 interface ManagerService {
+    //------------------------------以下为搜索的相关操作------------------------------//
+
     /**
-     * 通过标题获取版权合约地址
+     * 通过版权标题搜索版权合约地址
      *
      * @param title 版权标题
-     * @return 版权合约地址
+     * @return 版权合约地址列表
      */
     @ViewFunction
-    fun getRightByTitle(
+    fun searchByTitle(
         title: String
-    ): String
+    ): List<String>
+
+    //------------------------------以下为根据特殊键的相关操作------------------------------//
 
     /**
      * 通过注册号获取版权合约地址
@@ -62,6 +66,8 @@ interface ManagerService {
     fun canInsertRight(
         rightDeployForm: RightDeployForm
     ): Boolean
+
+    //------------------------------以下为以地址为基础的CRUD操作------------------------------//
 
     /**
      * 添加版权合约
