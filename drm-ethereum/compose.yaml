@@ -14,15 +14,12 @@ services:
       - ./ethereum/boot:/root/drm-ethereum
     ports:
       - '30303:30303'
-    networks:
-      priv-ethereum-net:
     command:
       --datadir="/root/drm-ethereum"
       --nodekeyhex="aa2cd35ec09e9c85f28fa5655fb5fa5f07b7d4fd30eff152cdd5b345220637d5"
       --networkid=721
       --nodiscover
       --ipcdisable
-      --netrestrict="172.21.0.0/16"
   ethereum_node_0:
     image: drm-ethereum:1.0.4
     container_name: ethereum_node_0
@@ -32,8 +29,6 @@ services:
       - '8546:8545'
     depends_on:
         - ethereum_boot_node
-    networks:
-      priv-ethereum-net:
     command:
        --datadir="/root/drm-ethereum"
        --bootnodes="enode://d184b2ed048e114ab581175964eb19dff717f540dc203dabe807a1f46c9220b7d495e675184bfd665b96e17c121cc45ccd7b20d195842aff1fca9df6e8b66282@ethereum_boot_node:30303"
@@ -45,8 +40,7 @@ services:
        --http.vhosts="*"
        --mine
        --miner.threads=2
-       --miner.etherbase="0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe"
-       --netrestrict="172.21.0.0/16"
+       --miner.etherbase="0x4db3443fc610477a5260c350254c9003b63e0673"
   ethereum_node_1:
     image: drm-ethereum:1.0.4
     container_name: ethereum_node_1
@@ -56,8 +50,6 @@ services:
       - '8547:8545'
     depends_on:
       - ethereum_boot_node
-    networks:
-      priv-ethereum-net:
     command:
       --datadir="/root/drm-ethereum"
       --bootnodes="enode://d184b2ed048e114ab581175964eb19dff717f540dc203dabe807a1f46c9220b7d495e675184bfd665b96e17c121cc45ccd7b20d195842aff1fca9df6e8b66282@ethereum_boot_node:30303"
@@ -69,11 +61,4 @@ services:
       --http.vhosts="*"
       --mine
       --miner.threads=2
-      --miner.etherbase="0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe"
-      --netrestrict="172.21.0.0/16"
-networks:
-  priv-ethereum-net:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.21.0.0/16
+      --miner.etherbase="0x4db3443fc610477a5260c350254c9003b63e0673"
