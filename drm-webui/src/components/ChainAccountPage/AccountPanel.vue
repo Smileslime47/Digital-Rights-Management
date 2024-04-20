@@ -3,6 +3,7 @@ import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
 import {ElMessage} from "element-plus";
 import routeTo from "~/route/routeTo.ts";
+import TemplatePage from "~/pages/TemplatePage.vue";
 
 defineProps<{
   addr: String | null,
@@ -28,17 +29,19 @@ const confirmCharge = () => {
 </script>
 
 <template>
-  <h1>链上账户管理</h1>
-  <el-descriptions>
-    <el-descriptions-item label="区块链地址">{{ addr }}</el-descriptions-item>
-    <el-descriptions-item label="账户余额">{{ balance }} ETH</el-descriptions-item>
-    <el-descriptions-item label="充值">
-      <el-space>
-        <el-input v-model="chargeValue" style="width: 240px" placeholder="Please input">
-          <template #append>ETH</template>
-        </el-input>
-        <el-button text bg type="primary" @click="confirmCharge">确认</el-button>
-      </el-space>
-    </el-descriptions-item>
-  </el-descriptions>
+  <el-card>
+    <h1>链上账户管理</h1>
+    <el-descriptions>
+      <el-descriptions-item label="区块链地址">{{ addr }}</el-descriptions-item>
+      <el-descriptions-item label="账户余额">{{ balance }} ETH</el-descriptions-item>
+      <el-descriptions-item label="充值">
+        <el-space>
+          <el-input v-model="chargeValue" style="width: 240px" placeholder="Please input">
+            <template #append>ETH</template>
+          </el-input>
+          <el-button text bg type="primary" @click="confirmCharge">确认</el-button>
+        </el-space>
+      </el-descriptions-item>
+    </el-descriptions>
+  </el-card>
 </template>

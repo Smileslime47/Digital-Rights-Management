@@ -65,6 +65,8 @@ declare module 'vue' {
     GroupPanel: typeof import('./components/ProfilePage/GroupPanel.vue')['default']
     HeroPanel: typeof import('./components/LoginPage/HeroPanel.vue')['default']
     Icon: typeof import('./components/Icon.vue')['default']
+    IpfsPanel: typeof import('./components/ChainRightPage/IpfsPanel.vue')['default']
+    LicensePanel: typeof import('./components/ChainRightPage/LicensePanel.vue')['default']
     Login: typeof import('./components/Login.vue')['default']
     LoginPage: typeof import('./components/LoginPage.vue')['default']
     LoginPanel: typeof import('./components/LoginPage/LoginPanel.vue')['default']
@@ -72,9 +74,11 @@ declare module 'vue' {
     PendingPanel: typeof import('./components/ChainAccountPage/PendingPanel.vue')['default']
     ProfilePanel: typeof import('./components/ProfilePage/ProfilePanel.vue')['default']
     RegisterPanel: typeof import('./components/LoginPage/RegisterPanel.vue')['default']
+    RightPanel: typeof import('./components/ChainRightPage/RightPanel.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SideNavBar: typeof import('./components/navigation/SideNavBar.vue')['default']
+    SmoothPanel: typeof import('./components/SmoothPanel.vue')['default']
     TopNavBar: typeof import('./components/navigation/TopNavBar.vue')['default']
   }
   export interface ComponentCustomProperties {

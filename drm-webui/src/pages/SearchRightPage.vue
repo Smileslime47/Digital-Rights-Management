@@ -6,18 +6,21 @@ import {httpService} from "~/server/http.ts";
 import Right from "~/modules/Right.ts";
 import {Search} from "@element-plus/icons-vue";
 import routeTo from "~/route/routeTo.ts";
+import TokenUtils from "~/server/TokenUtils.ts";
 
 const initialized = ref(false)
 const searchContent = ref("")
 const chainRights = ref<Right[]>([])
 
-fresh((route) => {
+fresh(async (route) => {
+  let caller = await TokenUtils.getChainAddress(useRoute().path)
   searchContent.value = <string>route.params.title
   httpService.get(
       Constant.Api.CHAIN.RIGHT.SEARCH,
       {
         params: {
           title: searchContent.value,
+          caller: caller
         }
       }
   ).then((data) => {
@@ -51,7 +54,9 @@ fresh((route) => {
             <br/>
             <span>版权登记号：{{ right.registrationNumber }}</span>
             <br/>
-            <span>版权有效期：{{ new Date(right.issueTime).toLocaleDateString() }} - {{ new Date(right.expireTime).toLocaleDateString() }}</span>
+            <span>版权有效期：{{
+                new Date(right.issueTime).toLocaleDateString()
+              }} - {{ new Date(right.expireTime).toLocaleDateString() }}</span>
           </template>
         </el-card>
       </el-space>

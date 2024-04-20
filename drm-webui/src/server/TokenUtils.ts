@@ -102,8 +102,10 @@ class TokenUtils {
         await this.checkCache(routeNow)
         if (this.initialized)
             return this.chainAddress
-        else
+        else{
+            ElMessage.error("请先申请区块链账户。")
             return null
+        }
     }
 }
 

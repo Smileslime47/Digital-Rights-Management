@@ -1,0 +1,90 @@
+<script setup lang="ts">
+import RightData from "~/modules/RightData.ts";
+import IpfsResponseBody from "~/modules/IpfsResponseBody.ts";
+import PendingRight from "~/modules/PendingRight.ts";
+import {httpService} from "~/server/http.ts";
+import Constant from "~/constant/Constant.ts";
+
+const props = defineProps<{
+  right: RightData,
+}>()
+
+const form = reactive({
+  title: "",
+  owner: "",
+  registrationNumber: "",
+  availableTime: [0, 0],
+  description: ""
+})
+
+
+const onUploadSuccess = (response) => {
+  //提取Ipfs文件信息
+  let ipfsResponseBody = response.data as IpfsResponseBody
+
+  //生成合约部署表单
+  let pendingRight = new PendingRight(
+      0,
+      form.title,
+      form.owner,
+      form.registrationNumber,
+      form.availableTime[0],
+      form.availableTime[1],
+      form.description,
+      ipfsResponseBody.name,
+      ipfsResponseBody.hash,
+      "PENDING",
+  )
+
+  //发送合约部署审核请求
+  httpService.post(
+      Constant.Api.PENDING_RIGHT.ROOT,
+      pendingRight
+  ).then((data) => {
+    let success = data[Constant.RespondField.SUCCESS]
+    if (success) {
+      ElMessage.success("提交成功！")
+    } else {
+      ElMessage.error("提交失败！")
+    }
+  })
+}
+
+</script>
+
+<template>
+  <TemplatePage side="true">
+    <h1>版权资源上传</h1>
+    <el-row>
+      <el-col :span="12">
+        <el-form :model="form" label-width="80px">
+          <el-form-item label="版权名称">
+            <el-input v-model="form.title"></el-input>
+          </el-form-item>
+          <el-form-item label="所有人">
+            <el-input v-model="form.owner"></el-input>
+          </el-form-item>
+          <el-form-item label="登记号">
+            <el-input v-model="form.registrationNumber"></el-input>
+          </el-form-item>
+          <el-form-item label="有效时间">
+            <el-date-picker
+                v-model="form.availableTime"
+                range-separator="至"
+                start-placeholder="发行日期"
+                end-placeholder="到期日期"
+                type="daterange"
+                value-format="x"
+            />
+          </el-form-item>
+          <el-form-item label="版权描述">
+            <el-input autosize type="textarea" v-model="form.description"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="confirmCreate">提交</el-button>
+          </el-form-item>
+        </el-form>
+      </el-col>
+    </el-row>
+  </TemplatePage>
+</template>

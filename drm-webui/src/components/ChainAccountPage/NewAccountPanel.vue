@@ -28,16 +28,18 @@ const confirmCreate = () => {
 </script>
 
 <template>
-  <h1>创建新的链上账户</h1>
-  <el-form label-width="auto" :model="passwordForm">
-    <el-form-item label="密码">
-      <el-input show-password v-model="passwordForm.password"/>
-    </el-form-item>
-    <el-form-item label="确认密码">
-      <el-input show-password v-model="passwordForm.confirmPassword"/>
-    </el-form-item>
-    <el-form-item>
-      <el-button text bg type="primary" @click="confirmCreate">确认</el-button>
-    </el-form-item>
-  </el-form>
+  <el-card>
+    <h1>创建新的链上账户</h1>
+    <el-form label-width="auto" :model="passwordForm">
+      <el-form-item label="密码">
+        <el-input show-password v-model="passwordForm.password"/>
+      </el-form-item>
+      <el-form-item label="确认密码">
+        <el-input show-password v-model="passwordForm.confirmPassword"/>
+      </el-form-item>
+      <el-form-item>
+        <el-button text bg type="primary" @click="confirmCreate">确认</el-button>
+      </el-form-item>
+    </el-form>
+  </el-card>
 </template>

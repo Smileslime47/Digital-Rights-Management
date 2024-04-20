@@ -22,6 +22,7 @@ const routeTo = {
     chainVerify: (page: String) => loadAndTo("/chain/verify/" + page),
     createRight: () => loadAndTo("/chain/right/create"),
     chainRight: (addr: String) => loadAndTo("/chain/right/" + addr),
+    createLicense: (right: String) => loadAndTo("/chain/license/create/" + right),
     searchRight: (title: String) => loadAndTo("/search/right/" + title),
     fresh: () => router.go(0)
 }
