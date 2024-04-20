@@ -14,12 +14,16 @@ contract License {
     address private addr;
     //版权地址
     address private right;
-    //授权所有者
-    address private owner;
+    //版权部署者
+    address private deployer;
+    //版权所有者
+    string private owner;
     //授权时间
     uint64 private issueTime;
     //过期时间
     uint64 private expireTime;
+    //授权描述
+    string private description;
 
     /**
      * 构造器
@@ -28,12 +32,14 @@ contract License {
      * @param _issueTime 授权时间
      * @param _expireTime 过期时间
      */
-    constructor(address _right, uint64 _issueTime, uint64 _expireTime) {
+    constructor(address _right, string memory _owner, uint64 _issueTime, uint64 _expireTime, string memory _description) {
         right = _right;
+        owner = _owner;
         issueTime = _issueTime;
         expireTime = _expireTime;
+        description = description;
 
-        owner = msg.sender;
+        deployer = msg.sender;
         addr = address(this);
     }
 
@@ -56,9 +62,11 @@ contract License {
 
         result = string(abi.encodePacked(result, "\"addr\":\"", addr2str(addr), "\","));
         result = string(abi.encodePacked(result, "\"right\":\"", addr2str(right), "\","));
-        result = string(abi.encodePacked(result, "\"owner\":\"", addr2str(owner), "\","));
+        result = string(abi.encodePacked(result, "\"deployer\":\"", addr2str(deployer), "\","));
+        result = string(abi.encodePacked(result, "\"owner\":\"", owner, "\","));
         result = string(abi.encodePacked(result, "\"issueTime\":\"", uint2str(issueTime), "\","));
         result = string(abi.encodePacked(result, "\"expireTime\":\"", uint2str(expireTime), "\","));
+        result = string(abi.encodePacked(result, "\"description\":\"", description, "\""));
 
         result = string(abi.encodePacked(result, "}"));
         return result;

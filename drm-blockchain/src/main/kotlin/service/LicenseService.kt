@@ -16,10 +16,14 @@ interface LicenseService {
     /**
      * 估算部署合约所需的gas
      *
+     * @param callerAddr 调用者地址
      * @param form 授权部署表单
      * @return 估算的gas
      */
-    fun estimateDeploy(form: LicenseDeployForm): BigInteger
+    fun estimateDeploy(
+        callerAddr: String,
+        form: LicenseDeployForm
+    ): BigInteger
 
     /**
      * 添加授权合约
@@ -36,11 +40,13 @@ interface LicenseService {
     /**
      * 获取授权合约的纯数据对象
      *
+     * @param callerAddr 调用者地址
      * @param licenseAddr 授权合约地址
      * @return 纯数据对象
      */
     @ViewFunction
     fun getPureData(
+        callerAddr: String,
         licenseAddr: String
     ): LicenseData
 

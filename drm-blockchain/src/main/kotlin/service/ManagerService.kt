@@ -29,6 +29,7 @@ interface ManagerService {
      */
     @ViewFunction
     fun searchByTitle(
+        callerAddr:String,
         title: String
     ): List<String>
 
@@ -42,6 +43,7 @@ interface ManagerService {
      */
     @ViewFunction
     fun getRightByRegistrationNumber(
+        callerAddr:String,
         registrationNumber: String
     ): String
 
@@ -53,6 +55,7 @@ interface ManagerService {
      */
     @ViewFunction
     fun getRightByFileHash(
+        callerAddr:String,
         fileHash: String
     ): String
 
@@ -64,6 +67,7 @@ interface ManagerService {
      */
     @ViewFunction
     fun canInsertRight(
+        callerAddr:String,
         rightDeployForm: RightDeployForm
     ): Boolean
 

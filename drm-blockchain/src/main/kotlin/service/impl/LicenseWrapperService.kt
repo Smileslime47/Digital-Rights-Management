@@ -1,29 +1,33 @@
 package moe._47saikyo.service.impl
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import moe._47saikyo.*
+import moe._47saikyo.BlockChain
+import moe._47saikyo.Estimate
+import moe._47saikyo.address
+import moe._47saikyo.annotation.TxManagerPlaceholder
 import moe._47saikyo.annotation.ViewFunction
 import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.contract.License
+import moe._47saikyo.contract.Right
 import moe._47saikyo.models.LicenseData
 import moe._47saikyo.models.LicenseDeployForm
+import moe._47saikyo.models.RightData
 import moe._47saikyo.service.LicenseService
 import moe._47saikyo.service.ManagerService
-import moe._47saikyo.service.RightService
+import moe._47saikyo.uint64
 import org.koin.java.KoinJavaComponent
 import org.web3j.abi.FunctionEncoder
-import org.web3j.abi.FunctionReturnDecoder
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Function
-import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
-class LicenseServiceImpl: LicenseService {
-    private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
-    private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
-    private val logger = org.slf4j.LoggerFactory.getLogger(LicenseServiceImpl::class.java)
+/**
+ * 基于Wrapper的LicenseService实现
+ *
+ * @author 刘一邦
+ */
+@Deprecated("Use LicenseWrapperService instead,maintenance only.")
+class LicenseWrapperService : LicenseService {
+    private val managerService: ManagerService by KoinJavaComponent.inject(LicenseWrapperService::class.java)
 
     override fun estimateDeploy(
         callerAddr: String,
@@ -34,10 +38,8 @@ class LicenseServiceImpl: LicenseService {
         val encodedConstructor = FunctionEncoder.encodeConstructor(
             listOf(
                 address(form.right),
-                string(form.owner),
                 uint64(form.issueTime),
                 uint64(form.expireTime),
-                string(form.description)
             )
         )
 
@@ -59,9 +61,16 @@ class LicenseServiceImpl: LicenseService {
             form.issueTime,
             form.expireTime,
             form.description
-        ).sendAsync().get()
+        ).send()
 
-        rightService.addLicense(transactionManager,form.right,license.contractAddress)
+        val right = Right.load(
+            form.right,
+            BlockChain.web3jInstance,
+            transactionManager,
+            BlockChain.gasProvider
+        )
+
+        right.addLicense(license.contractAddress).send()
         managerService.addLicense(transactionManager, license)
 
         return license
@@ -73,27 +82,18 @@ class LicenseServiceImpl: LicenseService {
         licenseAddr: String
     ): LicenseData {
         //创建函数调用交易
-        val function = Function("serialize", emptyList(), listOf(TypeReference.create(string::class.java)))
-        val transaction = Transaction.createEthCallTransaction(
-            callerAddr,
+        val license = License.load(
             licenseAddr,
-            FunctionEncoder.encode(function)
+            BlockChain.web3jInstance,
+            @TxManagerPlaceholder
+            BlockChain.bankTxManager,
+            BlockChain.gasProvider
         )
-
-        //发送交易并获取结果
-        val result = BlockChain.web3jInstance!!.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get().value
-
-        //获取函数返回值
-        val json = FunctionReturnDecoder.decode(result, function.outputParameters)[0].value as String
-
-        //解析json并返回
-        return jacksonObjectMapper().readerFor(LicenseData::class.java).readValue(json)
+        val json = license.serialize().send()
+        return jacksonObjectMapper().readerFor(RightData::class.java).readValue(json)
     }
 
     @ViewFunction
-    override fun getLicenses(owner: String): List<LicenseData> {
-        val addrs = managerService.getLicenses(owner)
-        logger.info("getLicenses[$addrs]")
-        return addrs.map { getPureData(owner, it) }
-    }
+    override fun getLicenses(owner: String): List<LicenseData> =
+        managerService.getLicenses(owner).map { getPureData(owner, it) }
 }

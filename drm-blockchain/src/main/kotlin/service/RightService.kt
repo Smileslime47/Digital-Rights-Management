@@ -20,7 +20,10 @@ interface RightService {
      * @return 版权合约地址列表
      */
     @ViewFunction
-    fun searchByTitle(title: String): List<String>
+    fun searchByTitle(
+        callerAddr: String,
+        title: String
+    ): List<String>
 
     /**
      * 估算部署合约所需的gas
@@ -28,7 +31,10 @@ interface RightService {
      * @param form 版权部署表单
      * @return 估算的gas
      */
-    fun estimateDeploy(form: RightDeployForm): BigInteger
+    fun estimateDeploy(
+        callerAddr: String,
+        form: RightDeployForm
+    ): BigInteger
 
     /**
      * 添加版权合约
@@ -43,13 +49,30 @@ interface RightService {
     ): Right
 
     /**
+     * 添加授权
+     *
+     * @param transactionManager 交易管理器
+     * @param rightAddr 版权合约地址
+     * @param licenseAddr 授权合约地址
+     * @return 版权合约
+     */
+    fun addLicense(
+        transactionManager: TransactionManager,
+        rightAddr: String,
+        licenseAddr: String
+    )
+
+    /**
      * 获取版权合约的纯数据对象
      *
      * @param rightAddr 版权合约地址
      * @return 纯数据对象
      */
     @ViewFunction
-    fun getPureData(rightAddr: String): RightData
+    fun getPureData(
+        callerAddr: String,
+        rightAddr: String
+    ): RightData
 
     /**
      * 获取用户的版权
@@ -58,5 +81,7 @@ interface RightService {
      * @return 版权合约列表
      */
     @ViewFunction
-    fun getRights(owner:String): List<RightData>
+    fun getRights(
+        owner: String
+    ): List<RightData>
 }

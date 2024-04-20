@@ -1,30 +1,30 @@
 package moe._47saikyo.service.impl
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import moe._47saikyo.*
+import moe._47saikyo.BlockChain
+import moe._47saikyo.Estimate
 import moe._47saikyo.annotation.TxManagerPlaceholder
-import moe._47saikyo.annotation.ViewFunction
 import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.contract.Right
 import moe._47saikyo.models.RightData
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.ManagerService
 import moe._47saikyo.service.RightService
-import org.koin.java.KoinJavaComponent.inject
+import moe._47saikyo.string
+import moe._47saikyo.uint64
+import org.koin.java.KoinJavaComponent
 import org.web3j.abi.FunctionEncoder
-import org.web3j.abi.FunctionReturnDecoder
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Function
-import org.web3j.crypto.TransactionEncoder
-import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.TransactionManager
-import org.web3j.utils.Numeric
 import java.math.BigInteger
 
-
-class RightServiceImpl : RightService {
-    private val managerService: ManagerService by inject(ManagerService::class.java)
+/**
+ * 基于Wrapper的RightService实现
+ *
+ * @author 刘一邦
+ */
+@Deprecated("Use RightServiceImpl instead, maintenance only.")
+class RightWrapperService : RightService {
+    private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
     private val logger = org.slf4j.LoggerFactory.getLogger(RightServiceImpl::class.java)
 
     override fun searchByTitle(
@@ -32,7 +32,6 @@ class RightServiceImpl : RightService {
         title: String
     ): List<String> =
         managerService.searchByTitle(callerAddr, title)
-
 
     override fun estimateDeploy(
         callerAddr: String,
@@ -73,7 +72,7 @@ class RightServiceImpl : RightService {
             form.description,
             form.fileName,
             form.fileHash
-        ).sendAsync().get()
+        ).send()
 
         managerService.addRight(transactionManager, right)
 
@@ -95,30 +94,23 @@ class RightServiceImpl : RightService {
         right.addLicense(licenseAddr).sendAsync()
     }
 
-    @ViewFunction
     override fun getPureData(
         callerAddr: String,
         rightAddr: String
     ): RightData {
-        //创建函数调用交易
-        val function = Function("serialize", emptyList(), listOf(TypeReference.create(string::class.java)))
-        val transaction = Transaction.createEthCallTransaction(
-            callerAddr,
+        logger.info("getPureData[$rightAddr]")
+        val right = Right.load(
             rightAddr,
-            FunctionEncoder.encode(function)
+            BlockChain.web3jInstance,
+            @TxManagerPlaceholder
+            BlockChain.bankTxManager,
+            BlockChain.gasProvider
         )
-
-        //发送交易并获取结果
-        val result = BlockChain.web3jInstance!!.ethCall(transaction, DefaultBlockParameterName.LATEST).sendAsync().get().value
-
-        //获取函数返回值
-        val json = FunctionReturnDecoder.decode(result, function.outputParameters)[0].value as String
-
-        //解析json并返回
+        val json = right.serialize().send()
+        logger.info("getPureData[$json]")
         return jacksonObjectMapper().readerFor(RightData::class.java).readValue(json)
     }
 
-    @ViewFunction
     override fun getRights(owner: String): List<RightData> {
         val addrs = managerService.getRights(owner)
         logger.info("getRights[$addrs]")

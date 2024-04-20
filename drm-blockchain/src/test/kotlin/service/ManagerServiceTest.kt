@@ -26,22 +26,26 @@ class ManagerServiceTest {
             modules(KoinBlockChainConfiguration.module)
         }
 
-        BlockChain.connect(
-            BlockChainConfigurationBuilder()
-                .withChain("http://192.168.10.108:8545", 721)
-                .withBankWallet(
-                    "/home/smile_slime_47/Projekt/Digital-Rights-Management/drm-blockchain/src/test/resources/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json",
-                    "1234567890"
-                )
-                .withManager("0xef563dee888cb304dd660b9f6e6b261f1a2295d2")
-                .build()
-        )
+        BlockChainTest.init()
+    }
+
+    @Test
+    fun testSearchRights() {
+        val rights = managerService.searchByTitle("0x4db3443fc610477a5260c350254c9003b63e0673","Te").toString()
+        logger.info("rights: $rights")
+    }
+
+    @Test
+    fun testGetRights() {
+        val rights = managerService.getRights("0x31e582af2d0baeaa563a908eca1af273caeb7c0e")
+        logger.info("rights: $rights")
     }
 
     @Test
     fun testAddGas() {
         assert(
             Estimate.estimateCall(
+                "0x4db3443fc610477a5260c350254c9003b63e0673",
                 "0xb65881ac2417778c8495128892d900e1a9fd19d1",
                 "addRight",
                 listOf(

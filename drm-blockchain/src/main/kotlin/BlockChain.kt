@@ -122,6 +122,6 @@ object BlockChain {
             walletAddress, DefaultBlockParameterName.LATEST
         ).sendAsync().get()
 
-        return ethGetTransactionCount.transactionCount
+        return ethGetTransactionCount.transactionCount.add(BigInteger.valueOf(1L))
     }
 }

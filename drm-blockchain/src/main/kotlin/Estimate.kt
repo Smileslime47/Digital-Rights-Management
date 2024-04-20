@@ -17,15 +17,16 @@ object Estimate {
      * 基于银行账户估算部署合约所需的gas
      * 由于合约部署消耗的gas只取决于合约的二进制代码，因此只需要提供合约的二进制代码即可
      *
+     * @param callerAddr 部署者地址
      * @param binCode 合约二进制代码[+构造器二进制代码]
      * @return 估算的gas,单位为wei
      *
      * @see [FunctionEncoder.encodeConstructor]
      */
-    fun estimateDeploy(binCode: String): BigInteger {
+    fun estimateDeploy(callerAddr: String, binCode: String): BigInteger {
         val transaction = Transaction.createContractTransaction(
-            BlockChain.bankAddress,
-            BlockChain.getNextNonce(BlockChain.bankAddress!!),
+            callerAddr,
+            BlockChain.getNextNonce(callerAddr),
             BlockChain.gasProvider.gasPrice,
             BlockChain.gasProvider.gasLimit,
             BigInteger.valueOf(0x0),
@@ -40,6 +41,7 @@ object Estimate {
      * 基于银行账户估算调用合约函数所需的gas
      * 由于合约函数调用消耗的gas只取决于函数的参数，因此只需要提供合约地址、函数名、参数和参数类型即可
      *
+     * @param callerAddr 调用者地址
      * @param contractAddress 合约地址
      * @param functionName 函数名
      * @param params 函数参数
@@ -48,11 +50,11 @@ object Estimate {
      *
      * @see [FunctionEncoder.encode]
      */
-    fun estimateCall(contractAddress: String, functionName: String, params: List<Type<*>>, paramTypes: List<TypeReference<*>>): BigInteger {
+    fun estimateCall(callerAddr: String, contractAddress: String, functionName: String, params: List<Type<*>>, paramTypes: List<TypeReference<*>>): BigInteger {
         val function = Function(functionName, params, paramTypes)
         val transaction = Transaction.createFunctionCallTransaction(
-            BlockChain.bankAddress,
-            BlockChain.getNextNonce(BlockChain.bankAddress!!),
+            callerAddr,
+            BlockChain.getNextNonce(callerAddr),
             BlockChain.gasProvider.gasPrice,
             BlockChain.gasProvider.gasLimit,
             contractAddress,

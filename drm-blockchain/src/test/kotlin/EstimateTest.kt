@@ -28,16 +28,7 @@ class EstimateTest {
      */
     @BeforeTest
     fun setUp() {
-        BlockChain.connect(
-            BlockChainConfigurationBuilder()
-                .withChain("http://localhost:8545", 721)
-                .withBankWallet(
-                    "/home/smile_slime_47/Projekt/Digital-Rights-Management/drm-blockchain/src/test/resources/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json",
-                    "1234567890"
-                )
-                .withManager("0x9c2cb0dc39e31484991efc461a9feab8ce0baf61")
-                .build()
-        )
+        BlockChainTest.init()
     }
 
     /**
@@ -98,7 +89,7 @@ class EstimateTest {
         )
 
         logger.info(
-            (Estimate.estimateDeploy("$binCode$encodedConstructor").toLong() * BlockChain.gasProvider.gasPrice.toLong()).toString()
+            (Estimate.estimateDeploy(BlockChain.bankAddress!!,"$binCode$encodedConstructor").toLong() * BlockChain.gasProvider.gasPrice.toLong()).toString()
         )
     }
 
@@ -109,13 +100,14 @@ class EstimateTest {
     fun testEstimateCall() {
         logger.info(
             (Estimate.estimateCall(
+                BlockChain.bankAddress!!,
                 "0xfe5078c71a0fc05ab17429472fb2b310612706e5",
                 "addRight",
                 listOf(
                     address(BlockChainConstant.ADDRESS_PLACEHOLDER)
                 ),
                 listOf(
-                    TypeReference.makeTypeReference(BlockChainConstant.SolidityType.ADDRESS)
+                    TypeReference.create(address::class.java)
                 )
             ).toLong() * BlockChain.gasProvider.gasPrice.toLong()).toString()
         )
@@ -128,13 +120,10 @@ class EstimateTest {
     fun testViewFunctionCall() {
         val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
-        val function = Function("serialize", emptyList(), listOf(TypeReference.makeTypeReference("string")))
-        val transaction = Transaction.createFunctionCallTransaction(
+        val function = Function("serialize", emptyList(), listOf(TypeReference.create(string::class.java)))
+        val transaction = Transaction.createEthCallTransaction(
             BlockChain.bankAddress,
-            BlockChain.getNextNonce(BlockChain.bankAddress!!),
-            BlockChain.gasProvider.gasPrice,
-            BlockChain.gasProvider.gasLimit,
-            "0xc190cb0662ae5a22f944557b2c0063cbcc6091ee",
+            "0x17ee7ffa7f79a43b51dc7e01ef924b0f541fdfeb",
             FunctionEncoder.encode(function)
         )
         val estimateCost =  BlockChain.web3jInstance!!.ethEstimateGas(transaction).send().amountUsed.toLong() * BlockChain.gasProvider.gasPrice.toLong()
