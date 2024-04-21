@@ -3,7 +3,22 @@ ktor:
     port: 8080
   application:
     modules:
-      - moe._47saikyo.ApplicationKt.modules
+      # 配置数据库
+      - moe._47saikyo.drm.backend.configuration.exposed.DatabaseConfigurationKt.configureDataSource
+      # 配置Koin依赖注入
+      - moe._47saikyo.drm.backend.configuration.koin.KoinKt.configureKoin
+      # 配置鉴权模块
+      - moe._47saikyo.drm.backend.configuration.security.SecurityKt.configureSecurity
+      # 配置区块链接口
+      - moe._47saikyo.drm.backend.configuration.BlockChainKt.configureBlockChain
+      # 配置HTTP策略
+      - moe._47saikyo.drm.backend.configuration.HTTPKt.configureHTTP
+      # 配置IPFS接口
+      - moe._47saikyo.drm.backend.configuration.IpfsKt.configureIpfs
+      # 配置序列化插件
+      - moe._47saikyo.drm.backend.configuration.SerializationKt.configureSerialization
+      # 启用全部Controller路由
+      - moe._47saikyo.drm.backend.ApplicationKt.enableAllControllers
 
 exposed:
   datasource:

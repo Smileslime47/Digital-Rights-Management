@@ -13,16 +13,16 @@ web3j generate solidity \
     -b ./solidity-build/DRManager.bin \
     -a ./solidity-build/DRManager.abi \
     -o $project_path \
-    -p moe._47saikyo.contract
+    -p moe._47saikyo.drm.blockchain.contract
 
 web3j generate solidity \
--b ./solidity-build/Right.bin \
--a ./solidity-build/Right.abi \
--o $project_path \
--p moe._47saikyo.contract
+    -b ./solidity-build/Right.bin \
+    -a ./solidity-build/Right.abi \
+    -o $project_path \
+    -p moe._47saikyo.drm.blockchain.contract
 
 web3j generate solidity \
--b ./solidity-build/License.bin \
--a ./solidity-build/License.abi \
--o $project_path \
--p moe._47saikyo.contract
+    -b ./solidity-build/License.bin \
+    -a ./solidity-build/License.abi \
+    -o $project_path \
+    -p moe._47saikyo.drm.blockchain.contract
