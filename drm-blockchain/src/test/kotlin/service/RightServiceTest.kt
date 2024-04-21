@@ -77,7 +77,7 @@ class RightServiceTest {
 
     @Test
     fun getPureDataTest() {
-        logger.info(rightService.getPureData(BlockChain.bankAddress!!,"0x821a55a89c6e515764c61f44377488f4b7db68e2").toString())
+        logger.info(rightService.getPureData("0x31e582af2d0baeaa563a908eca1af273caeb7c0e","0x821a55a89c6e515764c61f44377488f4b7db68e2").toString())
     }
 
     @Test

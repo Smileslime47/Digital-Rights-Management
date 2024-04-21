@@ -12,8 +12,10 @@ import "./Right.sol";
 contract License {
     //合约地址
     address private addr;
+    //版权标题
+    string private rightTitle;
     //版权地址
-    address private right;
+    address private rightAddr;
     //版权部署者
     address private deployer;
     //版权所有者
@@ -28,12 +30,16 @@ contract License {
     /**
      * 构造器
      *
-     * @param _right 版权地址
+     * @param _rightTitle 版权标题
+     * @param _rightAddr 版权地址
+     * @param _owner 版权所有者
      * @param _issueTime 授权时间
      * @param _expireTime 过期时间
+     * @param _description 授权描述
      */
-    constructor(address _right, string memory _owner, uint64 _issueTime, uint64 _expireTime, string memory _description) {
-        right = _right;
+    constructor(string memory _rightTitle, address _rightAddr, string memory _owner, uint64 _issueTime, uint64 _expireTime, string memory _description) {
+        rightTitle = _rightTitle;
+        rightAddr = _rightAddr;
         owner = _owner;
         issueTime = _issueTime;
         expireTime = _expireTime;
@@ -61,7 +67,8 @@ contract License {
         string memory result = "{";
 
         result = string(abi.encodePacked(result, "\"addr\":\"", addr2str(addr), "\","));
-        result = string(abi.encodePacked(result, "\"right\":\"", addr2str(right), "\","));
+        result = string(abi.encodePacked(result, "\"rightTitle\":\"", rightTitle, "\","));
+        result = string(abi.encodePacked(result, "\"rightAddr\":\"", addr2str(rightAddr), "\","));
         result = string(abi.encodePacked(result, "\"deployer\":\"", addr2str(deployer), "\","));
         result = string(abi.encodePacked(result, "\"owner\":\"", owner, "\","));
         result = string(abi.encodePacked(result, "\"issueTime\":\"", uint2str(issueTime), "\","));

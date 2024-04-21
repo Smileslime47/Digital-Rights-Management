@@ -1,9 +1,7 @@
 package moe._47saikyo.service.impl
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import moe._47saikyo.BlockChain
-import moe._47saikyo.Estimate
-import moe._47saikyo.address
+import moe._47saikyo.*
 import moe._47saikyo.annotation.TxManagerPlaceholder
 import moe._47saikyo.annotation.ViewFunction
 import moe._47saikyo.constant.BlockChainConstant
@@ -14,7 +12,7 @@ import moe._47saikyo.models.LicenseDeployForm
 import moe._47saikyo.models.RightData
 import moe._47saikyo.service.LicenseService
 import moe._47saikyo.service.ManagerService
-import moe._47saikyo.uint64
+import moe._47saikyo.service.RightService
 import org.koin.java.KoinJavaComponent
 import org.web3j.abi.FunctionEncoder
 import org.web3j.tx.TransactionManager
@@ -28,6 +26,7 @@ import java.math.BigInteger
 @Deprecated("Use LicenseWrapperService instead,maintenance only.")
 class LicenseWrapperService : LicenseService {
     private val managerService: ManagerService by KoinJavaComponent.inject(LicenseWrapperService::class.java)
+    private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
 
     override fun estimateDeploy(
         callerAddr: String,
@@ -37,9 +36,12 @@ class LicenseWrapperService : LicenseService {
 
         val encodedConstructor = FunctionEncoder.encodeConstructor(
             listOf(
-                address(form.right),
+                string(form.rightTitle),
+                address(form.rightAddr),
+                string(form.owner),
                 uint64(form.issueTime),
                 uint64(form.expireTime),
+                string(form.description)
             )
         )
 
@@ -56,21 +58,15 @@ class LicenseWrapperService : LicenseService {
             BlockChain.web3jInstance,
             transactionManager,
             BlockChain.gasProvider,
-            form.right,
+            form.rightTitle,
+            form.rightAddr,
             form.owner,
             form.issueTime,
             form.expireTime,
             form.description
         ).send()
 
-        val right = Right.load(
-            form.right,
-            BlockChain.web3jInstance,
-            transactionManager,
-            BlockChain.gasProvider
-        )
-
-        right.addLicense(license.contractAddress).send()
+        rightService.addLicense(transactionManager,form.rightAddr,license.contractAddress)
         managerService.addLicense(transactionManager, license)
 
         return license

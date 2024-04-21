@@ -134,7 +134,7 @@ class ManagerServiceImpl : ManagerService {
             BlockChain.gasProvider
         )
 
-        return (manager.addRight(license.contractAddress).send() != null)
+        return (manager.addLicense(license.contractAddress).send() != null)
     }
 
     @ViewFunction

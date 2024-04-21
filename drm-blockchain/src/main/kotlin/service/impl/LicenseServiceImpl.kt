@@ -33,7 +33,8 @@ class LicenseServiceImpl: LicenseService {
 
         val encodedConstructor = FunctionEncoder.encodeConstructor(
             listOf(
-                address(form.right),
+                string(form.rightTitle),
+                address(form.rightAddr),
                 string(form.owner),
                 uint64(form.issueTime),
                 uint64(form.expireTime),
@@ -54,14 +55,15 @@ class LicenseServiceImpl: LicenseService {
             BlockChain.web3jInstance,
             transactionManager,
             BlockChain.gasProvider,
-            form.right,
+            form.rightTitle,
+            form.rightAddr,
             form.owner,
             form.issueTime,
             form.expireTime,
             form.description
         ).sendAsync().get()
 
-        rightService.addLicense(transactionManager,form.right,license.contractAddress)
+        rightService.addLicense(transactionManager,form.rightAddr,license.contractAddress)
         managerService.addLicense(transactionManager, license)
 
         return license

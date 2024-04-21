@@ -8,6 +8,7 @@ import moe._47saikyo.contract.Right
 import moe._47saikyo.models.LicenseDeployForm
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.AccountService
+import moe._47saikyo.service.ManagerService
 import moe._47saikyo.service.impl.AccountServiceImpl
 import moe._47saikyo.service.impl.LicenseServiceImpl
 import moe._47saikyo.service.impl.RightServiceImpl
@@ -27,6 +28,7 @@ import kotlin.test.Test
 class PreDeploy {
     private val logger = LoggerFactory.getLogger(PreDeploy::class.java)
     private val accountService: AccountService by inject(AccountService::class.java)
+    private val managerService: ManagerService by inject(ManagerService::class.java)
 
     /**
      * 初始化区块链连接
@@ -98,17 +100,20 @@ class PreDeploy {
     /**
      * 部署测试用授权合约
      *
-     * 上一次部署成功地址：0x9c2cb0dc39e31484991efc461a9feab8ce0baf61
+     * 上一次部署成功地址：0xb128cd53adf278888f72638fbb6ac1844af2ff0e
      */
     @Test
     fun deployLicense(){
         val form = LicenseDeployForm(
-             "0xc190cb0662ae5a22f944557b2c0063cbcc6091ee",
+             "TestAbc",
+            "0x821a55a89c6e515764c61f44377488f4b7db68e2",
+            "123",
             BigInteger.valueOf(System.currentTimeMillis()),
             BigInteger.valueOf(System.currentTimeMillis() + 360000L),
+            "TestLicenseDescription"
         )
 
-        val estimateCost = LicenseServiceImpl().estimateDeploy(form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
+        val estimateCost = LicenseServiceImpl().estimateDeploy(BlockChain.bankAddress!!,form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
 
         val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
@@ -116,14 +121,19 @@ class PreDeploy {
             BlockChain.web3jInstance,
             BlockChain.bankTxManager,
             BlockChain.gasProvider,
-            form.right,
+            form.rightTitle,
+            form.rightAddr,
+            form.owner,
             form.issueTime,
-            form.expireTime
+            form.expireTime,
+            form.description
         ).send()
+        managerService.addLicense(BlockChain.bankTxManager!!,license)
+
 
         val newBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
-        logger.info("Right deployed at ${license.contractAddress}.")
+        logger.info("License deployed at ${license.contractAddress}.")
         logger.info("cost ${oldBalance - newBalance} wei.")
         logger.info("estimate cost $estimateCost wei.")
     }

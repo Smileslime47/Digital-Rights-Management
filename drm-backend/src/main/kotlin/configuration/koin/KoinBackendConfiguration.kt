@@ -23,6 +23,8 @@ class KoinBackendConfiguration {
             single<GroupService> { GroupServiceImpl() }
             single<PendingRightDao> { PendingRightDaoImpl() }
             single<PendingRightService> { PendingRightServiceImpl() }
+            single<PendingLicenseDao> { PendingLicenseDaoImpl() }
+            single<PendingLicenseService> { PendingLicenseServiceImpl() }
             single<NoticeDao> { NoticeDaoImpl() }
             single<NoticeService> { NoticeServiceImpl() }
             single<WalletDao> { WalletDaoImpl() }
