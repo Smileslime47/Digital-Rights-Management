@@ -39,6 +39,6 @@ fresh(async (route) => {
 
     <el-divider/>
 
-    <LicensePanel :is-deployer="isDeployer"/>
+    <LicensePanel :right="right" :is-deployer="isDeployer"/>
   </TemplatePage>
 </template>

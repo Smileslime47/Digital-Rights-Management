@@ -19,15 +19,9 @@ const noticeCnt = ref(0)
 
 const searchContent = ref("")
 
-const route = useRoute()
-
 const logout = () => {
   localStorage.clear()
-  if (route.path === "/home") {
-    routeTo.fresh()
-  } else {
-    routeTo.home()
-  }
+  routeTo.fresh()
 }
 
 fresh(async (_) => {

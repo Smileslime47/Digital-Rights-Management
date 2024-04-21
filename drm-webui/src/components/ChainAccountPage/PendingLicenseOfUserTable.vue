@@ -41,6 +41,7 @@ const deployLicense = (id: number) => {
     let cost = data[Constant.RespondField.COST]
     ElMessage.success("部署成功,实际花费" + cost + " WEI。")
   })
+  ElMessage.info("已发送部署交易请求，部署成功后会向您发送通知。")
 }
 
 watch(licensePageNow, (newVal) => {

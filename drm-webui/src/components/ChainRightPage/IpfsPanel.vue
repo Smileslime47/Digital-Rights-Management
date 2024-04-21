@@ -2,7 +2,6 @@
 import RightData from "~/modules/RightData.ts";
 import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
-import fresh from "~/composables/fresh.ts";
 
 const props = defineProps<{
   right: RightData,

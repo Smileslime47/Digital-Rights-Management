@@ -4,8 +4,10 @@ import Constant from "~/constant/Constant.ts";
 import fresh from "~/composables/fresh.ts";
 import {ElMessage} from "element-plus";
 import {reactive} from "vue";
+import RightData from "~/modules/RightData.ts";
 
 const props = defineProps<{
+  right: RightData,
   isDeployer: boolean
 }>()
 
