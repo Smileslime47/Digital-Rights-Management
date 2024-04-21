@@ -15,7 +15,7 @@ fun Application.configureKoin(){
     install(Koin){
         slf4jLogger()
         modules(KoinBackendConfiguration.module)
-        modules(KoinBlockChainConfiguration.module)
+        modules(KoinBlockChainWrapperConfiguration.module)
         modules(KoinIpfsConfiguration.module)
     }
 }

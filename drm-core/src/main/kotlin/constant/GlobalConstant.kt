@@ -6,6 +6,7 @@ object GlobalConstant {
 
     const val PENDING_STATUS_PENDING = "PENDING"
     const val PENDING_STATUS_CONFIRMED = "CONFIRMED"
+    const val PENDING_STATUS_DEPLOYING = "DEPLOYING"
     const val PENDING_STATUS_DEPLOYED = "DEPLOYED"
     const val PENDING_STATUS_REJECTED = "REJECTED"
 

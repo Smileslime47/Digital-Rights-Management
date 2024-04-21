@@ -17,7 +17,7 @@ group = "moe._47saikyo"
 version = "1.0-SNAPSHOT"
 
 application {
-    mainClass.set("ApplicationKt")
+    mainClass.set("moe._47saikyo.ApplicationKt")
 
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")

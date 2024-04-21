@@ -70,15 +70,16 @@ class PendingLicenseServiceImpl : PendingLicenseService {
     override suspend fun deployPendingLicense(id: Long, transactionManager: TransactionManager): License? {
         val pendingLicense = getPendingLicense(id)
         if (pendingLicense?.status == PendingStatus.CONFIRMED) {
+            pendingLicenseDao.updatePendingLicense(pendingLicense.apply { status = PendingStatus.DEPLOYING })
+
             val form = convertToDeployForm(pendingLicense)
 
             val license = licenseService.addLicense(transactionManager, form)
 
-            if (license.isValid) {
-                pendingLicense.status = PendingStatus.DEPLOYED
-                return if (pendingLicenseDao.updatePendingLicense(pendingLicense)) license else null
+            return if (license.isValid) {
+                if (pendingLicenseDao.updatePendingLicense(pendingLicense.apply { status = PendingStatus.DEPLOYED })) license else null
             } else {
-                return null
+                if (pendingLicenseDao.updatePendingLicense(pendingLicense.apply { status = PendingStatus.CONFIRMED })) license else null
             }
         } else {
             return null

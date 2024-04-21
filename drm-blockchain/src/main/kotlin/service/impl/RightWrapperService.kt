@@ -3,7 +3,6 @@ package moe._47saikyo.service.impl
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import moe._47saikyo.BlockChain
 import moe._47saikyo.Estimate
-import moe._47saikyo.annotation.TxManagerPlaceholder
 import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.contract.Right
 import moe._47saikyo.models.RightData
@@ -14,6 +13,7 @@ import moe._47saikyo.string
 import moe._47saikyo.uint64
 import org.koin.java.KoinJavaComponent
 import org.web3j.abi.FunctionEncoder
+import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
@@ -22,10 +22,9 @@ import java.math.BigInteger
  *
  * @author 刘一邦
  */
-@Deprecated("Use RightServiceImpl instead, maintenance only.")
 class RightWrapperService : RightService {
     private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
-    private val logger = org.slf4j.LoggerFactory.getLogger(RightServiceImpl::class.java)
+    private val logger = org.slf4j.LoggerFactory.getLogger(RightEthCallService::class.java)
 
     override fun searchByTitle(
         callerAddr: String,
@@ -91,19 +90,20 @@ class RightWrapperService : RightService {
             BlockChain.gasProvider
         )
 
-        right.addLicense(licenseAddr).sendAsync()
+        right.addLicense(licenseAddr).send()
     }
 
     override fun getPureData(
         callerAddr: String,
         rightAddr: String
     ): RightData {
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
+
         logger.info("getPureData[$rightAddr]")
         val right = Right.load(
             rightAddr,
             BlockChain.web3jInstance,
-            @TxManagerPlaceholder
-            BlockChain.bankTxManager,
+            txManager,
             BlockChain.gasProvider
         )
         val json = right.serialize().send()

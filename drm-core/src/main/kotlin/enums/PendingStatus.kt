@@ -5,6 +5,7 @@ import moe._47saikyo.constant.GlobalConstant
 enum class PendingStatus {
     PENDING,
     CONFIRMED,
+    DEPLOYING,
     DEPLOYED,
     REJECTED,
 
@@ -15,6 +16,7 @@ enum class PendingStatus {
             return when (value) {
                 GlobalConstant.PENDING_STATUS_PENDING -> PENDING
                 GlobalConstant.PENDING_STATUS_CONFIRMED -> CONFIRMED
+                GlobalConstant.PENDING_STATUS_DEPLOYING -> DEPLOYING
                 GlobalConstant.PENDING_STATUS_DEPLOYED -> DEPLOYED
                 GlobalConstant.PENDING_STATUS_REJECTED -> REJECTED
                 else -> throw IllegalArgumentException("Invalid value $value")
@@ -25,6 +27,7 @@ enum class PendingStatus {
             return when (value) {
                 PENDING -> GlobalConstant.PENDING_STATUS_PENDING
                 CONFIRMED -> GlobalConstant.PENDING_STATUS_CONFIRMED
+                DEPLOYING -> GlobalConstant.PENDING_STATUS_DEPLOYING
                 DEPLOYED -> GlobalConstant.PENDING_STATUS_DEPLOYED
                 REJECTED -> GlobalConstant.PENDING_STATUS_REJECTED
             }

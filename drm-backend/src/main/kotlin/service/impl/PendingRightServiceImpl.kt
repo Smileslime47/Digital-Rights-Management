@@ -66,15 +66,16 @@ class PendingRightServiceImpl : PendingRightService {
     override suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): Right? {
         val pendingRight = getPendingRight(id)
         if (pendingRight?.status == PendingStatus.CONFIRMED) {
+            pendingRightDao.updatePendingRight(pendingRight.apply { status = PendingStatus.DEPLOYING })
+
             val form = convertToDeployForm(pendingRight)
 
             val right = rightService.addRight(transactionManager, form)
 
-            if (right.isValid) {
-                pendingRight.status = PendingStatus.DEPLOYED
-                return if (pendingRightDao.updatePendingRight(pendingRight)) right else null
+            return if (right.isValid) {
+                if (pendingRightDao.updatePendingRight(pendingRight.apply { status = PendingStatus.DEPLOYED })) right else null
             } else {
-                return null
+                if (pendingRightDao.updatePendingRight(pendingRight.apply { status = PendingStatus.CONFIRMED })) right else null
             }
         } else {
             return null

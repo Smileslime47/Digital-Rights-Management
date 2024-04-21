@@ -84,7 +84,7 @@ fun Application.chainLicenseController() {
 
                     val right = rightService.getPureData(loginAddr!!, addr!!)
                     val licenses = right.licenses
-                        .map { licenseService.getPureData(loginAddr, it) }
+//                        .map { licenseService.getPureData(loginAddr, it) }
                         .filter { it.deployer == loginAddr || right.deployer == loginAddr }
 
                     call.httpRespond(data = mapOf(Constant.RespondField.LICENSE to licenses))

@@ -14,9 +14,9 @@ import java.math.BigInteger
  * @author 刘一邦
  */
 fun Application.configureBlockChain() {
-    val walletFilePath = Application::class.java.getResource(
-        getProperty(Constant.PropertyUrl.CHAIN_WALLET_FILE)!!
-    )?.path
+//    val walletFilePath = Application::class.java.getResource(
+//        getProperty(Constant.PropertyUrl.CHAIN_WALLET_FILE)!!
+//    )?.path
     BlockChain.connect(
         BlockChainConfigurationBuilder()
             .withChain(
@@ -24,7 +24,7 @@ fun Application.configureBlockChain() {
                 chainId = getProperty(Constant.PropertyUrl.CHAIN_ID)!!.toLong()
             )
             .withBankWallet(
-                source = walletFilePath!!,
+                source = getProperty(Constant.PropertyUrl.CHAIN_WALLET_FILE)!!,
                 password = getProperty(Constant.PropertyUrl.CHAIN_PASSWORD)!!
             )
 //            //自定义Gas价格和Gas限制
