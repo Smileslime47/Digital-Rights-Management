@@ -7,21 +7,24 @@ import RightData, {EmptyRight} from "~/modules/RightData.ts";
 import TokenUtils from "~/server/TokenUtils.ts";
 
 const right = ref<RightData>(EmptyRight())
+const rightAddr = ref("")
 const isDeployer = ref(false)
 
 fresh(async (route) => {
-  let caller = await TokenUtils.getChainAddress(useRoute().path)
-  httpService.get(
-      Constant.Api.CHAIN.RIGHT.ROOT,
-      {
-        params: {
-          addr: route.params.addr,
-          caller: caller
+  await TokenUtils.getChainAddress(useRoute().path).then((result) => {
+    let caller = result
+    httpService.get(
+        Constant.Api.CHAIN.RIGHT.ROOT,
+        {
+          params: {
+            addr: route.params.right,
+            caller: caller
+          }
         }
-      }
-  ).then((data) => {
-    right.value = data[Constant.RespondField.RIGHT] as RightData
-    isDeployer.value = caller === right.value.deployer
+    ).then((data) => {
+      right.value = data[Constant.RespondField.RIGHT] as RightData
+      isDeployer.value = caller === right.value.deployer
+    })
   })
 })
 </script>
@@ -36,6 +39,6 @@ fresh(async (route) => {
 
     <el-divider/>
 
-    <LicensePanel/>
+    <LicensePanel :is-deployer="isDeployer"/>
   </TemplatePage>
 </template>

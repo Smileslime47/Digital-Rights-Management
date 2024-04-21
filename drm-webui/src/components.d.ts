@@ -8,6 +8,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AccountPanel: typeof import('./components/ChainAccountPage/AccountPanel.vue')['default']
+    ChainLicenseOfRightTable: typeof import('./components/ChainRightPage/ChainLicenseOfRightTable.vue')['default']
+    ChainLicensePanel: typeof import('./components/ChainAccountPage/ChainLicensePanel.vue')['default']
     ChainPanel: typeof import('./components/ChainAccountPage/ChainPanel.vue')['default']
     ChainRightPanel: typeof import('./components/ChainAccountPage/ChainRightPanel.vue')['default']
     ElAlert: typeof import('element-plus/es')['ElAlert']
@@ -71,7 +73,13 @@ declare module 'vue' {
     LoginPage: typeof import('./components/LoginPage.vue')['default']
     LoginPanel: typeof import('./components/LoginPage/LoginPanel.vue')['default']
     NewAccountPanel: typeof import('./components/ChainAccountPage/NewAccountPanel.vue')['default']
+    PendingLicenseByRightTable: typeof import('./components/ChainRightPage/PendingLicenseByRightTable.vue')['default']
+    PendingLicenseOfRightTable: typeof import('./components/ChainRightPage/PendingLicenseOfRightTable.vue')['default']
+    PendingLicenseOfUserTable: typeof import('./components/ChainAccountPage/PendingLicenseOfUserTable.vue')['default']
+    PendingLicenseTable: typeof import('./components/ChainAccountPage/PendingLicenseTable.vue')['default']
     PendingPanel: typeof import('./components/ChainAccountPage/PendingPanel.vue')['default']
+    PendingRightOfUserTable: typeof import('./components/ChainAccountPage/PendingRightOfUserTable.vue')['default']
+    PendingRightTable: typeof import('./components/ChainAccountPage/PendingRightTable.vue')['default']
     ProfilePanel: typeof import('./components/ProfilePage/ProfilePanel.vue')['default']
     RegisterPanel: typeof import('./components/LoginPage/RegisterPanel.vue')['default']
     RightPanel: typeof import('./components/ChainRightPage/RightPanel.vue')['default']
@@ -79,7 +87,10 @@ declare module 'vue' {
     RouterView: typeof import('vue-router')['RouterView']
     SideNavBar: typeof import('./components/navigation/SideNavBar.vue')['default']
     SmoothPanel: typeof import('./components/SmoothPanel.vue')['default']
+    TestTable: typeof import('./components/ChainRightPage/TestTable.vue')['default']
     TopNavBar: typeof import('./components/navigation/TopNavBar.vue')['default']
+    VerifyPendingLicenseTable: typeof import('./components/ChainVerifyPage/VerifyPendingLicenseTable.vue')['default']
+    VerifyPendingRightTable: typeof import('./components/ChainVerifyPage/VerifyPendingRightTable.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

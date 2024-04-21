@@ -23,17 +23,24 @@ const Constant = {
         EXPIRE_TIME_CLAIM: "expire_time"
     },
     RespondField: {
+        //------------------------------数据实体------------------------------//
         USER: "user",
         GROUP: "group",
         NOTICE: "notice",
+        RIGHT: "right",
+        LICENSE: "license",
+
+        //------------------------------Flag字段------------------------------//
         SELF_PROFILE: "self",
         SUCCESS: "success",
+
+        //------------------------------零散数据------------------------------//
         ADDRESS: "address",
-        RIGHT: "right",
         BALANCE: "balance",
         COST: "cost",
         COUNT: "count",
         HASH: "hash",
+        NAME: "name"
     },
     Property: {
         BASE_URL: import.meta.env.VITE_BASE_URL,
@@ -64,6 +71,14 @@ const Constant = {
             CONFIRM: "/pending-right/verify/confirm",
             REJECT: "/pending-right/verify/reject"
         },
+        PENDING_LICENSE: {
+            ROOT: "/pending-license",
+            BY_USER: "/pending-license/by-user",
+            BY_RIGHT: "/pending-license/by-right",
+            DEPLOY: "/pending-license/deploy",
+            CONFIRM: "/pending-license/verify/confirm",
+            REJECT: "/pending-license/verify/reject"
+        },
         CHAIN: {
             ACCOUNT: {
                 NEW_ACCOUNT: "/chain/account/new-account",
@@ -73,15 +88,22 @@ const Constant = {
             },
             RIGHT: {
                 ROOT: "/chain/right",
-                OWNER: "/chain/right/owner",
+                DEPLOYER: "/chain/right/deployer",
                 VERIFY: "/chain/right/verify",
                 CONFIRM: "/chain/right/verify/confirm",
                 REJECT: "/chain/right/verify/reject",
                 SEARCH: "/chain/right/search"
+            },
+            LICENSE: {
+                ROOT: "/chain/license",
+                BY_DEPLOYER: "/chain/license/by-deployer",
+                BY_RIGHT: "/chain/license/by-right",
             }
         },
         IPFS: {
             ROOT: "/ipfs",
+            BY_RIGHT:"/ipfs/by-right",
+            BY_LICENSE:"/ipfs/by-license",
         }
     }
 }

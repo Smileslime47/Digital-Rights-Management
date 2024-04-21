@@ -38,6 +38,10 @@ const onFulfilledResponseHandler = (response: AxiosResponse) => {
         return Promise.reject();
     }
 
+    if(response.headers["content-type"]==="application/octet-stream") {
+        return response.data;
+    }
+
     let httpResponse = response.data as HttpResponse
     if (httpResponse.status.code == 200) {
         return httpResponse.data;
@@ -68,6 +72,8 @@ const onFulfilledResponseHandler = (response: AxiosResponse) => {
     }
 }
 
+//--------------------请求拦截器--------------------//
+
 httpServiceIgnoreStatus.interceptors.request.use(
     //发生请求拦截
     onFulfilledRequestHandler,
@@ -85,6 +91,8 @@ httpService.interceptors.request.use(
         return Promise.reject(error);
     }
 );
+
+//--------------------响应拦截器--------------------//
 
 httpServiceIgnoreStatus.interceptors.response.use(
     (response) => {

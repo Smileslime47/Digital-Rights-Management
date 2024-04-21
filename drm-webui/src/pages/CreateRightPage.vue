@@ -1,15 +1,15 @@
 <script setup lang="ts">
-
 import TemplatePage from "~/pages/TemplatePage.vue";
 import {UploadFilled} from "@element-plus/icons-vue";
 import TokenUtils from "~/server/TokenUtils.ts";
 import fresh from "~/composables/fresh.ts";
-import {ElMessage, UploadInstance} from "element-plus";
+import {ElMessage, genFileId, UploadInstance, UploadProps, UploadRawFile} from "element-plus";
 import routeTo from "~/route/routeTo.ts";
 import {httpService} from "~/server/http.ts";
 import Constant from "~/constant/Constant.ts";
 import IpfsResponseBody from "~/modules/IpfsResponseBody.ts";
 import PendingRight from "~/modules/PendingRight.ts";
+import HttpResponse from "~/modules/HttpResponse.ts";
 
 const form = reactive({
   title: "",
@@ -19,7 +19,11 @@ const form = reactive({
   description: ""
 })
 
-const addr = ref("")
+const deployer = ref("")
+
+const headers = reactive({
+  Authorization: "Bearer " + localStorage.getItem(Constant.Authentication.TOKEN_STORAGE)
+})
 
 const uploadUrl = Constant.Property.BASE_URL + Constant.Api.IPFS.ROOT
 const uploadRef = ref<UploadInstance>()
@@ -29,7 +33,7 @@ fresh((_) => {
   //获取链上账户
   TokenUtils.getChainAddress(useRoute().path).then((result) => {
     if (result != null) {
-      addr.value = result
+      deployer.value = result
     } else {
       ElMessage.error("Need Chain Account.")
       routeTo.chainAccount()
@@ -37,19 +41,30 @@ fresh((_) => {
   })
 })
 
+const handleExceed: UploadProps['onExceed'] = (files) => {
+  uploadRef.value!.clearFiles()
+  const file = files[0] as UploadRawFile
+  file.uid = genFileId()
+  uploadRef.value!.handleStart(file)
+}
 
 const confirmCreate = () => {
   uploadRef.value!.submit()
 }
 
 const onUploadSuccess = (response) => {
+  let ipfsResponse = response as HttpResponse
+  if (ipfsResponse.status.code !== 200) {
+    ElMessage.error("上传数字资源时发生错误：" + response.status.msg + ",后续操作中断。")
+    return
+  }
   //提取Ipfs文件信息
-  let ipfsResponseBody = response.data as IpfsResponseBody
+  let ipfsResponseBody = ipfsResponse.data as IpfsResponseBody
 
   //生成合约部署表单
   let pendingRight = new PendingRight(
-      0,
       form.title,
+      deployer.value,
       form.owner,
       form.registrationNumber,
       form.availableTime[0],
@@ -57,7 +72,6 @@ const onUploadSuccess = (response) => {
       form.description,
       ipfsResponseBody.name,
       ipfsResponseBody.hash,
-      "PENDING",
   )
 
   //发送合约部署审核请求
@@ -73,7 +87,6 @@ const onUploadSuccess = (response) => {
     }
   })
 }
-
 </script>
 
 <template>
@@ -109,8 +122,11 @@ const onUploadSuccess = (response) => {
                 style="width:100%"
                 drag
                 multiple
-                :auto-upload="false"
                 ref="uploadRef"
+                :headers="headers"
+                :limit="1"
+                :on-exceed="handleExceed"
+                :auto-upload="false"
                 :action=uploadUrl
                 :on-success=onUploadSuccess
             >
@@ -123,7 +139,7 @@ const onUploadSuccess = (response) => {
             </el-upload>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="confirmCreate">提交</el-button>
+            <el-button plain text bg type="primary" @click="confirmCreate">提交</el-button>
           </el-form-item>
         </el-form>
       </el-col>
