@@ -26,6 +26,7 @@ import org.koin.java.KoinJavaComponent.inject
  *
  */
 fun Application.configureSecurity() {
+    val logger = org.slf4j.LoggerFactory.getLogger("Security")
     val userService: UserService by inject(UserService::class.java)
     val groupService: GroupService by inject(GroupService::class.java)
     val walletService: WalletService by inject(WalletService::class.java)
@@ -69,12 +70,15 @@ fun Application.configureSecurity() {
         jwt(Constant.Authentication.NEED_LOGIN) {
             verifier(jwtTemplate)
             validate {
+                logger.info("Validate if user exists.")
                 val loginId = it.payload.getClaim(Constant.Authentication.USER_ID_CLAIM).asLong()
                 val loginUser = loginId?.let { id -> userService.getUser(id) }
                 if (loginId != null && loginUser != null) {
+                    logger.info("User exists.")
                     JWTPrincipal(it.payload)
                 } else {
-                    throw Exception()
+                    logger.info("User does not exists.")
+                    null
                 }
             }
             challenge { _, _ ->
@@ -104,6 +108,10 @@ fun Application.configureSecurity() {
         jwt(Constant.Authentication.PERMISSION_CREATE_RIGHT, authenticateGroupPermission(Group::permissionCreateRight))
 
         jwt(Constant.Authentication.PERMISSION_VERIFY_RIGHT, authenticateGroupPermission(Group::permissionVerifyRight))
+
+        jwt(Constant.Authentication.PERMISSION_CREATE_LICENSE, authenticateGroupPermission(Group::permissionCreateLicense))
+
+        jwt(Constant.Authentication.PERMISSION_VERIFY_LICENSE, authenticateGroupPermission(Group::permissionVerifyLicense))
     }
 }
 
@@ -117,11 +125,11 @@ fun Route.authenticateAll(
     build: Route.() -> Unit
 ): Route =
     if (configurations.size > 1) {
-        authenticate(configurations[0]) {
+        authenticateRequired(configurations[0]) {
             authenticateAll(configurations.drop(1), build)
         }
     } else {
-        authenticate(configurations[0]) {
+        authenticateRequired(configurations[0]) {
             build()
         }
     }

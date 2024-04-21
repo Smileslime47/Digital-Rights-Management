@@ -1,5 +1,6 @@
 package moe._47saikyo.models
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import moe._47saikyo.constant.GlobalConstant
@@ -17,5 +18,15 @@ data class HttpResponse(val status: HttpStatus = HttpStatus.SUCCESS, val data: A
  * @param status HttpStatus对象，状态码及信息
  * @param data 数据对象
  */
-suspend fun ApplicationCall.httpRespond(status: HttpStatus = HttpStatus.SUCCESS, data: Any = GlobalConstant.NULL_PLACEHOLDER)
-    = this.respond(HttpResponse(status,data))
+suspend fun ApplicationCall.httpRespond(status: HttpStatus = HttpStatus.SUCCESS, data: Any = GlobalConstant.NULL_PLACEHOLDER) = this.respond(HttpResponse(status, data))
+
+suspend fun ApplicationCall.fileRespond(fileName: String, bytes: ByteArray) {
+    this.response.header(
+        HttpHeaders.ContentDisposition,
+        ContentDisposition.Attachment.withParameter(
+            ContentDisposition.Parameters.FileName, fileName
+        ).toString()
+    )
+
+    this.respondOutputStream(ContentType.Application.OctetStream) { this.write(bytes) }
+}

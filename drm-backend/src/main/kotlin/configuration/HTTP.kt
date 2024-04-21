@@ -18,6 +18,7 @@ fun Application.configureHTTP() {
 //        allowHeader(HttpHeaders.Accept)
 //        allowHeader(HttpHeaders.AcceptLanguage)
 //        allowHeader(HttpHeaders.ContentLanguage)
+        //以下不默认允许
         allowHeader(HttpHeaders.Authorization)
         allowHeader(HttpHeaders.AcceptEncoding)
         allowHeader(HttpHeaders.Connection)

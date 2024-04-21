@@ -19,7 +19,12 @@ class NoticeDaoImpl : NoticeDao {
         transaction { NoticeTable.select(where).map(NoticeTable::resultRowToNotice).singleOrNull() }
 
     override suspend fun getNotices(where: SqlExpressionBuilder.() -> Op<Boolean>): List<Notice> =
-        transaction { NoticeTable.select(where).map(NoticeTable::resultRowToNotice) }
+        transaction {
+            NoticeTable
+                .select(where)
+                .sortedByDescending { it[NoticeTable.sent_time] }
+                .map(NoticeTable::resultRowToNotice)
+        }
 
     override suspend fun getNotices(
         pageSize: Int,
@@ -27,7 +32,10 @@ class NoticeDaoImpl : NoticeDao {
         where: SqlExpressionBuilder.() -> Op<Boolean>
     ): List<Notice> =
         transaction {
-            NoticeTable.select(where).limit(pageSize, (pageNumber - 1) * pageSize.toLong())
+            NoticeTable
+                .select(where)
+                .limit(pageSize, (pageNumber - 1) * pageSize.toLong())
+                .sortedByDescending { it[NoticeTable.sent_time] }
                 .map(NoticeTable::resultRowToNotice)
         }
 
