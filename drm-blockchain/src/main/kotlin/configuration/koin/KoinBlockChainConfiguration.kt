@@ -5,9 +5,9 @@ import moe._47saikyo.service.LicenseService
 import moe._47saikyo.service.ManagerService
 import moe._47saikyo.service.RightService
 import moe._47saikyo.service.impl.AccountServiceImpl
-import moe._47saikyo.service.impl.LicenseServiceImpl
-import moe._47saikyo.service.impl.ManagerServiceImpl
-import moe._47saikyo.service.impl.RightServiceImpl
+import moe._47saikyo.service.impl.LicenseEthCallService
+import moe._47saikyo.service.impl.ManagerEthCallService
+import moe._47saikyo.service.impl.RightEthCallService
 import org.koin.dsl.module
 
 /**
@@ -18,8 +18,8 @@ import org.koin.dsl.module
 object KoinBlockChainConfiguration {
     val module = module {
         single<AccountService> { AccountServiceImpl() }
-        single<RightService> { RightServiceImpl() }
-        single<LicenseService> { LicenseServiceImpl() }
-        single<ManagerService> { ManagerServiceImpl() }
+        single<RightService> { RightEthCallService() }
+        single<LicenseService> { LicenseEthCallService() }
+        single<ManagerService> { ManagerEthCallService() }
     }
 }

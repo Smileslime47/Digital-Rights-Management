@@ -1,15 +1,12 @@
 package service
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import moe._47saikyo.*
-import moe._47saikyo.annotation.TxManagerPlaceholder
-import moe._47saikyo.configuration.koin.KoinBlockChainConfiguration
+import moe._47saikyo.configuration.koin.KoinBlockChainWrapperConfiguration
 import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.contract.Right
-import moe._47saikyo.models.RightData
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.RightService
-import moe._47saikyo.service.impl.RightServiceImpl
+import moe._47saikyo.service.impl.RightEthCallService
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.LoggerFactory
@@ -19,7 +16,6 @@ import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
-import kotlin.math.log
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -39,7 +35,7 @@ class RightServiceTest {
     @BeforeTest
     fun setUp() {
         startKoin {
-            modules(KoinBlockChainConfiguration.module)
+            modules(KoinBlockChainWrapperConfiguration.module)
         }
 
         BlockChainTest.init()
@@ -72,7 +68,7 @@ class RightServiceTest {
      */
     @Test
     fun getRightsTest() {
-        logger.info(RightServiceImpl().getRights("0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe").toString())
+        logger.info(RightEthCallService().getRights("0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe").toString())
     }
 
     @Test

@@ -1,17 +1,15 @@
 import com.fasterxml.jackson.databind.ObjectMapper
 import moe._47saikyo.BlockChain
-import moe._47saikyo.BlockChainConfigurationBuilder
 import moe._47saikyo.configuration.koin.KoinBlockChainConfiguration
 import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.License
-import moe._47saikyo.contract.Right
 import moe._47saikyo.models.LicenseDeployForm
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.AccountService
 import moe._47saikyo.service.ManagerService
 import moe._47saikyo.service.impl.AccountServiceImpl
-import moe._47saikyo.service.impl.LicenseServiceImpl
-import moe._47saikyo.service.impl.RightServiceImpl
+import moe._47saikyo.service.impl.LicenseEthCallService
+import moe._47saikyo.service.impl.RightEthCallService
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.LoggerFactory
@@ -81,11 +79,11 @@ class PreDeploy {
             "TestRightFileHash"
         )
 
-        val estimateCost = RightServiceImpl().estimateDeploy(BlockChain.bankAddress!!,form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
+        val estimateCost = RightEthCallService().estimateDeploy(BlockChain.bankAddress!!,form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
 
         val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
-        val right = RightServiceImpl().addRight(
+        val right = RightEthCallService().addRight(
             BlockChain.bankTxManager!!,
             form
         )
@@ -113,7 +111,7 @@ class PreDeploy {
             "TestLicenseDescription"
         )
 
-        val estimateCost = LicenseServiceImpl().estimateDeploy(BlockChain.bankAddress!!,form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
+        val estimateCost = LicenseEthCallService().estimateDeploy(BlockChain.bankAddress!!,form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
 
         val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 

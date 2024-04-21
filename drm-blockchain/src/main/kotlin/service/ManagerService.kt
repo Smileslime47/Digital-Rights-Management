@@ -83,7 +83,7 @@ interface ManagerService {
     fun addRight(
         transactionManager: TransactionManager,
         right: Right
-    ):Boolean
+    )
 
     /**
      * 添加授权合约
@@ -95,7 +95,7 @@ interface ManagerService {
     fun addLicense(
         transactionManager: TransactionManager,
         license: License
-    ):Boolean
+    )
 
     /**
      * 获取用户的版权

@@ -2,7 +2,6 @@ package moe._47saikyo.service.impl
 
 import moe._47saikyo.BlockChain
 import moe._47saikyo.address
-import moe._47saikyo.annotation.TxManagerPlaceholder
 import moe._47saikyo.annotation.ViewFunction
 import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.License
@@ -19,8 +18,10 @@ import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.TransactionManager
 
-class ManagerServiceImpl : ManagerService {
-    private val logger = org.slf4j.LoggerFactory.getLogger(ManagerServiceImpl::class.java)
+@Deprecated("Use ManagerWrapperService instead,maintenance only.")
+
+class ManagerEthCallService : ManagerService {
+    private val logger = org.slf4j.LoggerFactory.getLogger(ManagerEthCallService::class.java)
 
     @ViewFunction
     override fun searchByTitle(
@@ -115,7 +116,7 @@ class ManagerServiceImpl : ManagerService {
         return canInsert
     }
 
-    override fun addRight(transactionManager: TransactionManager, right: Right): Boolean {
+    override fun addRight(transactionManager: TransactionManager, right: Right) {
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
@@ -123,10 +124,10 @@ class ManagerServiceImpl : ManagerService {
             BlockChain.gasProvider
         )
 
-        return (manager.addRight(right.contractAddress).send() != null)
+        manager.addRight(right.contractAddress).sendAsync()
     }
 
-    override fun addLicense(transactionManager: TransactionManager, license: License): Boolean {
+    override fun addLicense(transactionManager: TransactionManager, license: License) {
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
@@ -134,7 +135,7 @@ class ManagerServiceImpl : ManagerService {
             BlockChain.gasProvider
         )
 
-        return (manager.addLicense(license.contractAddress).send() != null)
+        manager.addLicense(license.contractAddress).send()
     }
 
     @ViewFunction

@@ -3,7 +3,6 @@ import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.contract.License
 import moe._47saikyo.contract.Right
 import moe._47saikyo.service.impl.AccountServiceImpl
-import moe._47saikyo.service.impl.RightServiceImpl
 import org.slf4j.LoggerFactory
 import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder

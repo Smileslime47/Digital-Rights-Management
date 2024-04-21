@@ -2,7 +2,6 @@ package moe._47saikyo.service.impl
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import moe._47saikyo.*
-import moe._47saikyo.annotation.TxManagerPlaceholder
 import moe._47saikyo.annotation.ViewFunction
 import moe._47saikyo.constant.BlockChainConstant
 import moe._47saikyo.contract.Right
@@ -15,17 +14,16 @@ import org.web3j.abi.FunctionEncoder
 import org.web3j.abi.FunctionReturnDecoder
 import org.web3j.abi.TypeReference
 import org.web3j.abi.datatypes.Function
-import org.web3j.crypto.TransactionEncoder
 import org.web3j.protocol.core.DefaultBlockParameterName
 import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.TransactionManager
-import org.web3j.utils.Numeric
 import java.math.BigInteger
 
+@Deprecated("Use RightWrapperService instead, maintenance only.")
 
-class RightServiceImpl : RightService {
+class RightEthCallService : RightService {
     private val managerService: ManagerService by inject(ManagerService::class.java)
-    private val logger = org.slf4j.LoggerFactory.getLogger(RightServiceImpl::class.java)
+    private val logger = org.slf4j.LoggerFactory.getLogger(RightEthCallService::class.java)
 
     override fun searchByTitle(
         callerAddr: String,
@@ -92,7 +90,7 @@ class RightServiceImpl : RightService {
             BlockChain.gasProvider
         )
 
-        right.addLicense(licenseAddr).sendAsync()
+        right.addLicense(licenseAddr).send()
     }
 
     @ViewFunction

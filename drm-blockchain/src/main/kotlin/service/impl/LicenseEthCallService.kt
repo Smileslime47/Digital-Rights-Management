@@ -20,10 +20,12 @@ import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
-class LicenseServiceImpl: LicenseService {
+@Deprecated("Use LicenseWrapperService instead,maintenance only.")
+
+class LicenseEthCallService: LicenseService {
     private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
     private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
-    private val logger = org.slf4j.LoggerFactory.getLogger(LicenseServiceImpl::class.java)
+    private val logger = org.slf4j.LoggerFactory.getLogger(LicenseEthCallService::class.java)
 
     override fun estimateDeploy(
         callerAddr: String,
@@ -63,8 +65,11 @@ class LicenseServiceImpl: LicenseService {
             form.description
         ).sendAsync().get()
 
+        logger.info("Trying to add license to right...")
         rightService.addLicense(transactionManager,form.rightAddr,license.contractAddress)
+        logger.info("Trying to add license to manager...")
         managerService.addLicense(transactionManager, license)
+        logger.info("Add finished")
 
         return license
     }

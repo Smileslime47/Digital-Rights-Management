@@ -1,12 +1,12 @@
 package moe._47saikyo.service.impl
 
 import moe._47saikyo.BlockChain
-import moe._47saikyo.annotation.TxManagerPlaceholder
 import moe._47saikyo.contract.DRManager
 import moe._47saikyo.contract.License
 import moe._47saikyo.contract.Right
 import moe._47saikyo.models.RightDeployForm
 import moe._47saikyo.service.ManagerService
+import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.TransactionManager
 
 /**
@@ -14,14 +14,14 @@ import org.web3j.tx.TransactionManager
  *
  * @author 刘一邦
  */
-@Deprecated("Use ManagerServiceImpl instead,maintenance only.")
 class ManagerWrapperService:ManagerService {
     override fun searchByTitle(callerAddr: String, title: String): List<String> {
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
+
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
-            @TxManagerPlaceholder
-            BlockChain.bankTxManager,
+            txManager,
             BlockChain.gasProvider
         )
 
@@ -29,11 +29,12 @@ class ManagerWrapperService:ManagerService {
     }
 
     override fun getRightByRegistrationNumber(callerAddr: String, registrationNumber: String): String {
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
+
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
-            @TxManagerPlaceholder
-            BlockChain.bankTxManager,
+            txManager,
             BlockChain.gasProvider
         )
 
@@ -41,11 +42,12 @@ class ManagerWrapperService:ManagerService {
     }
 
     override fun getRightByFileHash(callerAddr: String, fileHash: String): String {
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
+
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
-            @TxManagerPlaceholder
-            BlockChain.bankTxManager,
+            txManager,
             BlockChain.gasProvider
         )
 
@@ -53,11 +55,12 @@ class ManagerWrapperService:ManagerService {
     }
 
     override fun canInsertRight(callerAddr: String, rightDeployForm: RightDeployForm): Boolean {
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
+
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
-            @TxManagerPlaceholder
-            BlockChain.bankTxManager,
+            txManager,
             BlockChain.gasProvider
         )
 
@@ -67,7 +70,7 @@ class ManagerWrapperService:ManagerService {
         ).send()
     }
 
-    override fun addRight(transactionManager: TransactionManager, right: Right): Boolean {
+    override fun addRight(transactionManager: TransactionManager, right: Right) {
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
@@ -75,10 +78,10 @@ class ManagerWrapperService:ManagerService {
             BlockChain.gasProvider
         )
 
-        return (manager.addRight(right.contractAddress).send() != null)
+        manager.addRight(right.contractAddress).send()
     }
 
-    override fun addLicense(transactionManager: TransactionManager, license: License): Boolean {
+    override fun addLicense(transactionManager: TransactionManager, license: License) {
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
@@ -86,15 +89,16 @@ class ManagerWrapperService:ManagerService {
             BlockChain.gasProvider
         )
 
-        return (manager.addRight(license.contractAddress).send() != null)
+        manager.addLicense(license.contractAddress).send()
     }
 
     override fun getRights(owner: String): List<String> {
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, owner)
+
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
-            @TxManagerPlaceholder
-            BlockChain.bankTxManager,
+            txManager,
             BlockChain.gasProvider
         )
 
@@ -102,11 +106,12 @@ class ManagerWrapperService:ManagerService {
     }
 
     override fun getLicenses(owner: String): List<String> {
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, owner)
+
         val manager = DRManager.load(
             BlockChain.managerAddr,
             BlockChain.web3jInstance,
-            @TxManagerPlaceholder
-            BlockChain.bankTxManager,
+            txManager,
             BlockChain.gasProvider
         )
 

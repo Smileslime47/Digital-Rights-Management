@@ -11,5 +11,5 @@ data class RightData(
     val description: String = "",
     val fileName: String = "",
     val fileHash: String = "",
-    val licenses: List<String> = emptyList(),
+    val licenses: List<LicenseData> = emptyList(),
 )
