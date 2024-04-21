@@ -1,24 +1,30 @@
 package moe._47saikyo.controller
 
 import io.ktor.server.application.*
+import io.ktor.server.auth.*
+import io.ktor.server.auth.jwt.*
 import io.ktor.server.routing.*
 import moe._47saikyo.configuration.security.authenticateRequired
+import org.koin.ktor.ext.inject
 import moe._47saikyo.constant.Constant
 import moe._47saikyo.models.HttpStatus
 import moe._47saikyo.models.httpRespond
-import moe._47saikyo.service.*
-import org.koin.ktor.ext.inject
+import moe._47saikyo.service.LicenseService
+import moe._47saikyo.service.RightService
+import moe._47saikyo.service.WalletService
 
 /**
- * Right Contract Controller
+ * License Contract Controller
  *
  * @author 刘一邦
  */
-fun Application.chainRightController() {
+fun Application.chainLicenseController() {
+    val licenseService: LicenseService by inject()
     val rightService: RightService by inject()
+    val walletService: WalletService by inject()
 
     routing {
-        route("/chain/right") {
+        route("/chain/license") {
             authenticateRequired(Constant.Authentication.NEED_LOGIN) {
                 get {
                     val addr = call.parameters["addr"]
@@ -39,13 +45,13 @@ fun Application.chainRightController() {
                         }
                     }
 
-                    val rights = rightService.getPureData(caller!!, addr!!)
+                    val rights = licenseService.getPureData(caller!!, addr!!)
 
-                    call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to rights))
+                    call.httpRespond(data = mapOf(Constant.RespondField.LICENSE to rights))
                 }
 
                 //获取指定钱包所部署的版权合约列表
-                get("/deployer") {
+                get("/by-deployer") {
                     val addr = call.parameters["addr"]
 
                     when {
@@ -56,33 +62,32 @@ fun Application.chainRightController() {
                         }
                     }
 
-                    val rights = rightService.getRights(addr!!)
+                    val licenses = licenseService.getLicenses(addr!!)
 
-                    call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to rights))
+                    call.httpRespond(data = mapOf(Constant.RespondField.LICENSE to licenses))
                 }
 
-                //通过标题模糊搜索版权合约
-                get("/search") {
-                    val title = call.parameters["title"]
-                    val caller = call.parameters["caller"]
+                get("/by-right") {
+                    val addr = call.parameters["addr"]
+                    val loginId =
+                        call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
+                            ?.asLong()
+                    val loginAddr = loginId?.let { id -> walletService.getWallet(id)?.address }
 
                     when {
-                        //title为空
-                        (title == null) -> {
-                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的标题")
-                            return@get
-                        }
-
-                        //caller为空
-                        (caller == null) -> {
-                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的调用者")
+                        //addr为空
+                        (addr == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的地址")
                             return@get
                         }
                     }
 
-                    val rights = rightService.searchByTitle(caller!!, title!!).map { rightService.getPureData(caller, it) }
+                    val right = rightService.getPureData(loginAddr!!, addr!!)
+                    val licenses = right.licenses
+                        .map { licenseService.getPureData(loginAddr, it) }
+                        .filter { it.deployer == loginAddr || right.deployer == loginAddr }
 
-                    call.httpRespond(data = mapOf(Constant.RespondField.RIGHT to rights))
+                    call.httpRespond(data = mapOf(Constant.RespondField.LICENSE to licenses))
                 }
             }
         }

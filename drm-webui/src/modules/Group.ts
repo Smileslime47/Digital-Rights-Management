@@ -5,10 +5,12 @@ class Group {
     groupName: string = Constant.Global.NULL_STRING_PLACEHOLDER;
     permissionLogin: boolean = false;
     permissionShowProfile: boolean = false;
-    permissionCreateRight: boolean = false;
-    permissionCreateLicense: boolean = false;
     permissionCreateChainAccount: boolean = false;
+    permissionCreateRight: boolean = false;
     permissionVerifyRight: boolean = false;
+    permissionCreateLicense: boolean = false;
+    permissionVerifyLicense: boolean = false;
+
 }
 
 export default Group

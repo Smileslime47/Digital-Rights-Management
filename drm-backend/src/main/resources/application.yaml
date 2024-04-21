@@ -20,7 +20,7 @@ JWT:
 
 chain:
   socket: "http://localhost:8545"
-  address: "0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe"
+  address: "0x4db3443fc610477a5260c350254c9003b63e0673"
   manager: "0xef563dee888cb304dd660b9f6e6b261f1a2295d2"
   password: "1234567890"
   walletFile: "/KeyStore/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json"

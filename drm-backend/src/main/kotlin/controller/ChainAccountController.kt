@@ -112,9 +112,10 @@ fun Application.chainAccountController() {
                         try {
                             //创建钱包文件并获取地址
                             val walletFile = accountService.newAccount(password)
+                            //序列化钱包文件
                             val walletFileJson = ObjectMapper().writeValueAsString(walletFile)
                             var addr = walletFile.address
-                            if (addr.startsWith("0x")) {
+                            if (!addr.startsWith("0x")) {
                                 addr = "0x$addr"
                             }
 

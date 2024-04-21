@@ -33,7 +33,7 @@ fun Application.pendingRightController() {
 
     routing {
         route("/pending-right") {
-            //查询指定地址的待审核版权
+            //查询指定账户的待审核版权
             get {
                 val addr = call.parameters["addr"]
                 val pageNumberStr = call.request.queryParameters["page"]
@@ -63,7 +63,9 @@ fun Application.pendingRightController() {
                 )
             }
 
+            //要求登陆
             authenticateRequired(Constant.Authentication.NEED_LOGIN) {
+                //要求登陆、拥有区块链账号
                 authenticateRequired(Constant.Authentication.NEED_BLOCK_ACCOUNT) {
                     //部署版权
                     post("/deploy") {
@@ -99,6 +101,7 @@ fun Application.pendingRightController() {
                         ))
                     }
 
+                    //要求登陆、拥有区块链账号、拥有创建版权权限
                     authenticateRequired(Constant.Authentication.PERMISSION_CREATE_RIGHT) {
                         //创建新的版权申请
                         post {
@@ -134,7 +137,7 @@ fun Application.pendingRightController() {
                         }
                     }
 
-                    //版权审核路由
+                    //要求登陆、拥有区块链账号、拥有审核版权权限
                     authenticateRequired(Constant.Authentication.PERMISSION_VERIFY_RIGHT) {
                         //查询待审核版权
                         get("/verify") {
@@ -189,23 +192,20 @@ fun Application.pendingRightController() {
                             val deployForm = pendingRightService.convertToDeployForm(targetRight)
 
                             //获取估算Gas —— 估算Gas = 部署合约费用 + 调用Manager的Add Right函数费用
-                            val estimateGas = rightService.estimateDeploy(deployForm).toLong()
+                            val estimateGas = rightService.estimateDeploy(ownerWallet!!.address,deployForm).toLong()
 
                             noticeService.insertNotice(
                                 Notice(
                                     title = "版权审核通知",
                                     content = "您的版权申请:${targetRight.title}已通过审核,需要您填写区块链账户密码完成合约部署。",
-                                    receiverId = ownerWallet!!.userId,
+                                    receiverId = ownerWallet.userId,
                                     targetRoute = "/chain/account"
                                 )
                             )
 
                             //发送通知
                             when (pendingRightService.confirmPendingRight(targetRight.id, estimateGas * BlockChain.gasProvider.gasPrice.toLong())) {
-                                true -> call.httpRespond(
-                                    data = mapOf(Constant.RespondField.SUCCESS to true,)
-                                )
-
+                                true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
                                 false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
                             }
                         }

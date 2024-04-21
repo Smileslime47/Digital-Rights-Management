@@ -36,7 +36,9 @@ fun Application.modules() {
     groupController()
     chainAccountController()
     chainRightController()
+    chainLicenseController()
     noticeController()
     pendingRightController()
+    pendingLicenseController()
     ipfsController()
 }

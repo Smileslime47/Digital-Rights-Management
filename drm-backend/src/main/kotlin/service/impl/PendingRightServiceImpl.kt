@@ -7,12 +7,10 @@ import moe._47saikyo.domain.PendingRight
 import moe._47saikyo.enums.PendingStatus
 import moe._47saikyo.mapper.PendingRightTable
 import moe._47saikyo.models.RightDeployForm
-import moe._47saikyo.service.ManagerService
 import moe._47saikyo.service.PendingRightService
 import moe._47saikyo.service.RightService
-import org.koin.java.KoinJavaComponent
+import org.koin.java.KoinJavaComponent.inject
 import org.web3j.tx.TransactionManager
-import java.math.BigInteger
 
 /**
  * PendingRightService实现
@@ -20,8 +18,8 @@ import java.math.BigInteger
  * @author 刘一邦
  */
 class PendingRightServiceImpl : PendingRightService {
-    private val pendingRightDao: PendingRightDao by KoinJavaComponent.inject(PendingRightDao::class.java)
-    private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
+    private val pendingRightDao: PendingRightDao by inject(PendingRightDao::class.java)
+    private val rightService: RightService by inject(RightService::class.java)
 
     override fun convertToDeployForm(pendingRight: PendingRight): RightDeployForm =
         RightDeployForm(
@@ -68,23 +66,16 @@ class PendingRightServiceImpl : PendingRightService {
     override suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): Right? {
         val pendingRight = getPendingRight(id)
         if (pendingRight?.status == PendingStatus.CONFIRMED) {
-            val form = RightDeployForm(
-                title = pendingRight.title,
-                owner = pendingRight.owner,
-                registrationNumber = pendingRight.registrationNumber,
-                issueTime = BigInteger.valueOf(pendingRight.issueTime),
-                expireTime = BigInteger.valueOf(pendingRight.expireTime),
-                description = pendingRight.description,
-                fileName = pendingRight.fileName,
-                fileHash = pendingRight.fileHash
-            )
+            val form = convertToDeployForm(pendingRight)
 
             val right = rightService.addRight(transactionManager, form)
 
-            pendingRight.status = PendingStatus.DEPLOYED
-            pendingRightDao.updatePendingRight(pendingRight)
-
-            return right
+            if (right.isValid) {
+                pendingRight.status = PendingStatus.DEPLOYED
+                return if (pendingRightDao.updatePendingRight(pendingRight)) right else null
+            } else {
+                return null
+            }
         } else {
             return null
         }

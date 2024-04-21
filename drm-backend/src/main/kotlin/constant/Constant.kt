@@ -29,6 +29,8 @@ object Constant {
         const val PERMISSION_CREATE_CHAIN_ACCOUNT = "permission_create_chain_account"
         const val PERMISSION_CREATE_RIGHT = "permission_create_right"
         const val PERMISSION_VERIFY_RIGHT = "permission_verify_right"
+        const val PERMISSION_CREATE_LICENSE = "permission_create_license"
+        const val PERMISSION_VERIFY_LICENSE = "permission_verify_license"
     }
 
     //Http响应表单字段
@@ -42,6 +44,8 @@ object Constant {
         const val NOTICE = "notice"
         //版权
         const val RIGHT = "right"
+        //授权
+        const val LICENSE = "license"
 
         //------------------------------Flag字段------------------------------//
         //是否为自我数据查询
