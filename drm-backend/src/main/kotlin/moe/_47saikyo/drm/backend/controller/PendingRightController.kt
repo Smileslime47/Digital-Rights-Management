@@ -11,6 +11,7 @@ import moe._47saikyo.drm.backend.models.HttpStatus
 import moe._47saikyo.drm.backend.models.httpRespond
 import moe._47saikyo.drm.backend.service.*
 import moe._47saikyo.drm.blockchain.BlockChain
+import moe._47saikyo.drm.blockchain.models.KeyPairData
 import moe._47saikyo.drm.blockchain.service.AccountService
 import moe._47saikyo.drm.blockchain.service.RightService
 import moe._47saikyo.drm.core.domain.Group
@@ -97,10 +98,11 @@ fun Application.pendingRightController() {
                         val right = pendingRightService.deployPendingRight(pendingId, txManager)
                         val newBalance = accountService.getBalance(dbWallet.address)
 
-                        call.httpRespond(data = mapOf(
-                            Constant.RespondField.COST to newBalance - oldBalance,
-                            Constant.RespondField.RIGHT to right?.contractAddress
-                        ))
+                        call.httpRespond(
+                            data = mapOf(
+                                Constant.RespondField.COST to newBalance - oldBalance,
+                            )
+                        )
                     }
 
                     //要求登陆、拥有区块链账号、拥有创建版权权限
@@ -194,7 +196,7 @@ fun Application.pendingRightController() {
                             val deployForm = pendingRightService.convertToDeployForm(targetRight)
 
                             //获取估算Gas —— 估算Gas = 部署合约费用 + 调用Manager的Add Right函数费用
-                            val estimateGas = rightService.estimateDeploy(ownerWallet!!.address,deployForm).toLong()
+                            val estimateGas = rightService.estimateDeploy(ownerWallet!!.address, deployForm).toLong()
 
                             noticeService.insertNotice(
                                 Notice(

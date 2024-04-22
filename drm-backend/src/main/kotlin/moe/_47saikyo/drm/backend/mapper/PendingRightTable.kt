@@ -1,6 +1,7 @@
 package moe._47saikyo.drm.backend.mapper
 
 
+import moe._47saikyo.drm.backend.mapper.PendingLicenseTable.nullable
 import moe._47saikyo.drm.core.domain.PendingRight
 import moe._47saikyo.drm.core.enums.PendingStatus
 import org.jetbrains.exposed.sql.ResultRow
@@ -62,7 +63,7 @@ object PendingRightTable : Table("drm_pending_right") {
         status = PendingStatus.fromString(row[status]),
         estimatePrice = row[estimate_price],
         comment = row[comment],
-        createTime = row[create_time]
+        createTime = row[create_time],
     )
 
     fun <T : UpdateBuilder<Int>> getStatementBinder(pendingRight: PendingRight): PendingRightTable.(T) -> Unit = {

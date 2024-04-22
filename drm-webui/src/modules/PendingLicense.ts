@@ -3,7 +3,8 @@ import Constant from "~/constant/Constant.ts";
 class PendingLicense {
     id: number = Constant.Global.NULL_NUMBER_PLACEHOLDER;
     rightTitle: string;
-    rightAddr: string;
+    rightDeployer: string;
+    rightIndex: number;
     deployer: string;
     owner: string;
     issueTime: number;
@@ -17,7 +18,8 @@ class PendingLicense {
     //all-args
     constructor(
         rightTitle: string,
-        rightAddr: string,
+        rightDeployer: string,
+        rightIndex: number,
         deployer: string,
         owner: string,
         issueTime: number,
@@ -25,7 +27,8 @@ class PendingLicense {
         description: string,
     ) {
         this.rightTitle = rightTitle;
-        this.rightAddr = rightAddr;
+        this.rightDeployer = rightDeployer;
+        this.rightIndex = rightIndex;
         this.deployer = deployer;
         this.owner = owner;
         this.issueTime = issueTime;
@@ -38,6 +41,7 @@ export const EmptyPendingLicense = () => {
     return new PendingLicense(
         Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
+        Constant.Global.NULL_NUMBER_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_NUMBER_PLACEHOLDER,

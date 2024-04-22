@@ -1,6 +1,7 @@
 package moe._47saikyo.drm.backend.service
 
-import moe._47saikyo.drm.blockchain.contract.License
+import moe._47saikyo.drm.blockchain.models.KeyPairData
+import moe._47saikyo.drm.blockchain.models.LicenseData
 import moe._47saikyo.drm.blockchain.models.LicenseDeployForm
 import moe._47saikyo.drm.core.domain.PendingLicense
 import org.web3j.tx.TransactionManager
@@ -30,41 +31,41 @@ interface PendingLicenseService {
     /**
      * 计算某版权下的待审核授权数量
      *
-     * @param rightAddr 版权合约地址
+     * @param rightKey 在合约中唯一定位版权的键对
      * @return 待审核授权数量
      */
-    suspend fun countPendingLicensesOfRight(rightAddr: String): Long
+    suspend fun countPendingLicensesOfRight(rightKey: KeyPairData): Long
 
     /**
      * 获取某版权下某用户拥有的的待审核授权
      *
-     * @param rightAddr 版权合约地址
+     * @param rightKey 在合约中唯一定位版权的键对
      * @param licenseDeployerAddr 授权部署者地址
      * @return 待审核授权数量
      */
-    suspend fun countPendingLicensesOfRight(rightAddr: String, licenseDeployerAddr: String): Long
+    suspend fun countPendingLicensesOfRight(rightKey: KeyPairData, licenseDeployerAddr: String): Long
 
 
     /**
      * 获取某版权下的待审核授权
      *
-     * @param rightAddr 版权合约地址
+     * @param rightKey 在合约中唯一定位版权的键对
      * @param pageSize 页大小
      * @param pageNumber 页码
      * @return 待审核授权
      */
-    suspend fun getPendingLicensesOfRight(rightAddr: String, pageSize: Int, pageNumber: Int): List<PendingLicense>
+    suspend fun getPendingLicensesOfRight(rightKey: KeyPairData, pageSize: Int, pageNumber: Int): List<PendingLicense>
 
     /**
      * 获取某版权下某用户拥有的的待审核授权
      *
-     * @param rightAddr 版权合约地址
+     * @param rightKey 在合约中唯一定位版权的键对
      * @param pageSize 页大小
      * @param pageNumber 页码
      * @param licenseDeployerAddr 授权部署者地址
      * @return 待审核授权数量
      */
-    suspend fun getPendingLicenseOfRight(rightAddr: String, licenseDeployerAddr: String, pageSize: Int, pageNumber: Int): List<PendingLicense>
+    suspend fun getPendingLicenseOfRight(rightKey: KeyPairData, licenseDeployerAddr: String, pageSize: Int, pageNumber: Int): List<PendingLicense>
 
     /**
      * 获取用户的待审核授权数量
@@ -108,7 +109,7 @@ interface PendingLicenseService {
      * @param transactionManager 交易管理器
      * @return 部署后的授权
      */
-    suspend fun deployPendingLicense(id: Long, transactionManager: TransactionManager): License?
+    suspend fun deployPendingLicense(id: Long, transactionManager: TransactionManager): LicenseData?
 
     /**
      * 拒绝待审核授权，将状态从*PENDING*改为*REJECTED*

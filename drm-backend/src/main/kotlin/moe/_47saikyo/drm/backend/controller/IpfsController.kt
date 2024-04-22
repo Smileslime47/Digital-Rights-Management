@@ -32,7 +32,7 @@ fun Application.ipfsController() {
 
     routing {
         route("/ipfs") {
-            authenticateRequired(Constant.Authentication.NEED_LOGIN){
+            authenticateRequired(Constant.Authentication.NEED_LOGIN) {
                 post {
                     val multipartData = call.receiveMultipart()
 
@@ -58,14 +58,37 @@ fun Application.ipfsController() {
                 }
 
                 get("/by-license") {
-                    val addr = call.request.queryParameters["addr"]
+                    val licenseDeployer = call.parameters["deployer"]
+                    val licenseIndex = call.parameters["index"]
+
                     val loginId =
                         call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
                             ?.asLong()
                     val loginAddr = loginId?.let { id -> walletService.getWallet(id)?.address }
 
-                    val targetLicense = licenseService.getPureData(loginAddr!!, addr!!)
-                    val targetRight = rightService.getPureData(loginAddr, targetLicense.rightAddr)
+                    when {
+                        (licenseDeployer == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的部署者")
+                            return@get
+                        }
+
+                        (licenseIndex == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的索引")
+                            return@get
+                        }
+
+                        (licenseIndex.toIntOrNull() == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的索引")
+                            return@get
+                        }
+                    }
+
+                    val targetLicense = licenseService.getLicense(loginAddr!!, licenseDeployer!!, licenseIndex!!.toBigInteger())
+                    val targetRight = rightService.getRight(
+                        callerAddr = loginAddr,
+                        deployer = targetLicense.rightKeyPair.deployer,
+                        index = targetLicense.rightKeyPair.arrayIndex.toBigInteger()
+                    )
 
                     when {
                         (targetLicense.deployer != loginAddr) -> {
@@ -78,22 +101,36 @@ fun Application.ipfsController() {
                     val fileName = targetRight.fileName
                     val fileBytes = ipfsService.download(fileHash)
 
-                    call.fileRespond(fileName,fileBytes)
+                    call.fileRespond(fileName, fileBytes)
                 }
 
                 get("/by-right") {
-                    val addr = call.request.queryParameters["addr"]
+                    val rightDeployer = call.parameters["deployer"]
+                    val rightIndex = call.parameters["index"]
+
                     val loginId =
                         call.principal<JWTPrincipal>()?.payload?.getClaim(Constant.Authentication.USER_ID_CLAIM)
                             ?.asLong()
-
                     val loginAddr = loginId?.let { id -> walletService.getWallet(id)?.address }
 
-                    logger.info("loginId: $loginId")
-                    logger.info("loginAddr: $loginAddr")
-                    logger.info("addr: $addr")
+                    when {
+                        (rightDeployer == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的部署者")
+                            return@get
+                        }
 
-                    val targetRight = rightService.getPureData(loginAddr!!, addr!!)
+                        (rightIndex == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的索引")
+                            return@get
+                        }
+
+                        (rightIndex.toIntOrNull() == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的索引")
+                            return@get
+                        }
+                    }
+
+                    val targetRight = rightService.getRight(loginAddr!!, rightDeployer!!, rightIndex!!.toLong())
 
                     when {
                         (targetRight.deployer != loginAddr) -> {
@@ -106,7 +143,7 @@ fun Application.ipfsController() {
                     val fileName = targetRight.fileName
                     val fileBytes = ipfsService.download(fileHash)
 
-                    call.fileRespond(fileName,fileBytes)
+                    call.fileRespond(fileName, fileBytes)
                 }
             }
         }

@@ -46,6 +46,8 @@ object Constant {
         const val RIGHT = "right"
         //授权
         const val LICENSE = "license"
+        //收据
+        const val RECEIPT = "receipt"
 
         //------------------------------Flag字段------------------------------//
         //是否为自我数据查询

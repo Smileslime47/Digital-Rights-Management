@@ -16,5 +16,5 @@ data class PendingRight(
     var status: PendingStatus,
     var estimatePrice: Long? = null,
     var comment: String? = null,
-    var createTime: Long
+    var createTime: Long,
 )

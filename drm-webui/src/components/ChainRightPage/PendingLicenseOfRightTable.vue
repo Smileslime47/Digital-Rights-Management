@@ -11,8 +11,6 @@ const props = defineProps<{
   isDeployer: boolean
 }>()
 
-const rightAddr = ref(<string>useRoute().params.right)
-
 const rejectWindowVisible = ref(false)
 const pendingLicenses = ref([])
 const maxLicensePage = ref(0)
@@ -61,14 +59,17 @@ const handleRejectButton = (rightId: number) => {
   RejectForm.pendingLicenseId = rightId
 }
 
-const getPendingLicenses = (addr: string, page: number) => {
+const route = useRoute()
+
+const getPendingLicenses = (page:number) => {
   //获取账户待审合约
   httpService.get(
       Constant.Api.PENDING_LICENSE.BY_RIGHT,
       {
         params: {
-          addr: addr,
-          page: page
+          deployer:route.params.deployer,
+          index:route.params.index,
+          page:page
         }
       }
   ).then((data) => {
@@ -78,13 +79,27 @@ const getPendingLicenses = (addr: string, page: number) => {
 }
 
 watch(licensePageNow, (newVal) => {
-  getPendingLicenses(rightAddr.value, newVal)
+  getPendingLicenses(newVal)
 })
 
 fresh(() => {
   console.log(props.isDeployer)
-  getPendingLicenses(rightAddr.value, licensePageNow.value)
+  getPendingLicenses(licensePageNow.value)
 })
+
+const deployLicense = (id: number) => {
+  httpService.post(
+      Constant.Api.PENDING_LICENSE.DEPLOY,
+      {
+        password: chainPassword.value,
+        pendingId: id
+      },
+  ).then((data) => {
+    let cost = data[Constant.RespondField.COST]
+    ElMessage.success("部署成功,实际花费" + cost + " WEI。")
+  })
+  ElMessage.info("已发送部署交易请求，部署成功后会向您发送通知。")
+}
 </script>
 
 <template>
@@ -110,7 +125,6 @@ fresh(() => {
       </template>
     </el-table-column>
     <el-table-column prop="rightTitle" label="版权标题"/>
-    <el-table-column prop="rightAddr" label="版权地址"/>
     <el-table-column prop="owner" label="授权所有人"/>
     <el-table-column label="授权起始时间">
       <template #default="scope">

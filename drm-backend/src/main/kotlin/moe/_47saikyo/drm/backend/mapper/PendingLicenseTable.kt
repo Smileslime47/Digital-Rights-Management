@@ -25,24 +25,26 @@ import org.jetbrains.exposed.sql.statements.UpdateBuilder
  * @author 刘一邦
  */
 object PendingLicenseTable: Table("drm_pending_license"){
-    val id = long("id").autoIncrement()
-    val right_title = varchar("right_title", 128)
-    val right_addr = varchar("right_addr", 128)
-    val deployer = varchar("deployer", 128)
-    val owner = varchar("owner", 128)
-    val issue_time = long("issue_time")
-    val expire_time = long("expire_time")
-    val description = text("description").nullable()
-    val status = varchar("status", 128)
-    val estimate_price = long("estimate_price").nullable()
-    val comment = text("comment").nullable()
-    val create_time = long("create_time")
+    val id                      = long("id").autoIncrement()
+    val right_title             = varchar("right_title", 128)
+    val right_deployer          = varchar("right_deployer", 128)
+    val right_index             = long("right_index")
+    val deployer                = varchar("deployer", 128)
+    val owner                   = varchar("owner", 128)
+    val issue_time              = long("issue_time")
+    val expire_time             = long("expire_time")
+    val description             = text("description").nullable()
+    val status                  = varchar("status", 128)
+    val estimate_price          = long("estimate_price").nullable()
+    val comment                 = text("comment").nullable()
+    val create_time             = long("create_time")
     override val primaryKey = PrimaryKey(id)
 
     fun resultRowToPendingLicense(row: ResultRow) = PendingLicense(
         id = row[id],
         rightTitle = row[right_title],
-        rightAddr = row[right_addr],
+        rightDeployer = row[right_deployer],
+        rightIndex = row[right_index],
         deployer = row[deployer],
         owner = row[owner],
         issueTime = row[issue_time],
@@ -56,7 +58,8 @@ object PendingLicenseTable: Table("drm_pending_license"){
 
     fun <T : UpdateBuilder<Int>>getStatementBinder(pendingLicense: PendingLicense): PendingLicenseTable.(T) -> Unit = {
         it[right_title] = pendingLicense.rightTitle
-        it[right_addr] = pendingLicense.rightAddr
+        it[right_deployer] = pendingLicense.rightDeployer
+        it[right_index] = pendingLicense.rightIndex
         it[deployer] = pendingLicense.deployer
         it[owner] = pendingLicense.owner
         it[issue_time] = pendingLicense.issueTime

@@ -1,6 +1,7 @@
 package moe._47saikyo.drm.backend.service
 
-import moe._47saikyo.drm.blockchain.contract.Right
+import moe._47saikyo.drm.blockchain.models.KeyPairData
+import moe._47saikyo.drm.blockchain.models.RightData
 import moe._47saikyo.drm.blockchain.models.RightDeployForm
 import moe._47saikyo.drm.core.domain.PendingRight
 import org.web3j.tx.TransactionManager
@@ -85,7 +86,7 @@ interface PendingRightService {
      * @param transactionManager 交易管理器
      * @return 已部署版权
      */
-    suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): Right?
+    suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): RightData?
 
     /**
      * 拒绝待审核版权，将状态从*PENDING*改为*REJECTED*

@@ -11,6 +11,7 @@ import moe._47saikyo.drm.backend.models.HttpStatus
 import moe._47saikyo.drm.backend.models.httpRespond
 import moe._47saikyo.drm.backend.service.*
 import moe._47saikyo.drm.blockchain.BlockChain
+import moe._47saikyo.drm.blockchain.models.KeyPairData
 import moe._47saikyo.drm.blockchain.service.AccountService
 import moe._47saikyo.drm.blockchain.service.LicenseService
 import moe._47saikyo.drm.core.domain.Group
@@ -69,7 +70,8 @@ fun Application.pendingLicenseController() {
 
                 //查询指定账户的待审核授权
                 get("/by-right") {
-                    val addr = call.parameters["addr"]
+                    val rightDeployer = call.parameters["deployer"]
+                    val rightIndex = call.parameters["index"]
                     val pageNumberStr = call.request.queryParameters["page"]
                     val pageSize = Constant.DEFAULT_PAGE_SIZE
 
@@ -79,9 +81,21 @@ fun Application.pendingLicenseController() {
                     val loginAddr = loginId?.let { id -> walletService.getWallet(id)?.address }
 
                     when {
-                        //addr为空
-                        (addr == null) -> {
-                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的地址")
+                        //rightDeployer为空
+                        (rightDeployer == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的部署者")
+                            return@get
+                        }
+
+                        //rightIndex为空
+                        (rightIndex == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的索引")
+                            return@get
+                        }
+
+                        //rightIndex不是数字
+                        (rightIndex.toIntOrNull() == null) -> {
+                            call.httpRespond(HttpStatus.BAD_REQUEST with "无效的索引")
                             return@get
                         }
 
@@ -92,10 +106,15 @@ fun Application.pendingLicenseController() {
                         }
                     }
 
+                    val rightKeyPair = KeyPairData(
+                        deployer = rightDeployer!!,
+                        arrayIndex = rightIndex!!.toLong()
+                    )
+
                     //非作者智能查询自己对应版权下的待审核授权
-                    if (addr == loginAddr) {
+                    if (rightDeployer == loginAddr) {
                         val (count, pages) =
-                            pendingLicenseService.countPendingLicensesOfRight(addr!!) to pendingLicenseService.getPendingLicensesOfRight(addr, pageSize, pageNumberStr!!.toInt())
+                            pendingLicenseService.countPendingLicensesOfRight(rightKeyPair) to pendingLicenseService.getPendingLicensesOfRight(rightKeyPair, pageSize, pageNumberStr!!.toInt())
                         call.httpRespond(
                             data = mapOf(
                                 Constant.RespondField.COUNT to count,
@@ -104,7 +123,12 @@ fun Application.pendingLicenseController() {
                         )
                     } else {
                         val (count, pages) =
-                            pendingLicenseService.countPendingLicensesOfRight(addr!!, loginAddr!!) to pendingLicenseService.getPendingLicenseOfRight(addr, loginAddr, pageSize, pageNumberStr!!.toInt())
+                            pendingLicenseService.countPendingLicensesOfRight(rightKeyPair, loginAddr!!) to pendingLicenseService.getPendingLicenseOfRight(
+                                rightKeyPair,
+                                loginAddr,
+                                pageSize,
+                                pageNumberStr!!.toInt()
+                            )
                         call.httpRespond(
                             data = mapOf(
                                 Constant.RespondField.COUNT to count,
@@ -141,13 +165,14 @@ fun Application.pendingLicenseController() {
 
                         //部署合约
                         val oldBalance = accountService.getBalance(dbWallet.address)
-                        val license = pendingLicenseService.deployPendingLicense(pendingId, txManager)
+                        pendingLicenseService.deployPendingLicense(pendingId, txManager)
                         val newBalance = accountService.getBalance(dbWallet.address)
 
-                        call.httpRespond(data = mapOf(
-                            Constant.RespondField.COST to newBalance - oldBalance,
-                            Constant.RespondField.RIGHT to license?.contractAddress
-                        ))
+                        call.httpRespond(
+                            data = mapOf(
+                                Constant.RespondField.COST to newBalance - oldBalance,
+                            )
+                        )
                     }
 
                     //要求登陆、拥有区块链账号、拥有创建授权权限

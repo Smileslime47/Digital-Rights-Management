@@ -5,7 +5,8 @@ import moe._47saikyo.drm.core.enums.PendingStatus
 data class PendingLicense(
     val id: Long,
     val rightTitle: String,
-    val rightAddr: String,
+    val rightDeployer: String,
+    val rightIndex: Long,
     val deployer: String,
     val owner: String,
     val issueTime: Long,

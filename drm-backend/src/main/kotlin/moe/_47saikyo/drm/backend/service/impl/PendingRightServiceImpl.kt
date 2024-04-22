@@ -3,13 +3,17 @@ package moe._47saikyo.drm.backend.service.impl
 import moe._47saikyo.drm.backend.dao.PendingRightDao
 import moe._47saikyo.drm.backend.mapper.PendingRightTable
 import moe._47saikyo.drm.backend.service.PendingRightService
-import moe._47saikyo.drm.blockchain.contract.Right
+import moe._47saikyo.drm.backend.service.ReceiptService
+import moe._47saikyo.drm.blockchain.models.KeyPairData
+import moe._47saikyo.drm.blockchain.models.RightData
 import moe._47saikyo.drm.blockchain.models.RightDeployForm
 import moe._47saikyo.drm.blockchain.service.RightService
 import moe._47saikyo.drm.core.constant.GlobalConstant
 import moe._47saikyo.drm.core.domain.PendingRight
 import moe._47saikyo.drm.core.enums.PendingStatus
+import org.jetbrains.exposed.sql.and
 import org.koin.java.KoinJavaComponent.inject
+import org.slf4j.LoggerFactory
 import org.web3j.tx.TransactionManager
 
 /**
@@ -18,8 +22,10 @@ import org.web3j.tx.TransactionManager
  * @author 刘一邦
  */
 class PendingRightServiceImpl : PendingRightService {
+    private val logger = LoggerFactory.getLogger(PendingRightServiceImpl::class.java)
     private val pendingRightDao: PendingRightDao by inject(PendingRightDao::class.java)
     private val rightService: RightService by inject(RightService::class.java)
+    private val receiptService: ReceiptService by inject(ReceiptService::class.java)
 
     override fun convertToDeployForm(pendingRight: PendingRight): RightDeployForm =
         RightDeployForm(
@@ -63,19 +69,29 @@ class PendingRightServiceImpl : PendingRightService {
         }
     }
 
-    override suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): Right? {
+    override suspend fun deployPendingRight(id: Long, transactionManager: TransactionManager): RightData? {
         val pendingRight = getPendingRight(id)
         if (pendingRight?.status == PendingStatus.CONFIRMED) {
-            pendingRightDao.updatePendingRight(pendingRight.apply { status = PendingStatus.DEPLOYING })
+            try {
+                pendingRightDao.updatePendingRight(pendingRight.apply { status = PendingStatus.DEPLOYING })
 
-            val form = convertToDeployForm(pendingRight)
+                val form = convertToDeployForm(pendingRight)
 
-            val right = rightService.addRight(transactionManager, form)
+                val receiptWrapper = rightService.addRight(transactionManager, form)
+                val right = receiptWrapper?.getPayload()
+                val receipt = receiptWrapper?.getReceipt(right!!.deployer, right.index)
 
-            return if (right.isValid) {
-                if (pendingRightDao.updatePendingRight(pendingRight.apply { status = PendingStatus.DEPLOYED })) right else null
-            } else {
-                if (pendingRightDao.updatePendingRight(pendingRight.apply { status = PendingStatus.CONFIRMED })) right else null
+                receiptService.insertReceipt(receipt!!)
+                pendingRightDao.updatePendingRight(pendingRight.apply {
+                    status = PendingStatus.DEPLOYED
+                })
+                return right
+            } catch (e: Exception) {
+                logger.error(e.message)
+                pendingRightDao.updatePendingRight(pendingRight.apply {
+                    status = PendingStatus.CONFIRMED
+                })
+                return null
             }
         } else {
             return null

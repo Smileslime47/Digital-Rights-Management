@@ -27,6 +27,7 @@ fun Application.enableAllControllers() {
     chainAccountController()
     chainRightController()
     chainLicenseController()
+    receiptController()
     noticeController()
     pendingRightController()
     pendingLicenseController()

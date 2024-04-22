@@ -78,7 +78,6 @@ fresh(() => {
       </template>
     </el-table-column>
     <el-table-column prop="rightTitle" label="版权标题"/>
-    <el-table-column prop="rightAddr" label="版权地址"/>
     <el-table-column prop="owner" label="授权所有人"/>
     <el-table-column label="授权起始时间">
       <template #default="scope">
