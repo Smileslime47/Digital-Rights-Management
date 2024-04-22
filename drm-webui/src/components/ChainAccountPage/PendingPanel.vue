@@ -6,12 +6,12 @@ const props = defineProps<{
 
 <template>
   <el-card>
-    <h1>合约申请记录</h1>
+    <h1>申请记录</h1>
     <el-tabs>
-      <el-tab-pane label="版权合约">
+      <el-tab-pane label="版权信息">
         <PendingRightOfUserTable :addr="props.addr"/>
       </el-tab-pane>
-      <el-tab-pane label="授权合约">
+      <el-tab-pane label="授权信息">
         <PendingLicenseOfUserTable :addr="props.addr" />
       </el-tab-pane>
     </el-tabs>

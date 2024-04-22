@@ -7,7 +7,6 @@ import RightData, {EmptyRight} from "~/modules/RightData.ts";
 import TokenUtils from "~/server/TokenUtils.ts";
 
 const right = ref<RightData>(EmptyRight())
-const rightAddr = ref("")
 const isDeployer = ref(false)
 
 fresh(async (route) => {
@@ -17,8 +16,8 @@ fresh(async (route) => {
         Constant.Api.CHAIN.RIGHT.ROOT,
         {
           params: {
-            addr: route.params.right,
-            caller: caller
+            deployer: route.params.deployer,
+            index: route.params.index
           }
         }
     ).then((data) => {
@@ -32,6 +31,10 @@ fresh(async (route) => {
 <template>
   <TemplatePage>
     <RightPanel :right="right" :is-deployer="isDeployer"/>
+
+    <el-divider/>
+
+    <ReceiptPanel/>
 
     <el-divider/>
 

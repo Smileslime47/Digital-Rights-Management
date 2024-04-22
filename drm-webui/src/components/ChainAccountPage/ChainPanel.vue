@@ -8,12 +8,12 @@ const props = defineProps<{
 
 <template>
   <el-card>
-    <h1>链上合约</h1>
+    <h1>链上数据</h1>
     <el-tabs>
-      <el-tab-pane label="版权合约">
+      <el-tab-pane label="版权信息">
         <ChainRightPanel :addr="props.addr"/>
       </el-tab-pane>
-      <el-tab-pane label="授权合约">
+      <el-tab-pane label="授权信息">
         <ChainLicensePanel :addr="props.addr"/>
       </el-tab-pane>
     </el-tabs>

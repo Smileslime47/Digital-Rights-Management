@@ -21,8 +21,8 @@ const routeTo = {
     chainAccount: () => loadAndTo("/chain/account"),
     chainVerify: (page: String) => loadAndTo("/chain/verify/" + page),
     createRight: () => loadAndTo("/chain/right/create"),
-    chainRight: (addr: String) => loadAndTo("/chain/right/" + addr),
-    createLicense: (right: String) => loadAndTo("/chain/license/create/" + right),
+    chainRight: (deployer: String, index: String) => loadAndTo("/chain/right/" + deployer + "/" + index),
+    createLicense: (deployer: String, index: String) => loadAndTo("/chain/license/create/" + deployer + "/" + index),
     searchRight: (title: String) => loadAndTo("/search/right/" + title),
     fresh: () => router.go(0)
 }

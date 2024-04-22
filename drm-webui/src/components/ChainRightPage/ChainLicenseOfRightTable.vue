@@ -11,17 +11,20 @@ const props = defineProps<{
   isDeployer: boolean
 }>()
 
-const rightAddr = ref(<string>useRoute().params.right)
+const rightDeployer = ref(<string>useRoute().params.deployer)
+const rightIndex = ref(<string>useRoute().params.index)
+
 const callerAddr = ref("")
 
-const chainRights = ref([])
+const chainLicenses = ref([])
 
-const downloadByRight = (rightAddr:string) => {
+const downloadByLicense = (licenseDeployer:string,licenseIndex:number) => {
   httpService.get(
-      Constant.Api.IPFS.BY_RIGHT,
+      Constant.Api.IPFS.BY_LICENSE,
       {
-        params:{
-          addr: rightAddr
+        params: {
+          deployer: licenseDeployer,
+          index: licenseIndex
         },
         responseType: 'blob'
       }
@@ -35,26 +38,26 @@ const downloadByRight = (rightAddr:string) => {
 }
 
 fresh((_) => {
-  TokenUtils.getChainAddress(useRoute().path).then((data)=>{
-    callerAddr.value = data
+  TokenUtils.getChainAddress(useRoute().path).then((data) => {
+    callerAddr.value = <string>data
     //获取账户待审合约
     httpService.get(
         Constant.Api.CHAIN.LICENSE.BY_RIGHT,
         {
           params: {
-            addr: rightAddr.value,
-            caller: callerAddr.value
+            deployer: rightDeployer.value,
+            index: rightIndex.value
           }
         }
     ).then((data) => {
-      chainRights.value = data[Constant.RespondField.LICENSE]
+      chainLicenses.value = data[Constant.RespondField.LICENSE]
     })
   })
 })
 </script>
 
 <template>
-  <el-table style="width: 100%" :data="chainRights" stripe>
+  <el-table style="width: 100%" :data="chainLicenses" stripe>
     <el-table-column prop="rightTitle" label="版权标题"/>
     <el-table-column prop="owner" label="授权所有人"/>
     <el-table-column prop="deployer" label="授权部署人"/>
@@ -72,8 +75,8 @@ fresh((_) => {
     <el-table-column label="操作">
       <template #default="scope">
         <el-button-group>
-          <el-button type="primary" plain text bg @click="routeTo.chainRight(scope.row.rightAddr)">查看版权</el-button>
-          <el-button type="success" plain text bg @click="downloadByRight(rightAddr)">下载资源</el-button>
+          <el-button type="primary" plain text bg @click="routeTo.chainRight(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">查看版权</el-button>
+          <el-button type="success" plain text bg @click="downloadByLicense(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">下载资源</el-button>
         </el-button-group>
       </template>
     </el-table-column>

@@ -10,8 +10,8 @@ const routes: RouteRecordRaw[] = [
     {path: '/change-password', name: 'ChangePassword', component: () => import('~/pages/PasswordPage.vue')},
     {path: '/chain/account', name: 'ChainAccount', component: () => import('~/pages/ChainAccountPage.vue')},
     {path: '/chain/right/create', name: 'CreateRight', component: () => import('~/pages/CreateRightPage.vue')},
-    {path: '/chain/right/:right', name: 'ChainRight', component: () => import('~/pages/ChainRightPage.vue')},
-    {path: '/chain/license/create/:right', name: 'CreateLicense', component: () => import('~/pages/CreateLicensePage.vue')},
+    {path: '/chain/right/:deployer/:index', name: 'ChainRight', component: () => import('~/pages/ChainRightPage.vue')},
+    {path: '/chain/license/create/:deployer/:index', name: 'CreateLicense', component: () => import('~/pages/CreateLicensePage.vue')},
     {path: '/chain/verify/:page', name: 'ChainVerify', component: () => import('~/pages/ChainVerifyPage.vue')},
     {path: '/search/right/:title', name: 'SearchRight', component: () => import('~/pages/SearchRightPage.vue')},
 ]

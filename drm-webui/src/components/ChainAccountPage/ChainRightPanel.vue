@@ -15,7 +15,7 @@ fresh((_) => {
       Constant.Api.CHAIN.RIGHT.DEPLOYER,
       {
         params: {
-          addr: props.addr,
+          deployer: props.addr
         }
       }
   ).then((data) => {
@@ -28,7 +28,6 @@ fresh((_) => {
   <el-table style="width: 100%" :data="chainRights" stripe>
     <el-table-column prop="title" label="版权标题"/>
     <el-table-column prop="owner" label="版权所有人"/>
-    <el-table-column prop="deployer" label="版权部署人"/>
     <el-table-column prop="registrationNumber" label="版权登记号"/>
     <el-table-column label="发行时间">
       <template #default="scope">
@@ -44,7 +43,7 @@ fresh((_) => {
     <el-table-column prop="fileName" label="版权资源"/>
     <el-table-column label="操作">
       <template #default="scope">
-        <el-button type="primary" size="mini" @click="routeTo.chainRight(scope.row.addr)">查看</el-button>
+        <el-button type="primary" plain bg text @click="routeTo.chainRight(props.addr,scope.row.index)">查看</el-button>
       </template>
     </el-table-column>
   </el-table>

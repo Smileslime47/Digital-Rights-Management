@@ -1,7 +1,7 @@
 import Constant from "~/constant/Constant.ts";
 
 class RightData {
-    addr: string;
+    index: number;
     title: string;
     deployer: string;
     owner: string;
@@ -14,7 +14,7 @@ class RightData {
 
     //all-args
     constructor(
-        addr: string,
+        index: number,
         title: string,
         deployer: string,
         owner: string,
@@ -25,7 +25,7 @@ class RightData {
         fileName: string,
         fileHash: string,
     ) {
-        this.addr = addr;
+        this.index = index;
         this.title = title;
         this.deployer = deployer;
         this.owner = owner;
@@ -40,7 +40,7 @@ class RightData {
 
 export const EmptyRight = () => {
     return new RightData(
-        Constant.Global.NULL_STRING_PLACEHOLDER,
+        Constant.Global.NULL_NUMBER_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,
         Constant.Global.NULL_STRING_PLACEHOLDER,

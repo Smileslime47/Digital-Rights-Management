@@ -15,20 +15,20 @@ const form = reactive({
   description: ""
 })
 
-const deployer = ref("")
+const licenseDeployer = ref("")
 const right = ref<RightData>(EmptyRight())
 
 fresh(async (route) => {
   //获取链上账户
   TokenUtils.getChainAddress(useRoute().path).then((result) => {
     if (result != null) {
-      deployer.value = result
+      licenseDeployer.value = result
       httpService.get(
           Constant.Api.CHAIN.RIGHT.ROOT,
           {
             params: {
-              addr: route.params.right,
-              caller: deployer.value
+              deployer: route.params.deployer,
+              index: route.params.index
             }
           }
       ).then((data) => {
@@ -45,8 +45,9 @@ const confirmCreate = () => {
   //生成合约部署表单
   let pendingLicense = new PendingLicense(
       right.value.title,
-      right.value.addr,
-      deployer.value,
+      right.value.deployer,
+      right.value.index,
+      licenseDeployer.value,
       form.owner,
       form.availableTime[0],
       form.availableTime[1],

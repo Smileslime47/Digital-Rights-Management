@@ -6,21 +6,18 @@ import {httpService} from "~/server/http.ts";
 import Right from "~/modules/Right.ts";
 import {Search} from "@element-plus/icons-vue";
 import routeTo from "~/route/routeTo.ts";
-import TokenUtils from "~/server/TokenUtils.ts";
 
 const initialized = ref(false)
 const searchContent = ref("")
 const chainRights = ref<Right[]>([])
 
 fresh(async (route) => {
-  let caller = await TokenUtils.getChainAddress(useRoute().path)
   searchContent.value = <string>route.params.title
   httpService.get(
       Constant.Api.CHAIN.RIGHT.SEARCH,
       {
         params: {
           title: searchContent.value,
-          caller: caller
         }
       }
   ).then((data) => {

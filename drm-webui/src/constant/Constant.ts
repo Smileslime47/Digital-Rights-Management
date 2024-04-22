@@ -29,6 +29,7 @@ const Constant = {
         NOTICE: "notice",
         RIGHT: "right",
         LICENSE: "license",
+        RECEIPT: "receipt",
 
         //------------------------------Flag字段------------------------------//
         SELF_PROFILE: "self",
@@ -60,12 +61,16 @@ const Constant = {
         GROUP: {
             ROOT: "/group",
         },
+        RECEIPT: {
+            ROOT: "/receipt",
+        },
         NOTICE: {
             ROOT: "/notice",
             COUNT: "/notice/count",
         },
         PENDING_RIGHT: {
             ROOT: "/pending-right",
+            BY_KEYPAIR: "/pending-license/by-keypair",
             DEPLOY: "/pending-right/deploy",
             VERIFY: "/pending-right/verify",
             CONFIRM: "/pending-right/verify/confirm",
@@ -89,9 +94,6 @@ const Constant = {
             RIGHT: {
                 ROOT: "/chain/right",
                 DEPLOYER: "/chain/right/deployer",
-                VERIFY: "/chain/right/verify",
-                CONFIRM: "/chain/right/verify/confirm",
-                REJECT: "/chain/right/verify/reject",
                 SEARCH: "/chain/right/search"
             },
             LICENSE: {
@@ -102,8 +104,8 @@ const Constant = {
         },
         IPFS: {
             ROOT: "/ipfs",
-            BY_RIGHT:"/ipfs/by-right",
-            BY_LICENSE:"/ipfs/by-license",
+            BY_RIGHT: "/ipfs/by-right",
+            BY_LICENSE: "/ipfs/by-license",
         }
     }
 }

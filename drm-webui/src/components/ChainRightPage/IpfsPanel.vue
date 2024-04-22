@@ -8,12 +8,15 @@ const props = defineProps<{
   isDeployer: boolean
 }>()
 
-const downloadByRight = (rightAddr:string) => {
+const route = useRoute()
+
+const downloadByRight = () => {
   httpService.get(
       Constant.Api.IPFS.BY_RIGHT,
       {
         params:{
-          addr: rightAddr
+          deployer: route.params.deployer,
+          index: route.params.index
         },
         responseType: 'blob'
       }
