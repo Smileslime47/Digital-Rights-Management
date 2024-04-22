@@ -20,7 +20,7 @@ class BlockChainTest {
                     "/home/smile_slime_47/Projekt/Digital-Rights-Management/drm-blockchain/src/test/resources/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json",
                     "1234567890"
                 )
-                .withManager("0x9c2cb0dc39e31484991efc461a9feab8ce0baf61")
+                .withManager("0x13598c1e0e73d0793a29e35e8831aad41e40bfdc")
                 .build()
         )
         assert(BlockChain.connected)

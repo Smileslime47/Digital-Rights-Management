@@ -4,7 +4,7 @@ import java.math.BigInteger
 
 data class LicenseDeployForm(
     val rightTitle: String,
-    val rightAddr: String,
+    val rightKeyPairData: KeyPairData,
     val owner: String,
     val issueTime: BigInteger,
     val expireTime: BigInteger,

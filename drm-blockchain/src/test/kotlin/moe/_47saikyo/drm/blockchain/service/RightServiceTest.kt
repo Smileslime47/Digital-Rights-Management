@@ -4,8 +4,6 @@ import moe._47saikyo.*
 import moe._47saikyo.drm.blockchain.*
 import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainWrapperConfiguration
 import moe._47saikyo.drm.blockchain.constant.BlockChainConstant
-import moe._47saikyo.drm.blockchain.contract.Right
-import moe._47saikyo.drm.blockchain.service.impl.RightEthCallService
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.LoggerFactory
@@ -38,41 +36,6 @@ class RightServiceTest {
         }
 
         BlockChainTest.init()
-    }
-
-    @Test
-    fun getTest() {
-        val right = Right.load(
-            "0x17ee7ffa7f79a43b51dc7e01ef924b0f541fdfeb",
-            BlockChain.web3jInstance,
-            BlockChain.bankTxManager,
-            BlockChain.gasProvider
-        )
-    }
-
-    @Test
-    fun serializeTest() {
-        val right = Right.load(
-            "0x17ee7ffa7f79a43b51dc7e01ef924b0f541fdfeb",
-            BlockChain.web3jInstance,
-            BlockChain.bankTxManager,
-            BlockChain.gasProvider
-        )
-        val json = right.serialize().send()
-        logger.info("getPureData[$json]")
-    }
-
-    /**
-     * 测试获取指定owner版权列表
-     */
-    @Test
-    fun getRightsTest() {
-        logger.info(RightEthCallService().getRights("0xcb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe").toString())
-    }
-
-    @Test
-    fun getPureDataTest() {
-        logger.info(rightService.getPureData("0x31e582af2d0baeaa563a908eca1af273caeb7c0e","0x821a55a89c6e515764c61f44377488f4b7db68e2").toString())
     }
 
     @Test

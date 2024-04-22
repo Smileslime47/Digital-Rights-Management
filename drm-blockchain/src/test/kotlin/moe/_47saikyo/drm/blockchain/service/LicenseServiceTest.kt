@@ -2,8 +2,7 @@ package moe._47saikyo.drm.blockchain.service
 
 import moe._47saikyo.drm.blockchain.BlockChain
 import moe._47saikyo.drm.blockchain.BlockChainTest
-import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainConfiguration
-import moe._47saikyo.drm.blockchain.contract.License
+import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainWrapperConfiguration
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent
 import org.slf4j.LoggerFactory
@@ -21,36 +20,9 @@ class LicenseServiceTest {
     @BeforeTest
     fun setUp() {
         startKoin {
-            modules(KoinBlockChainConfiguration.module)
+            modules(KoinBlockChainWrapperConfiguration.module)
         }
 
         BlockChainTest.init()
-    }
-
-    @Test
-    fun getTest() {
-        val license = License.load(
-            "0xb128cd53adf278888f72638fbb6ac1844af2ff0e",
-            BlockChain.web3jInstance,
-            BlockChain.bankTxManager,
-            BlockChain.gasProvider
-        )
-    }
-
-    @Test
-    fun serializeTest() {
-        val license = License.load(
-            "0xb128cd53adf278888f72638fbb6ac1844af2ff0e",
-            BlockChain.web3jInstance,
-            BlockChain.bankTxManager,
-            BlockChain.gasProvider
-        )
-        val json = license.serialize().send()
-        logger.info("getPureData[$json]")
-    }
-
-    @Test
-    fun getRightsTest() {
-        logger.info(licenseService.getLicenses("0x31e582af2d0baeaa563a908eca1af273caeb7c0e").toString())
     }
 }

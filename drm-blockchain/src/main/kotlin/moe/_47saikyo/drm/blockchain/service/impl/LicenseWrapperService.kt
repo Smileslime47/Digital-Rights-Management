@@ -1,18 +1,14 @@
 package moe._47saikyo.drm.blockchain.service.impl
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import moe._47saikyo.drm.blockchain.contract.License
-import moe._47saikyo.drm.blockchain.*
 import moe._47saikyo.drm.blockchain.annotation.ViewFunction
-import moe._47saikyo.drm.blockchain.constant.BlockChainConstant
+import moe._47saikyo.drm.blockchain.contract.DRManager.License
 import moe._47saikyo.drm.blockchain.models.LicenseData
 import moe._47saikyo.drm.blockchain.models.LicenseDeployForm
+import moe._47saikyo.drm.blockchain.models.ReceiptWrapper
 import moe._47saikyo.drm.blockchain.service.LicenseService
 import moe._47saikyo.drm.blockchain.service.ManagerService
 import moe._47saikyo.drm.blockchain.service.RightService
 import org.koin.java.KoinJavaComponent
-import org.web3j.abi.FunctionEncoder
-import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
@@ -22,6 +18,7 @@ import java.math.BigInteger
  * @author 刘一邦
  */
 class LicenseWrapperService : LicenseService {
+    private val logger = org.slf4j.LoggerFactory.getLogger(LicenseWrapperService::class.java)
     private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
     private val rightService: RightService by KoinJavaComponent.inject(RightService::class.java)
 
@@ -29,65 +26,65 @@ class LicenseWrapperService : LicenseService {
         callerAddr: String,
         form: LicenseDeployForm
     ): BigInteger {
-        val binCode = License.BINARY
+//        val binCode = License.BINARY
+//
+//        val encodedConstructor = FunctionEncoder.encodeConstructor(
+//            listOf(
+//                string(form.rightTitle),
+//                address(form.rightAddr),
+//                string(form.owner),
+//                uint64(form.issueTime),
+//                uint64(form.expireTime),
+//                string(form.description)
+//            )
+//        )
+//
+//        return Estimate.estimateDeploy(callerAddr, "$binCode$encodedConstructor")
+//            .add(BlockChainConstant.Gas.MANAGER_ADD)
+//            .add(BlockChainConstant.Gas.RIGHT_ADD)
 
-        val encodedConstructor = FunctionEncoder.encodeConstructor(
-            listOf(
-                string(form.rightTitle),
-                address(form.rightAddr),
-                string(form.owner),
-                uint64(form.issueTime),
-                uint64(form.expireTime),
-                string(form.description)
-            )
-        )
-
-        return Estimate.estimateDeploy(callerAddr, "$binCode$encodedConstructor")
-            .add(BlockChainConstant.Gas.MANAGER_ADD)
-            .add(BlockChainConstant.Gas.RIGHT_ADD)
+        return BigInteger.valueOf(0)
     }
 
     override fun addLicense(
         transactionManager: TransactionManager,
         form: LicenseDeployForm
-    ): License {
-        val license = License.deploy(
-            BlockChain.web3jInstance,
-            transactionManager,
-            BlockChain.gasProvider,
+    ): ReceiptWrapper<LicenseData>? {
+        val license = License(
+            BigInteger.valueOf(0),
             form.rightTitle,
-            form.rightAddr,
+            form.rightKeyPairData.toKeyPairStruct(),
+            transactionManager.fromAddress,
             form.owner,
             form.issueTime,
             form.expireTime,
             form.description
-        ).send()
-
-        rightService.addLicense(transactionManager, form.rightAddr, license.contractAddress)
-        managerService.addLicense(transactionManager, license)
-
-        return license
-    }
-
-    @ViewFunction
-    override fun getPureData(
-        callerAddr: String,
-        licenseAddr: String
-    ): LicenseData {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
-
-        //创建函数调用交易
-        val license = License.load(
-            licenseAddr,
-            BlockChain.web3jInstance,
-            txManager,
-            BlockChain.gasProvider
         )
-        val json = license.serialize().send()
-        return jacksonObjectMapper().readerFor(LicenseData::class.java).readValue(json)
+
+        val receipt = managerService.addLicense(transactionManager, license)
+
+        val lastLicense =
+            LicenseData.fromLicenseStruct(
+                managerService.getLastLicense(transactionManager.fromAddress, transactionManager.fromAddress)
+            )
+
+        return if (lastLicense == LicenseData.fromLicenseStruct(license))
+            ReceiptWrapper(receipt, lastLicense)
+        else
+            null
     }
 
     @ViewFunction
-    override fun getLicenses(owner: String): List<LicenseData> =
-        managerService.getLicenses(owner).map { getPureData(owner, it) }
+    override fun getLicense(callerAddr: String, deployer: String, index: Number): LicenseData {
+        val license = managerService.getLicense(callerAddr, deployer, index)
+        logger.info("getLicense[$license]")
+        return LicenseData.fromLicenseStruct(license)
+    }
+
+    @ViewFunction
+    override fun getLicenses(callerAddr: String, deployer: String): List<LicenseData> {
+        val licenses = managerService.getLicenses(callerAddr, deployer)
+        logger.info("getLicenses[$licenses]")
+        return licenses.map { LicenseData.fromLicenseStruct(it) }
+    }
 }

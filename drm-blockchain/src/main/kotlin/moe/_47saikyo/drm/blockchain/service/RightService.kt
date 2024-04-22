@@ -1,7 +1,8 @@
 package moe._47saikyo.drm.blockchain.service
 
 import moe._47saikyo.drm.blockchain.annotation.ViewFunction
-import moe._47saikyo.drm.blockchain.contract.Right
+import moe._47saikyo.drm.blockchain.contract.DRManager.Right
+import moe._47saikyo.drm.blockchain.models.ReceiptWrapper
 import moe._47saikyo.drm.blockchain.models.RightData
 import moe._47saikyo.drm.blockchain.models.RightDeployForm
 import org.web3j.tx.TransactionManager
@@ -23,7 +24,7 @@ interface RightService {
     fun searchByTitle(
         callerAddr: String,
         title: String
-    ): List<String>
+    ): List<RightData>
 
     /**
      * 估算部署合约所需的gas
@@ -41,47 +42,36 @@ interface RightService {
      *
      * @param transactionManager 交易管理器
      * @param form 版权部署表单
-     * @return 版权合约
      */
     fun addRight(
         transactionManager: TransactionManager,
         form: RightDeployForm
-    ): Right
+    ): ReceiptWrapper<RightData>?
 
     /**
-     * 添加授权
+     * 获取版权合约
      *
-     * @param transactionManager 交易管理器
-     * @param rightAddr 版权合约地址
-     * @param licenseAddr 授权合约地址
+     * @param callerAddr 调用者地址
+     * @param deployer 部署者地址
+     * @param index 版权合约索引
      * @return 版权合约
      */
-    fun addLicense(
-        transactionManager: TransactionManager,
-        rightAddr: String,
-        licenseAddr: String
-    )
-
-    /**
-     * 获取版权合约的纯数据对象
-     *
-     * @param rightAddr 版权合约地址
-     * @return 纯数据对象
-     */
-    @ViewFunction
-    fun getPureData(
+    fun getRight(
         callerAddr: String,
-        rightAddr: String
+        deployer: String,
+        index: Number
     ): RightData
 
     /**
      * 获取用户的版权
      *
-     * @param owner 用户地址
+     * @param callerAddr 调用者地址
+     * @param deployer 部署者地址
      * @return 版权合约列表
      */
     @ViewFunction
     fun getRights(
-        owner: String
+        callerAddr: String,
+        deployer: String
     ): List<RightData>
 }

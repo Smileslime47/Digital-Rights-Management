@@ -1,9 +1,9 @@
 package moe._47saikyo.drm.blockchain.service
 
-import moe._47saikyo.drm.blockchain.contract.License
 import moe._47saikyo.drm.blockchain.annotation.ViewFunction
 import moe._47saikyo.drm.blockchain.models.LicenseData
 import moe._47saikyo.drm.blockchain.models.LicenseDeployForm
+import moe._47saikyo.drm.blockchain.models.ReceiptWrapper
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
@@ -30,34 +30,36 @@ interface LicenseService {
      *
      * @param transactionManager 交易管理器
      * @param form 授权部署表单
-     * @return 授权合约
      */
     fun addLicense(
         transactionManager: TransactionManager,
         form: LicenseDeployForm
-    ): License
+    ): ReceiptWrapper<LicenseData>?
 
     /**
-     * 获取授权合约的纯数据对象
+     * 获取授权合约
      *
      * @param callerAddr 调用者地址
-     * @param licenseAddr 授权合约地址
-     * @return 纯数据对象
+     * @param deployer 部署者地址
+     * @param index 授权合约索引
+     * @return 授权合约
      */
-    @ViewFunction
-    fun getPureData(
+    fun getLicense(
         callerAddr: String,
-        licenseAddr: String
+        deployer: String,
+        index: Number
     ): LicenseData
 
     /**
      * 获取用户的授权
      *
-     * @param owner 用户地址
+     * @param callerAddr 调用者地址
+     * @param deployer 部署者地址
      * @return 授权合约列表
      */
     @ViewFunction
     fun getLicenses(
-        owner:String
+        callerAddr: String,
+        deployer: String
     ): List<LicenseData>
 }

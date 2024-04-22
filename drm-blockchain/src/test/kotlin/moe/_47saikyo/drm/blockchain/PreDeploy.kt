@@ -1,15 +1,13 @@
 package moe._47saikyo.drm.blockchain
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainConfiguration
+import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainWrapperConfiguration
 import moe._47saikyo.drm.blockchain.contract.DRManager
-import moe._47saikyo.drm.blockchain.contract.License
 import moe._47saikyo.drm.blockchain.models.LicenseDeployForm
 import moe._47saikyo.drm.blockchain.models.RightDeployForm
 import moe._47saikyo.drm.blockchain.service.AccountService
 import moe._47saikyo.drm.blockchain.service.ManagerService
 import moe._47saikyo.drm.blockchain.service.impl.AccountServiceImpl
-import moe._47saikyo.drm.blockchain.service.impl.RightEthCallService
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.LoggerFactory
@@ -34,7 +32,7 @@ class PreDeploy {
     @BeforeTest
     fun setup() {
         startKoin {
-            modules(KoinBlockChainConfiguration.module)
+            modules(KoinBlockChainWrapperConfiguration.module)
         }
 
         BlockChainTest.init()
@@ -48,7 +46,7 @@ class PreDeploy {
     /**
      * 预部署测试用DRManager合约
      *
-     * 上一次部署成功地址：0xef563dee888cb304dd660b9f6e6b261f1a2295d2
+     * 上一次部署成功地址：0x13598c1e0e73d0793a29e35e8831aad41e40bfdc
      */
     @Test
     fun deployManager() {
@@ -60,79 +58,5 @@ class PreDeploy {
 
         logger.info("Manager deployed at ${manager.contractAddress}.")
         logger.info("cost ${oldBalance - newBalance} wei.")
-    }
-    /**
-     * 部署测试用版权合约
-     *
-     * 上一次部署成功地址：0x5e10e07433ae5419c798902b219b76f5cd6eef8d
-     */
-    @Test
-    fun deployRight() {
-        val form = RightDeployForm(
-            "TestRight",
-            "testOwner",
-            "0721",
-            BigInteger.valueOf(System.currentTimeMillis()),
-            BigInteger.valueOf(System.currentTimeMillis() + 360000L),
-            "TestRightDescription",
-            "TestRightFileName",
-            "TestRightFileHash"
-        )
-
-        val estimateCost = RightEthCallService().estimateDeploy(BlockChain.bankAddress!!,form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
-
-        val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
-
-        val right = RightEthCallService().addRight(
-            BlockChain.bankTxManager!!,
-            form
-        )
-
-        val newBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
-
-        logger.info("Right deployed at ${right.contractAddress}.")
-        logger.info("cost ${oldBalance - newBalance} wei.")
-        logger.info("estimate cost $estimateCost wei.")
-    }
-
-    /**
-     * 部署测试用授权合约
-     *
-     * 上一次部署成功地址：0xb128cd53adf278888f72638fbb6ac1844af2ff0e
-     */
-    @Test
-    fun deployLicense(){
-        val form = LicenseDeployForm(
-             "TestAbc",
-            "0x821a55a89c6e515764c61f44377488f4b7db68e2",
-            "123",
-            BigInteger.valueOf(System.currentTimeMillis()),
-            BigInteger.valueOf(System.currentTimeMillis() + 360000L),
-            "TestLicenseDescription"
-        )
-
-        val estimateCost = moe._47saikyo.drm.blockchain.service.impl.LicenseEthCallService().estimateDeploy(BlockChain.bankAddress!!,form).toLong() * BlockChain.gasProvider.gasPrice.toLong()
-
-        val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
-
-        val license = License.deploy(
-            BlockChain.web3jInstance,
-            BlockChain.bankTxManager,
-            BlockChain.gasProvider,
-            form.rightTitle,
-            form.rightAddr,
-            form.owner,
-            form.issueTime,
-            form.expireTime,
-            form.description
-        ).send()
-        managerService.addLicense(BlockChain.bankTxManager!!,license)
-
-
-        val newBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
-
-        logger.info("License deployed at ${license.contractAddress}.")
-        logger.info("cost ${oldBalance - newBalance} wei.")
-        logger.info("estimate cost $estimateCost wei.")
     }
 }

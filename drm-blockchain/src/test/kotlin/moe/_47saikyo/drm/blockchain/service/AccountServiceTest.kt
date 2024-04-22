@@ -2,7 +2,7 @@ package moe._47saikyo.drm.blockchain.service
 
 import moe._47saikyo.drm.blockchain.BlockChain
 import moe._47saikyo.drm.blockchain.BlockChainTest
-import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainConfiguration
+import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainWrapperConfiguration
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.LoggerFactory
@@ -19,7 +19,7 @@ class AccountServiceTest {
     @BeforeTest
     fun setUp() {
         startKoin {
-            modules(KoinBlockChainConfiguration.module)
+            modules(KoinBlockChainWrapperConfiguration.module)
         }
 
         BlockChainTest.init()

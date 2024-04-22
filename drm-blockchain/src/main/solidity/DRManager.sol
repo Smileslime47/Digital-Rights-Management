@@ -2,23 +2,76 @@
 
 pragma solidity >=0.7.0 <0.9.0;
 
-import "./Right.sol";
-import "./License.sol";
-
 /**
  * 版权管理合约
  *
  * @author 刘一邦
  */
 contract DRManager {
+    //------------------------------结构体定义------------------------------//
+
+    struct Right {
+        //数组下标
+        uint index;
+        //作品名称
+        string title;
+        //版权部署者
+        address deployer;
+        //版权所有者
+        string owner;
+        //登记号
+        string registrationNumber;
+        //发行时间
+        uint64 issueTime;
+        //到期时间
+        uint64 expireTime;
+        //版权描述
+        string description;
+        //文件名
+        string fileName;
+        //文件哈希
+        string fileHash;
+        //授权列表
+        KeyPair[] licenses;
+    }
+
+    struct License {
+        //数组下标
+        uint index;
+        //版权标题
+        string rightTitle;
+        //版权地址
+        KeyPair rightKeyPair;
+        //版权部署者
+        address deployer;
+        //版权所有者
+        string owner;
+        //授权时间
+        uint64 issueTime;
+        //过期时间
+        uint64 expireTime;
+        //授权描述
+        string description;
+    }
+
+    /**
+     * 用于在rightMap和licenseMap中唯一定位数据
+     */
+    struct KeyPair {
+        address deployer;
+        uint arrayIndex;
+    }
+
+    //------------------------------数据存储对象-----------------------------//
+
     //版权哈希表
     mapping(address => Right[]) private rightMap;
     //授权哈希表
     mapping(address => License[]) private licenseMap;
 
     //版权表Unique键映射
-    mapping(string => address) private registrationNumberRightKeyMap;
-    mapping(string => address) private fileHashRightKeyMap;
+    mapping(string => KeyPair) private registrationNumberRightKeyMap;
+    mapping(string => KeyPair) private fileHashRightKeyMap;
 
     //Title键可重名，用于做搜索功能
     IterableMap private titleRightKeyMap;
@@ -32,15 +85,6 @@ contract DRManager {
      * @return 版权列表
      */
     function searchByTitle(string memory title) view public returns (Right[] memory) {
-        //如果存在完全匹配项直接返回
-        if (has(titleRightKeyMap, title)) {
-            Right[] memory exactResult = new Right[](get(titleRightKeyMap, title).length);
-            for (uint i = 0; i < get(titleRightKeyMap, title).length; i++) {
-                exactResult[i] = Right(get(titleRightKeyMap, title)[i]);
-            }
-            return exactResult;
-        }
-
         //计算结果长度
         uint resultLen = 0;
         for (uint i = 0; i < getLength(titleRightKeyMap); i++) {
@@ -55,7 +99,9 @@ contract DRManager {
         for (uint i = 0; i < getLength(titleRightKeyMap); i++) {
             if (kmpSearch(getEntry(titleRightKeyMap, i).key, title) != - 1) {
                 for (uint j = 0; j < getEntry(titleRightKeyMap, i).value.length; j++) {
-                    result[resultIndex++] = Right(getEntry(titleRightKeyMap, i).value[j]);
+                    KeyPair memory keyPair = getEntry(titleRightKeyMap, i).value[j];
+
+                    result[resultIndex++] = rightMap[keyPair.deployer][keyPair.arrayIndex];
                 }
             }
         }
@@ -65,71 +111,165 @@ contract DRManager {
 
     //------------------------------以下为根据特殊键的相关操作------------------------------//
 
-    function getRightByRegistrationNumber(string memory registrationNumber) view public returns (Right) {
-        return Right(registrationNumberRightKeyMap[registrationNumber]);
+    /**
+     * 根据登记号获取版权
+     *
+     * @param registrationNumber 登记号
+     * @return 版权
+     */
+    function getRightByRegistrationNumber(string memory registrationNumber) view public returns (Right memory) {
+        KeyPair memory pair = registrationNumberRightKeyMap[registrationNumber];
+        return rightMap[pair.deployer][pair.arrayIndex];
     }
 
-    function getRightByFileHash(string memory fileHash) view public returns (Right) {
-        return Right(fileHashRightKeyMap[fileHash]);
+    /**
+     * 根据文件哈希获取版权
+     *
+     * @param fileHash 文件哈希
+     * @return 版权
+     */
+    function getRightByFileHash(string memory fileHash) view public returns (Right memory) {
+        KeyPair memory pair = fileHashRightKeyMap[fileHash];
+        return rightMap[pair.deployer][pair.arrayIndex];
     }
 
+    /**
+     * 根据登记号获取授权
+     *
+     * @param registrationNumber 登记号
+     * @return 授权
+     */
     function canInsertRight(string memory registrationNumber, string memory fileHash) view public returns (bool) {
-        return !has(registrationNumberRightKeyMap, registrationNumber) && !has(fileHashRightKeyMap, fileHash);
+        return !keyPairMapHas(registrationNumberRightKeyMap, registrationNumber) && !keyPairMapHas(fileHashRightKeyMap, fileHash);
     }
 
     //------------------------------以下为以地址为基础的插入操作------------------------------//
 
-    function addRight(address owner, Right right) public returns (bool result) {
+    /**
+     * 添加版权
+     *
+     * @param owner 版权所有者
+     * @param right 版权
+     */
+    function addRight(address owner, Right memory right) public {
         //检查特殊键不重复
-        if (!canInsertRight(right.getRegistrationNumber(), right.getFileHash())) {
-            return false;
+        if (!canInsertRight(right.registrationNumber, right.fileHash)) {
+            return;
         } else {
+            uint index = rightMap[owner].length;
+            Right storage storageRight = rightMap[owner].push();
+            storageRight.index = index;
+            storageRight.title = right.title;
+            storageRight.deployer = right.deployer;
+            storageRight.owner = right.owner;
+            storageRight.registrationNumber = right.registrationNumber;
+            storageRight.issueTime = right.issueTime;
+            storageRight.expireTime = right.expireTime;
+            storageRight.description = right.description;
+            storageRight.fileName = right.fileName;
+            storageRight.fileHash = right.fileHash;
+
             //添加到UniqueKey表
-            registrationNumberRightKeyMap[right.getRegistrationNumber()] = address(right);
-            fileHashRightKeyMap[right.getFileHash()] = address(right);
+
+            KeyPair storage keyPair1 = registrationNumberRightKeyMap[storageRight.registrationNumber];
+            KeyPair storage keyPair2 = fileHashRightKeyMap[storageRight.fileHash];
+
+            keyPair1.deployer = owner;
+            keyPair1.arrayIndex = index;
+
+            keyPair2.deployer = owner;
+            keyPair2.arrayIndex = index;
 
             //添加到Title表
-            add(titleRightKeyMap, right.getTitle(), address(right));
-
-            rightMap[owner].push(right);
-            return true;
+            add(titleRightKeyMap, storageRight.title, owner, index);
         }
     }
 
-    function addRight(Right right) public returns (bool result) {
-        return addRight(msg.sender, right);
+    function addRight(Right memory right) public {
+        addRight(msg.sender, right);
     }
 
-    function addLicense(address owner, License license) public {
-        licenseMap[owner].push(license);
+    function addLicense(address owner, License memory license) public {
+        if (rightMap[owner].length <= license.rightKeyPair.arrayIndex) {
+            return;
+        }
+
+        if (rightMap[owner].length == 0 && license.rightKeyPair.arrayIndex == 0 && stringEquals(rightMap[owner][0].title, "")) {
+            return;
+        }
+
+        uint index = licenseMap[owner].length;
+        License storage storageLicense = licenseMap[owner].push();
+        storageLicense.index = index;
+        storageLicense.rightTitle = license.rightTitle;
+        storageLicense.rightKeyPair = license.rightKeyPair;
+        storageLicense.deployer = license.deployer;
+        storageLicense.owner = license.owner;
+        storageLicense.issueTime = license.issueTime;
+        storageLicense.expireTime = license.expireTime;
+        storageLicense.description = license.description;
+
+        Right storage storageRight = rightMap[license.rightKeyPair.deployer][license.rightKeyPair.arrayIndex];
+        KeyPair storage licenseKeyPair = storageRight.licenses.push();
+        licenseKeyPair.deployer = owner;
+        licenseKeyPair.arrayIndex = licenseMap[owner].length - 1;
     }
 
-    function addLicense(License license) public {
+    function addLicense(License memory license) public {
         addLicense(msg.sender, license);
     }
 
     //------------------------------以下为以地址为基础的查询操作------------------------------//
 
-    function getRights(address owner) view public returns (Right[] memory) {
-        return rightMap[owner];
+    function getRight(address deployer, uint index) view public returns (Right memory) {
+        return rightMap[deployer][index];
+    }
+
+    function getRight(uint index) view public returns (Right memory) {
+        return getRight(msg.sender, index);
+    }
+
+    function getRights(address deployer) view public returns (Right[] memory) {
+        return rightMap[deployer];
     }
 
     function getRights() view public returns (Right[] memory) {
         return getRights(msg.sender);
     }
 
-    function getLicenses(address owner) view public returns (License[] memory) {
-        return licenseMap[owner];
+    function getLastRight(address owner) view public returns (Right memory) {
+        return rightMap[owner][rightMap[owner].length - 1];
+    }
+
+    function getLicense(address deployer, uint index) view public returns (License memory) {
+        return licenseMap[deployer][index];
+    }
+
+    function getLicense(uint index) view public returns (License memory) {
+        return getLicense(msg.sender, index);
+    }
+
+    function getLicenses(address deployer) view public returns (License[] memory) {
+        return licenseMap[deployer];
     }
 
     function getLicenses() view public returns (License[] memory) {
         return getLicenses(msg.sender);
     }
 
+    function getLastLicense(address owner) view public returns (License memory) {
+        return licenseMap[owner][licenseMap[owner].length - 1];
+    }
+
     //------------------------------Mapping基础函数------------------------------//
 
-    function has(mapping(string => address) storage map, string memory key) view internal returns (bool){
-        return map[key] != address(0);
+    function keyPairMapHas(mapping(string => KeyPair) storage map, string memory key) view internal returns (bool){
+        KeyPair memory keyPair = map[key];
+        if (keyPair.deployer == address(0) && keyPair.arrayIndex == 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     //------------------------------IterableMapping库------------------------------//
@@ -139,7 +279,7 @@ contract DRManager {
      */
     struct Entry {
         string key;
-        address[] value;
+        KeyPair[] value;
     }
 
     /**
@@ -157,7 +297,7 @@ contract DRManager {
      * @param key key
      * @return value value
      */
-    function get(IterableMap storage map, string memory key) view internal returns (address[] memory value){
+    function get(IterableMap storage map, string memory key) view internal returns (KeyPair[] memory value){
         return map.entries[map.keys[key]].value;
     }
 
@@ -168,7 +308,7 @@ contract DRManager {
      * @param index index
      * @return value value
      */
-    function get(IterableMap storage map, uint index) view internal returns (address[] memory value){
+    function get(IterableMap storage map, uint index) view internal returns (KeyPair[] memory value){
         return map.entries[index].value;
     }
 
@@ -187,21 +327,18 @@ contract DRManager {
      * 添加元素，在库基础上进行修改
      *
      * @param map Map
-     * @param key key
-     * @param value value
+     * @param _key key
+     * @param _deployer 部署者
+     * @param _arrayIndex 数组下标
      */
-    function add(IterableMap storage map, string memory key, address value) internal {
-        uint keyIndex = map.keys[key];
+    function add(IterableMap storage map, string memory _key, address _deployer, uint _arrayIndex) internal {
+        if (!has(map, _key)) {
+            map.keys[_key] = map.entries.length;
 
-        if (!has(map, key)) {
-            uint keyLen = map.entries.length;
-
-            map.entries.push(Entry(key, new address[](0)));
-            map.keys[key] = keyLen;
-            keyIndex = keyLen;
+            Entry storage entry = map.entries.push();
+            entry.key = _key;
         }
-
-        map.entries[keyIndex].value.push(value);
+        map.entries[map.keys[_key]].value.push(KeyPair(_deployer, _arrayIndex));
     }
 
     /**
@@ -329,5 +466,55 @@ contract DRManager {
      */
     function stringCharAt(string memory s, uint index) pure internal returns (bytes1) {
         return bytes(s)[index];
+    }
+
+    //------------------------------类型转换------------------------------//
+
+    /**
+     * 地址转字符串
+     *
+     * @param _addr 地址
+     * @return 地址字符串
+     */
+    function addr2str(address _addr) pure internal returns (string memory) {
+        bytes32 value = bytes32(uint256(uint160(_addr)));
+        bytes memory alphabet = "0123456789abcdef";
+
+        bytes memory str = new bytes(42);
+        str[0] = '0';
+        str[1] = 'x';
+        for (uint i = 0; i < 20; i++) {
+            str[2 + i * 2] = alphabet[uint(uint8(value[i + 12] >> 4))];
+            str[3 + i * 2] = alphabet[uint(uint8(value[i + 12] & 0x0f))];
+        }
+        return string(str);
+    }
+
+    /**
+     * uint转字符串
+     *
+     * @param _i uint
+     * @return _uintAsString uint字符串
+     */
+    function uint2str(uint _i) pure internal returns (string memory _uintAsString) {
+        if (_i == 0) {
+            return "0";
+        }
+        uint j = _i;
+        uint len;
+        while (j != 0) {
+            len++;
+            j /= 10;
+        }
+        bytes memory bstr = new bytes(len);
+        uint k = len;
+        while (_i != 0) {
+            k = k - 1;
+            uint8 temp = (48 + uint8(_i - _i / 10 * 10));
+            bytes1 b1 = bytes1(temp);
+            bstr[k] = b1;
+            _i /= 10;
+        }
+        return string(bstr);
     }
 }

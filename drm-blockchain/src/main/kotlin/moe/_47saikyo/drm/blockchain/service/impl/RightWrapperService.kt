@@ -1,19 +1,12 @@
 package moe._47saikyo.drm.blockchain.service.impl
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import moe._47saikyo.drm.blockchain.contract.Right
-import moe._47saikyo.drm.blockchain.BlockChain
-import moe._47saikyo.drm.blockchain.Estimate
-import moe._47saikyo.drm.blockchain.constant.BlockChainConstant
+import moe._47saikyo.drm.blockchain.contract.DRManager.Right
+import moe._47saikyo.drm.blockchain.models.ReceiptWrapper
 import moe._47saikyo.drm.blockchain.models.RightData
 import moe._47saikyo.drm.blockchain.models.RightDeployForm
 import moe._47saikyo.drm.blockchain.service.ManagerService
 import moe._47saikyo.drm.blockchain.service.RightService
-import moe._47saikyo.drm.blockchain.string
-import moe._47saikyo.drm.blockchain.uint64
 import org.koin.java.KoinJavaComponent
-import org.web3j.abi.FunctionEncoder
-import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
@@ -24,96 +17,81 @@ import java.math.BigInteger
  */
 class RightWrapperService : RightService {
     private val managerService: ManagerService by KoinJavaComponent.inject(ManagerService::class.java)
-    private val logger = org.slf4j.LoggerFactory.getLogger(RightEthCallService::class.java)
+    private val logger = org.slf4j.LoggerFactory.getLogger(RightWrapperService::class.java)
 
     override fun searchByTitle(
         callerAddr: String,
         title: String
-    ): List<String> =
-        managerService.searchByTitle(callerAddr, title)
+    ): List<RightData> =
+        managerService.searchByTitle(callerAddr, title).map { RightData.fromRightStruct(it) }
 
     override fun estimateDeploy(
         callerAddr: String,
         form: RightDeployForm
     ): BigInteger {
-        val binCode = Right.BINARY
+//        //TODO
+//        val binCode = Right.BINARY
+//
+//        val encodedConstructor = FunctionEncoder.encodeConstructor(
+//            listOf(
+//                string(form.title),
+//                string(form.owner),
+//                string(form.registrationNumber),
+//                uint64(form.issueTime),
+//                uint64(form.expireTime),
+//                string(form.description),
+//                string(form.fileName),
+//                string(form.fileHash)
+//            )
+//        )
+//
+//        return Estimate.estimateCall(callerAddr, "$binCode$encodedConstructor")
+//            .add(BlockChainConstant.Gas.MANAGER_ADD)
 
-        val encodedConstructor = FunctionEncoder.encodeConstructor(
-            listOf(
-                string(form.title),
-                string(form.owner),
-                string(form.registrationNumber),
-                uint64(form.issueTime),
-                uint64(form.expireTime),
-                string(form.description),
-                string(form.fileName),
-                string(form.fileHash)
-            )
-        )
-
-        return Estimate.estimateDeploy(callerAddr, "$binCode$encodedConstructor")
-            .add(BlockChainConstant.Gas.MANAGER_ADD)
+        return BigInteger.valueOf(0)
     }
 
     override fun addRight(
         transactionManager: TransactionManager,
         form: RightDeployForm
-    ): Right {
-        val right = Right.deploy(
-            BlockChain.web3jInstance,
-            transactionManager,
-            BlockChain.gasProvider,
+    ): ReceiptWrapper<RightData>? {
+        val right = Right(
+            BigInteger.valueOf(0),
             form.title,
+            transactionManager.fromAddress,
             form.owner,
             form.registrationNumber,
             form.issueTime,
             form.expireTime,
             form.description,
             form.fileName,
-            form.fileHash
-        ).send()
-
-        managerService.addRight(transactionManager, right)
-
-        return right
-    }
-
-    override fun addLicense(
-        transactionManager: TransactionManager,
-        rightAddr: String,
-        licenseAddr: String
-    ) {
-        val right = Right.load(
-            rightAddr,
-            BlockChain.web3jInstance,
-            transactionManager,
-            BlockChain.gasProvider
+            form.fileHash,
+            emptyList()
         )
 
-        right.addLicense(licenseAddr).send()
+        val receipt = managerService.addRight(transactionManager, right)
+
+        val lastRight =
+            RightData.fromRightStruct(
+                managerService.getLastRight(transactionManager.fromAddress, transactionManager.fromAddress)
+            )
+
+        return if (lastRight == RightData.fromRightStruct(right)) {
+            ReceiptWrapper(receipt, lastRight)
+        } else {
+            null
+        }
     }
 
-    override fun getPureData(
-        callerAddr: String,
-        rightAddr: String
-    ): RightData {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
-
-        logger.info("getPureData[$rightAddr]")
-        val right = Right.load(
-            rightAddr,
-            BlockChain.web3jInstance,
-            txManager,
-            BlockChain.gasProvider
-        )
-        val json = right.serialize().send()
-        logger.info("getPureData[$json]")
-        return jacksonObjectMapper().readerFor(RightData::class.java).readValue(json)
+    override fun getRight(callerAddr: String, deployer: String, index: Number): RightData {
+        val right = managerService.getRight(callerAddr, deployer, index)
+        logger.info("getRight[$right]")
+        return RightData.fromRightStruct(right)
     }
 
-    override fun getRights(owner: String): List<RightData> {
-        val addrs = managerService.getRights(owner)
-        logger.info("getRights[$addrs]")
-        return addrs.map { getPureData(owner, it) }
+    override fun getRights(callerAddr: String, deployer: String): List<RightData> {
+        val rights = managerService.getRights(callerAddr, deployer)
+        logger.info("getRights[$rights]")
+        return rights.map { RightData.fromRightStruct(it) }
     }
 }
