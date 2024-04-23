@@ -1,6 +1,6 @@
 # Digital Rights Manager
 
-基于以太坊区块链（开发中）和分布式系统（计划中）的Ktor项目
+基于以太坊区块链和IPFS的Ktor项目
 
 该项目旨在通过部署在**以太坊私有链**上的智能合约实现对版权和授权的管理，并计划通过私有化部署的IPFS节点实现对数字资源的存储
 
@@ -16,22 +16,11 @@
   - 数据库交互基于Expose
   - 区块链API基于Web3j
 - 前端网页基于TypeScript开发
-  - 响应式框架基于Vue3
+  - 响应式框架基于Vue.js
   - 组件库使用Element UI PLus
+- IPFS基于java-ipfs-http-client库
 - 智能合约基于Solidity开发
   - EVM版本使用Paris
-
-## TODO
-
-| 目标           | 进度  |
-|--------------|-----|
-| 前端交互组件       | 开发中 |
-| 后端服务器组件      | 开发中 |
-| 以太坊私有链部署及配置  | 开发中 |
-| 区块链交互组件      | 开发中 |
-| 智能合约         | 开发中 |
-| IPFS部署及组件开发  | 计划中 |
-| Kubernetes部署 | 计划中 |
 
 ## 核心组件
 
@@ -42,7 +31,9 @@
 核心模块，基于Kotlin
 
 - domain包：包含Kotlin模块之间相互传输的通用数据类
+- enums包：包含Kotlin模块中的枚举类
 - constant包：应用于Kotlin项目全局的环境变量
+- exception包：Kotlin项目中的基类异常（DrmException）
 
 ### drm-blockchain
 
@@ -50,11 +41,22 @@
 
 - Kotlin with Web3j
   - BlockChain:包含建立与区块链服务器的链接、维护银行账户等基础功能，在调用该类的connect静态方法前，调用其他类会抛出`BlockChainNotConnectedException`异常
+  - Estimate：估算部署及调用合约Gas开销的工具类
+  - CurrencyConverter：用于将ETH和WEI之间的货币单位转换
   - AccountService：包含区块链账号创建、转账、查询、获取TxManager（用于后续部署智能合约）等功能
+  - ManagerService：与平台合约（DRManager）直接交互的Service类
+  - RightService/LicenseService：基于ManagerService，提供对版权和授权的管理
 - Java
   - **Web3j CLI**转译智能合约得到的Java对象，供其他Kotlin组件调用，详见[README](./drm-blockchain/README.md)
 - contract：包含`.sol`格式的智能合约源代码（开发中）及其直接构件（`.bin`和`.abi`），.sol文件通过solc编译为abi和bin文件后，通过web3j转译为Java对象导入到项目中
   - 智能合约编译见[README](./drm-blockchain/README.md)
+
+### drm-ipfs
+
+包含与IPFS节点交互的代码，基于Kotlin和java-ipfs-http-client库
+
+- IpfsService：Ipfs接口定义，此外还包含了连接到IPFS节点的基础功能
+- IpfsServiceImpl：包含与IPFS节点交互的基础功能，如上传、下载文件等
 
 ### drm-backend
 
@@ -86,7 +88,15 @@
 
 - geth：以太坊客户端
   - 区块链部署见[README](./drm-ethereum/README.md)
-- clef：本地的以太坊账号管理服务（暂时没用）
+- clef：本地的以太坊账号管理服务
+
+> 现提供DockerCompose部署方案，详见[README](./drm-ethereum/README.md)
+
+### drm-ipfs-node
+
+部署IPFS节点的相关环境和配置，同drm-ethereum,需要单独部署
+
+- IPFS节点部署见[README](./drm-ipfs-node/README.md)
 
 ## License
 
