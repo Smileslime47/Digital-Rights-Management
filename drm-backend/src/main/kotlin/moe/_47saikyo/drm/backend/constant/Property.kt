@@ -1,6 +1,7 @@
 package moe._47saikyo.drm.backend.constant
 
 import io.ktor.server.application.*
+import java.util.*
 
 /**
  * 获取Application的Property字段
@@ -8,7 +9,15 @@ import io.ktor.server.application.*
  * @author 刘一邦
  * @since 2024/01/21
  */
-fun Application.getProperty(key: String): String? = environment.config.propertyOrNull(key)?.getString()
+fun Application.getProperty(key: String): String? {
+    val env = environment.config.propertyOrNull(Constant.PropertyUrl.ENV)?.getString()
+
+    val globalVal = environment.config.propertyOrNull("${Constant.PropertyUrl.GLOBAL}.${key}")?.getString()
+
+    if (globalVal != null) return globalVal
+
+    return environment.config.propertyOrNull("${env}.${key}")?.getString()
+}
 
 /**
  * 环境变量类，防止在其他处理函数中重复调用getProperty函数

@@ -1,0 +1,9 @@
+version: '3'
+services:
+  drm-backend:
+    image: drm-backend:1.0.0
+    container_name: drm_backend
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./src/main/resources/KeyStore/UTC--2024-03-16T14-15-01.824378618Z--cb7f6d5c8f5c71c3f604f6fec874a97007dfe4fe.json:/root/drm-backend/KeyStore/bank-wallet.json

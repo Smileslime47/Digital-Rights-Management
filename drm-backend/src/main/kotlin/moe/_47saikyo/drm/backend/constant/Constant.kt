@@ -38,40 +38,55 @@ object Constant {
         //------------------------------数据实体------------------------------//
         //用户
         const val USER = "user"
+
         //用户组
         const val GROUP = "group"
+
         //通知
         const val NOTICE = "notice"
+
         //版权
         const val RIGHT = "right"
+
         //授权
         const val LICENSE = "license"
+
         //收据
         const val RECEIPT = "receipt"
 
         //------------------------------Flag字段------------------------------//
         //是否为自我数据查询
         const val SELF_PROFILE = "self"
+
         //操作是否成功
         const val SUCCESS = "success"
 
         //------------------------------零散数据------------------------------//
         //地址
         const val ADDRESS = "address"
+
         //余额
         const val BALANCE = "balance"
+
         //费用
         const val COST = "cost"
+
         //数量
         const val COUNT = "count"
+
         //哈希地址
         const val HASH = "hash"
+
         //名称
         const val NAME = "name"
     }
 
     //属性文件字段
     object PropertyUrl {
+        //------------------------------环境------------------------------//
+        const val ENV = "ktor.environment"
+        const val GLOBAL = "global"
+
         //------------------------------数据库------------------------------//
         const val DATASOURCE_DRIVER = "exposed.datasource.driverClassName"
         const val DATASOURCE_URL = "exposed.datasource.jdbcUrl"
