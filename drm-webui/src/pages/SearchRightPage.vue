@@ -3,7 +3,7 @@ import TemplatePage from "~/pages/TemplatePage.vue";
 import fresh from "~/composables/fresh.ts";
 import Constant from "~/constant/Constant.ts";
 import {httpService} from "~/server/http.ts";
-import Right from "~/modules/Right.ts";
+import RightData from "~/modules/RightData.ts";
 import {Search} from "@element-plus/icons-vue";
 import routeTo from "~/route/routeTo.ts";
 
@@ -43,7 +43,7 @@ fresh(async (route) => {
       <el-space fill direction="vertical" style="width:80%" v-if="chainRights.length>0">
         <el-card class="notice" v-for="right in chainRights">
           <template #header>
-            <el-link class="medium-text" @click="routeTo.chainRight(right.addr)">{{ right.title }}</el-link>
+            <el-link class="medium-text" @click="routeTo.chainRight(right.deployer,right.index)">{{ right.title }}</el-link>
           </template>
           <el-text>{{ right.description !== "" ? right.description : "无描述" }}</el-text>
           <template #footer>

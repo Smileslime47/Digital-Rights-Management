@@ -26,7 +26,7 @@ const login = () => {
     localStorage.setItem(Constant.Authentication.USER_ID_CLAIM, principleMap[Constant.Authentication.USER_ID_CLAIM])
     localStorage.setItem(Constant.Authentication.GROUP_ID_CLAIM, principleMap[Constant.Authentication.GROUP_ID_CLAIM])
     localStorage.setItem(Constant.Authentication.EXPIRE_TIME_CLAIM, principleMap[Constant.Authentication.EXPIRE_TIME_CLAIM])
-    routeTo.home()
+    routeTo.profile(principleMap[Constant.Authentication.USER_ID_CLAIM])
   })
 }
 </script>
