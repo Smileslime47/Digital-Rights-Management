@@ -32,6 +32,6 @@ fun Application.configureHTTP() {
     }
     //配置Swagger路径
     routing {
-        swaggerUI(path = "openapi")
+        swaggerUI(path="openapi", swaggerFile = "openapi/Document.yaml")
     }
 }

@@ -1,0 +1,1351 @@
+openapi: 3.0.3
+info:
+  title: Digital Right Management Backend
+  description: Digital Right Management Backend Api Doc
+  version: 1.0.0
+servers:
+  - url: http://0.0.0.0:8080
+tags:
+  - name: User
+    description: 用户
+  - name: Group
+    description: 用户组
+  - name: Notice
+    description: 通知
+  - name: Ipfs
+    description: Ipfs节点
+  - name: Pending Right
+    description: 版权申请
+  - name: Pending License
+    description: 授权申请
+  - name: Chain Account
+    description: 区块链账号
+  - name: Chain Right
+    description: 链上版权
+  - name: Chain License
+    description: 链上授权
+  - name: Receipt
+    description: 合约交易记录
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: number
+        permissionId:
+          type: number
+        username:
+          type: integer
+        nickname:
+          type: string
+        password:
+          type: string
+        email:
+          type: string
+        phoneNumber:
+          type: string
+    Group:
+      type: object
+      properties:
+        id:
+          type: number
+        groupName:
+          type: string
+        permissionLogin:
+          type: boolean
+        permissionShowProfile:
+          type: boolean
+        permissionCreateChainAccount:
+          type: boolean
+        permissionCreateRight:
+          type: boolean
+        permissionVerifyRight:
+          type: boolean
+        permissionCreateLicense:
+          type: boolean
+        permissionVerifyLicense:
+          type: boolean
+    Notice:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        content:
+          type: string
+        receiverId:
+          type: number
+        sentTime:
+          type: number
+        status:
+          type: string
+          enum:
+            - UNREAD
+            - READ
+            - ARCHIVED
+        targetRoute:
+          type: string
+    PendingRight:
+      type: object
+      properties:
+        id:
+          type: number
+        title:
+          type: string
+        deployer:
+          type: string
+        owner:
+          type: string
+        registrationNumber:
+          type: string
+        issueTime:
+          type: number
+        expireTime:
+          type: number
+        description:
+          type: string
+        fileName:
+          type: string
+        fileHash:
+          type: string
+        status:
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - DEPLOYING
+            - DEPLOYED
+            - REJECTED
+        estimatePrice:
+          type: number
+        comment:
+          type: string
+        createTime:
+          type: number
+    PendingLicense:
+      type: object
+      properties:
+        id:
+          type: number
+        rightTitle:
+          type: string
+        rightDeployer:
+          type: string
+        rightIndex:
+          type: number
+        deployer:
+          type: string
+        owner:
+          type: string
+        issueTime:
+          type: number
+        expireTime:
+          type: number
+        description:
+          type: string
+        status:
+          type: string
+          enum:
+            - PENDING
+            - CONFIRMED
+            - DEPLOYING
+            - DEPLOYED
+            - REJECTED
+        estimatePrice:
+          type: number
+        comment:
+          type: string
+        createTime:
+          type: number
+    KeyPairData:
+      type: object
+      properties:
+        deployer:
+          type: string
+          description: 部署者地址
+        arrayIndex:
+          type: number
+          description: 索引
+    RightData:
+      type: object
+      properties:
+        index:
+          type: number
+        title:
+          type: string
+        deployer:
+          type: string
+        owner:
+          type: string
+        registrationNumber:
+          type: string
+        issueTime:
+          type: number
+        expireTime:
+          type: number
+        description:
+          type: string
+        fileName:
+          type: string
+        fileHash:
+          type: string
+        licenses:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyPairData"
+    LicenseData:
+      type: object
+      properties:
+        index:
+          type: number
+        rightTitle:
+          type: string
+        rightKeyPair:
+          $ref: "#/components/schemas/KeyPairData"
+        deployer:
+          type: string
+        owner:
+          type: string
+        issueTime:
+          type: number
+        expireTime:
+          type: number
+        description:
+          type: string
+    Receipt:
+      type: object
+      properties:
+        id:
+          type: number
+        status:
+          type: string
+        transactionHash:
+          type: string
+        blockHash:
+          type: string
+        blockNumber:
+          type: number
+        gasUsed:
+          type: number
+        deployer:
+          type: string
+        deployIndex:
+          type: number
+        createTime:
+          type: number
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+paths: 
+  /user:
+    get:
+      tags:
+        - User
+      description: 获取用户信息
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: query
+          description: 用户ID
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: "#/components/schemas/User"
+        400:
+          description: ID参数为空或格式错误
+        403:
+          description: 用户无权限查看该用户信息
+        404:
+          description: 用户不存在
+    post:
+      tags:
+        - User
+      description: 更新用户信息
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: 用户信息
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        403:
+          description: 用户无权限更新该用户信息
+        404:
+            description: 用户不存在
+  /user/change-password:
+    post:
+      tags:
+        - User
+      description: 修改用户密码
+      security:
+        - bearerAuth: []
+      requestBody:
+        description: 用户密码修改表单
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                oldPassword:
+                  type: string
+                newPassword:
+                  type: string
+                confirmPassword:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        400:
+          description: 两次密码不匹配
+        402:
+          description: 旧密码错误
+  /user/login:
+    post:
+      tags:
+        - User
+      description: 用户登陆
+      requestBody:
+        description: 用户登陆表单
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                rememberMe:
+                  type: boolean
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user_id:
+                    type: number
+                  group_id:
+                    type: number
+                  user_nickname:
+                    type: string
+                  expire_time:
+                    type: number
+        402:
+          description: 用户名或密码错误
+        403:
+          description: 该用户已被封禁
+  /user/register:
+    post:
+      tags:
+        - User
+      description: 用户注册
+      requestBody:
+        description: 用户注册表单
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                confirmPassword:
+                  type: string
+                email:
+                  type: string
+                phoneNumber:
+                  type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user_id:
+                    type: number
+                  group_id:
+                    type: number
+                  user_nickname:
+                    type: string
+                  expire_time:
+                    type: number
+        403:
+          description: 用户已存在
+        500:
+          description: 注册失败
+  /group:
+    get:
+      tags:
+        - Group
+      description: 获取用户组信息
+      parameters:
+        - name: id
+          in: query
+          description: 用户组ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Group"
+        400:
+          description: ID参数为空或格式错误
+        404:
+          description: 用户组不存在
+  /notice/count:
+    get:
+      tags:
+        - Notice
+      description: 获取通知数量
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: filter
+          in: query
+          description: 通知状态
+          required: true
+          schema:
+            type: string
+            enum:
+              - ALL
+              - UNREAD
+              - READ
+              - ARCHIVED
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    description: 指定状态的通知数量
+        400:
+          description: filter参数为空或错误
+  /notice:
+    get:
+      tags:
+        - Notice
+      description: 获取通知列表
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: filter
+          in: query
+          description: 通知状态
+          required: true
+          schema:
+            type: string
+            enum:
+              - ALL
+              - UNREAD
+              - READ
+              - ARCHIVED
+        - name: page
+          in: query
+          description: 页码
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  notice:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notice'
+                  count:
+                    type: number
+                    description: 通知总数，用于计算页数
+        400:
+          description: filter或page为空或格式错误
+    post:
+      tags:
+        - Notice
+      description: 修改通知状态
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                noticeId:
+                  type: number
+                  description: 通知ID
+                targetStatus:
+                  type: string
+                  description: 目标状态
+                  enum:
+                    - UNREAD
+                    - READ
+                    - ARCHIVED
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        400:
+          description: 通知ID无效或目标状态无效
+  /ipfs:
+    post:
+      tags:
+        - Ipfs
+      description: 上传文件到IPFS
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    description: IPFS文件名
+                  hash:
+                    type: string
+                    description: IPFS文件Hash
+  /ipfs/by-license:
+    get:
+      tags:
+        - Ipfs
+      description: 通过License获取数字资源
+      security:
+          - bearerAuth: [ ]
+      parameters:
+        - name: deployer
+          in: query
+          description: 部署者地址
+          required: true
+          schema:
+              type: string
+        - name: index
+          in: query
+          description: 授权索引
+          required: true
+          schema:
+              type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        400:
+          description: 参数为空或格式错误
+        403:
+          description: 提交者与授权者不匹配
+  /ipfs/by-right:
+    get:
+      tags:
+        - Ipfs
+      description: 通过Right获取数字资源
+      security:
+          - bearerAuth: [ ]
+      parameters:
+        - name: deployer
+          in: query
+          description: 部署者地址
+          required: true
+          schema:
+            type: string
+        - name: index
+          in: query
+          description: 版权索引
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        400:
+          description: 参数为空或格式错误
+        403:
+          description: 提交者与授权者不匹配
+  /pending-right:
+    get:
+      tags:
+        - Pending Right
+      description: 获取指定用户的所有待审核版权
+      parameters:
+        - name: addr
+          in: query
+          description: 用户区块链地址
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: 页码
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    description: 该用户待审核版权总数，用于前端计算页数
+                  right:
+                    type: array
+                    description: 该用户指定页的待审核版权列表
+                    items:
+                      $ref: "#/components/schemas/PendingRight"
+        400:
+          description: 地址参数为空或页码错误
+    post:
+      tags:
+        - Pending Right
+      description: 提交待审核版权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 待审核版权信息
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PendingRight"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        403:
+          description: 用户无权限提交待审核版权或提交了status非PENDING的版权
+        500:
+          description: 版权登记号或文件哈希已存在
+  /pending-right/deploy:
+    post:
+      tags:
+        - Pending Right
+      description: 部署待审核版权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 部署所需信息
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  description: 用户区块链密码
+                  type: number
+                pendingId:
+                  description: 待审核版权ID
+                  type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cost:
+                    type: number
+                    description: 部署开销
+  /pending-right/verify:
+    get:
+      tags:
+        - Pending Right
+      description: 获取系统中的待审核状态的版权申请
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: page
+          in: query
+          description: 页码
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    description: 待审核版权总数，用于前端计算页数
+                  right:
+                    type: array
+                    description: 指定页的待审核版权列表
+                    items:
+                      $ref: "#/components/schemas/PendingRight"
+        400:
+          description: 页码无效
+  /pending-right/verify/confirm:
+    post:
+      tags:
+        - Pending Right
+      description: 确认待审核版权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 确认所需信息
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                rightId:
+                  description: 待审核版权ID
+                  type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        403:
+          description: 用户无权限确认待审核版权或确认了status非PENDING的版权
+        404:
+          description: 待审核版权不存在
+  /pending-right/verify/reject:
+    post:
+      tags:
+        - Pending Right
+      description: 拒绝待审核版权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 拒绝所需信息
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pendingRightId:
+                  description: 待审核版权ID
+                  type: number
+                rejectReason:
+                  description: 拒绝理由
+                  type: string
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        403:
+          description: 用户无权限拒绝待审核版权或拒绝了status非PENDING的版权
+        404:
+          description: 待审核版权不存在
+  /pending-license:
+    post:
+      tags:
+        - Pending License
+      description: 提交待审核授权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 待审核授权信息
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PendingLicense"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        403:
+          description: 用户无权限提交待审核授权或提交了status非PENDING的授权
+  /pending-license/by-user:
+    get:
+      tags:
+        - Pending License
+      description: 获取指定用户的授权申请
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: addr
+          in: query
+          description: 用户区块链地址
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: query
+          description: 页码
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    description: 该用户授权申请总数，用于前端计算页数
+                  right:
+                    type: array
+                    description: 该用户指定页的授权申请列表
+                    items:
+                      $ref: "#/components/schemas/PendingLicense"
+        400:
+          description: 地址参数为空或页码错误
+  /pending-license/by-right:
+    get:
+      tags:
+        - Pending License
+      description: 获取指定版权的授权申请
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: deployer
+          in: query
+          description: 版权部署者的区块链地址
+          required: true
+          schema:
+            type: string
+        - name: index
+          in: query
+          description: 版权序列号
+          required: true
+          schema:
+            type: number
+        - name: page
+          in: query
+          description: 页码
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  count:
+                    type: number
+                    description: 授权申请总数，用于前端计算页数
+                  right:
+                    type: array
+                    description: 若查询用户为部署人，则返回该版权所有的授权申请，否则返回仅该用户本身对该版权的授权申请
+                    items:
+                      $ref: "#/components/schemas/PendingLicense"
+        400:
+          description: 参数为空或页码错误
+  /pending-license/deploy:
+    post:
+      tags:
+        - Pending License
+      description: 部署待审核授权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 部署所需信息
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  description: 用户区块链密码
+                  type: number
+                pendingId:
+                  description: 待审核授权ID
+                  type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  cost:
+                    type: number
+                    description: 部署开销
+  /pending-license/verify/confirm:
+    post:
+      tags:
+        - Pending License
+      description: 确认待审核授权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 确认所需信息
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                licenseId:
+                  description: 待审核授权ID
+                  type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        403:
+          description: 用户无权限确认待审核授权或确认了status非PENDING的授权
+        404:
+          description: 待审核授权不存在
+  /pending-license/verify/reject:
+    post:
+      tags:
+        - Pending License
+      description: 拒绝待审核授权
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 拒绝所需信息
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                pendingRightId:
+                  description: 待审核授权ID
+                  type: number
+                rejectReason:
+                  description: 拒绝理由
+                  type: string
+
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 更新结果
+        403:
+          description: 用户无权限拒绝待审核授权或拒绝了status非PENDING的授权
+        404:
+          description: 待审核授权不存在
+  /chain/account/by-user:
+    get:
+      tags:
+        - Chain Account
+      description: 获取用户区块链地址
+      parameters:
+        - name: id
+          in: query
+          description: 用户ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  address:
+                    type: string
+                    description: 区块链地址
+  /chain/account/balance:
+    get:
+      tags:
+        - Chain Account
+      description: 获取账户余额
+      parameters:
+        - name: addr
+          in: query
+          description: 钱包地址
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: string
+                    description: 余额
+  /chain/account/charge:
+    post:
+      tags:
+        - Chain Account
+      description: 充值
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 充值金额
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                value:
+                  type: string
+                  description: 充值金额
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 充值结果
+  /chain/account/new-aacount:
+    post:
+      tags:
+        - Chain Account
+      description: 创建新账户
+      security:
+        - bearerAuth: [ ]
+      requestBody:
+        description: 账户密码
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: 账户密码
+                confirmPassword:
+                  type: string
+                  description: 确认密码
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    description: 创建结果
+                  address:
+                    type: string
+                    description: 区块链地址，当success为true时返回
+        400:
+          description: 两次密码不匹配
+        500:
+          description: 创建失败
+  /chain/right:
+    get:
+      tags:
+        - Chain Right
+      description: 获取指定版权的信息
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: deployer
+          in: query
+          description: 部署者地址
+          required: true
+          schema:
+            type: string
+        - name: index
+          in: query
+          description: 版权索引
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  right:
+                    $ref: "#/components/schemas/RightData"
+        400:
+          description: 参数为空或索引非数字
+  /chain/right/deployer:
+    get:
+      tags:
+        - Chain Right
+      description: 获取指定部署者所部署的版权列表
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: deployer
+          in: query
+          description: 所查询的部署者地址
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  right:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RightData"
+        400:
+          description: 部署者地址为空
+  /chain/right/search:
+    get:
+      tags:
+        - Chain Right
+      description: 搜索版权
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: title
+          in: query
+          description: 版权标题关键字
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  right:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/RightData"
+        400:
+          description: 标题为空
+  /chain/license/by-deployer:
+    get:
+      tags:
+        - Chain License
+      description: 获取指定钱包所部署的授权合约列表
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: deployer
+          in: query
+          description: 部署者地址
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  license:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LicenseData"
+        400:
+          description: 部署者地址为空
+  /chain/license/by-right:
+    get:
+      tags:
+        - Chain License
+      description: 获取指定版权所属的授权合约列表
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: deployer
+          in: query
+          description: 版权部署者地址
+          required: true
+          schema:
+            type: string
+        - name: index
+          in: query
+          description: 版权索引
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  license:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/LicenseData"
+        400:
+          description: 部署者地址/索引为空或索引非数字
+  /receipt:
+    get:
+      tags:
+        - Receipt
+      description: 获取指定版权部署的交易收据
+      parameters:
+        - name: deployer
+          in: query
+          description: 版权部署者区块链地址
+          required: true
+          schema:
+            type: string
+        - name: index
+          in: query
+          description: 版权索引
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Receipt'
+        400:
+          description: 参数为空或格式错误
