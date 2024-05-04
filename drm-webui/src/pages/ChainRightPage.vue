@@ -8,6 +8,7 @@ import TokenUtils from "~/server/TokenUtils.ts";
 
 const right = ref<RightData>(EmptyRight())
 const isDeployer = ref(false)
+const loaded = ref(false)
 
 fresh(async (route) => {
   await TokenUtils.getChainAddress(useRoute().path).then((result) => {
@@ -23,6 +24,7 @@ fresh(async (route) => {
     ).then((data) => {
       right.value = data[Constant.RespondField.RIGHT] as RightData
       isDeployer.value = caller === right.value.deployer
+      loaded.value = true
     })
   })
 })
@@ -30,18 +32,18 @@ fresh(async (route) => {
 
 <template>
   <TemplatePage>
-    <RightPanel :right="right" :is-deployer="isDeployer"/>
+    <RightPanel :right="right" :is-deployer="isDeployer" :loaded="loaded"/>
 
     <el-divider/>
 
-    <ReceiptPanel/>
+    <ReceiptPanel :loaded="loaded"/>
 
     <el-divider/>
 
-    <IpfsPanel :right="right" :is-deployer="isDeployer"/>
+    <IpfsPanel :right="right" :is-deployer="isDeployer" :loaded="loaded"/>
 
     <el-divider/>
 
-    <LicensePanel :right="right" :is-deployer="isDeployer"/>
+    <LicensePanel :right="right" :is-deployer="isDeployer" :loaded="loaded"/>
   </TemplatePage>
 </template>

@@ -85,6 +85,7 @@ const onUploadSuccess = (response) => {
     } else {
       ElMessage.error("提交失败！")
     }
+    routeTo.chainAccount()
   })
 }
 </script>

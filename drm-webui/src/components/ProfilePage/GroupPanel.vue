@@ -4,6 +4,7 @@ import Group from "~/modules/Group.ts";
 defineProps<{
   group: Group
   selfProfile: boolean
+  loaded: boolean
 }>()
 </script>
 
@@ -14,7 +15,7 @@ defineProps<{
       <el-descriptions-item label="用户组">
         <el-tag size="small">{{ group.groupName }}</el-tag>
       </el-descriptions-item>
-      <el-descriptions-item v-if="selfProfile">
+      <el-descriptions-item v-if="selfProfile && loaded">
         <el-descriptions :border=true title="权限">
           <el-descriptions-item label="允许登陆">{{ group.permissionLogin }}</el-descriptions-item>
           <el-descriptions-item label="允许展示资料">{{ group.permissionShowProfile }}</el-descriptions-item>
@@ -24,6 +25,9 @@ defineProps<{
           <el-descriptions-item label="允许获取版权授权">{{ group.permissionCreateLicense }}</el-descriptions-item>
           <el-descriptions-item label="允许审核版权授权">{{ group.permissionVerifyLicense }}</el-descriptions-item>
         </el-descriptions>
+      </el-descriptions-item>
+      <el-descriptions-item v-else>
+        <el-skeleton :rows="3" animated />
       </el-descriptions-item>
     </el-descriptions>
   </el-card>

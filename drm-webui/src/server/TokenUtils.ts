@@ -62,15 +62,14 @@ class TokenUtils {
     }
 
     public static async checkCache(routeNow: string) {
+        if(this.routeCache === routeNow && this.initialized) return
         await this.lock.lockCoroutine()
-
-        if (this.routeCache.length === 0 || !this.initialized) {
+        if (this.routeCache.length === 0 || this.routeCache !== routeNow || !this.initialized) {
             this.routeCache = routeNow
             if (await this.flushData()) {
                 this.initialized = true
             }
         }
-
         this.lock.unlockCoroutine()
     }
 
@@ -102,7 +101,7 @@ class TokenUtils {
         await this.checkCache(routeNow)
         if (this.initialized)
             return this.chainAddress
-        else{
+        else {
             ElMessage.error("请先申请区块链账户。")
             return null
         }

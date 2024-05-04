@@ -9,6 +9,7 @@ import Group from "~/modules/Group.ts";
 const user = ref(new User())
 const group = ref(new Group())
 const selfProfile = ref(false)
+const loaded = ref(false)
 
 fresh(async (route) => {
   //获取用户信息
@@ -35,15 +36,17 @@ fresh(async (route) => {
   ).then((data) => {
     group.value = data[Constant.RespondField.GROUP] as Group
   })
+
+  loaded.value = true
 })
 </script>
 
 <template>
   <TemplatePage side="true">
-    <ProfilePanel :user="user" :selfProfile="selfProfile" />
+    <ProfilePanel :user="user" :selfProfile="selfProfile" :loaded="loaded"/>
 
     <el-divider />
 
-    <GroupPanel :group="group" :selfProfile="selfProfile" />
+    <GroupPanel :group="group" :selfProfile="selfProfile" :loaded="loaded"/>
   </TemplatePage>
 </template>

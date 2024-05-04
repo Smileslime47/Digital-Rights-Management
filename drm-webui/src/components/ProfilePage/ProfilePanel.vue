@@ -8,6 +8,7 @@ import {ElMessage} from "element-plus";
 const props = defineProps<{
   user: User
   selfProfile: boolean
+  loaded:boolean
 }>()
 
 const update = () => {
@@ -28,7 +29,7 @@ const update = () => {
 <template>
   <el-card>
     <h1>个人资料</h1>
-    <el-form label-width="auto">
+    <el-form label-width="auto" v-if="loaded">
       <el-form-item label="用户名">
         <el-input v-model="user.username" style="width: 240px" disabled v-if="selfProfile"/>
         <el-text style="width: 240px" v-else>{{ user.username }}</el-text>
@@ -46,6 +47,7 @@ const update = () => {
         <el-text style="width: 240px" v-else>{{ user.email }}</el-text>
       </el-form-item>
     </el-form>
+    <el-skeleton :rows="4" animated v-else />
     <el-button-group v-if="selfProfile">
       <el-button text bg type="primary" @click="update">提交修改</el-button>
       <el-button text bg type="warning" @click="routeTo.changePassword">修改密码</el-button>

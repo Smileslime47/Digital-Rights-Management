@@ -5,7 +5,8 @@ import Constant from "~/constant/Constant.ts";
 
 const props = defineProps<{
   right: RightData,
-  isDeployer: boolean
+  isDeployer: boolean,
+  loaded: boolean
 }>()
 
 const route = useRoute()
@@ -14,7 +15,7 @@ const downloadByRight = () => {
   httpService.get(
       Constant.Api.IPFS.BY_RIGHT,
       {
-        params:{
+        params: {
           deployer: route.params.deployer,
           index: route.params.index
         },
@@ -33,12 +34,14 @@ const downloadByRight = () => {
 <template>
   <el-card>
     <h1>数字资源</h1>
-    <el-descriptions>
-      <el-descriptions-item label="版权资源">{{right.fileName}}</el-descriptions-item>
-      <el-descriptions-item label="版权资源Hash地址">{{right.fileHash}}</el-descriptions-item>
+    <el-descriptions v-if="loaded">
+      <el-descriptions-item label="版权资源">{{ right.fileName }}</el-descriptions-item>
+      <el-descriptions-item label="版权资源Hash地址">{{ right.fileHash }}</el-descriptions-item>
     </el-descriptions>
+    <el-skeleton :row="2" animated v-else/>
     <template #footer>
-      <el-button v-if="isDeployer" type="primary" plain bg text @click="downloadByRight(right.addr)">下载资源</el-button>
+      <el-button v-if="isDeployer" type="primary" plain bg text @click="downloadByRight()">下载资源
+      </el-button>
     </template>
   </el-card>
 </template>
