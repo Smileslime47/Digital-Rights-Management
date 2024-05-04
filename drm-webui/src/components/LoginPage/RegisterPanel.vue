@@ -33,6 +33,7 @@ const register = () => {
     localStorage.setItem(Constant.Authentication.TOKEN_STORAGE, principleMap[Constant.Authentication.TOKEN_STORAGE])
     localStorage.setItem(Constant.Authentication.USER_ID_CLAIM, principleMap[Constant.Authentication.USER_ID_CLAIM])
     localStorage.setItem(Constant.Authentication.GROUP_ID_CLAIM, principleMap[Constant.Authentication.GROUP_ID_CLAIM])
+    localStorage.setItem(Constant.Authentication.USER_NICKNAME_CLAIM, principleMap[Constant.Authentication.USER_NICKNAME_CLAIM])
     localStorage.setItem(Constant.Authentication.EXPIRE_TIME_CLAIM, principleMap[Constant.Authentication.EXPIRE_TIME_CLAIM])
     routeTo.home()
   })

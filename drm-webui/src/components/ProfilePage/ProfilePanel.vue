@@ -18,6 +18,7 @@ const update = () => {
   ).then((data) => {
     let success = data[Constant.RespondField.SUCCESS]
     if (success) {
+      localStorage.setItem(Constant.Authentication.USER_NICKNAME_CLAIM, props.user.nickname)
       ElMessage.success("修改成功！")
     } else {
       ElMessage.error("修改失败！")

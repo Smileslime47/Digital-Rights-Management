@@ -1,15 +1,20 @@
 <script setup lang="ts">
 import githubIcon from "~/assets/icons/github.svg"
 import webIcon from "~/assets/icons/web-icon.svg"
+import SwaggerIcon from "~/assets/icons/swagger.svg"
 import routeTo from "~/route/routeTo.ts";
 import fresh from "~/composables/fresh.ts";
 import {useRoute} from "vue-router";
-import { Search } from '@element-plus/icons-vue'
+import {Search} from '@element-plus/icons-vue'
 import TokenUtils from "~/server/TokenUtils.ts";
 import Constant from "~/constant/Constant.ts";
 
 const goToGithub = () => {
   window.open("https://github.com/Smileslime47/Digital-Rights-Management")
+}
+
+const goToSwagger = () => {
+  window.open(Constant.Property.BASE_URL + "/openapi")
 }
 
 const nickname = ref("")
@@ -25,22 +30,20 @@ const logout = () => {
 }
 
 fresh(async (_) => {
-  TokenUtils.getUser(
-      useRoute().path
-  ).then((result) => {
-    if (result != null) {
-      logged.value = true
-      nickname.value = result.nickname
-      userId.value = result.id
-    }
-  })
-  TokenUtils.getNoticeCnt(
-      useRoute().path
-  ).then((result) => {
-    if (result != null) {
-      noticeCnt.value = result
-    }
-  })
+  let token = TokenUtils.getToken()
+  if (token != null) {
+    nickname.value = token.user_nickname
+    userId.value = Number(token.user_id)
+    logged.value = true
+
+    TokenUtils.getNoticeCnt(
+        useRoute().path
+    ).then((result) => {
+      if (result != null) {
+        noticeCnt.value = result
+      }
+    })
+  }
 })
 </script>
 
@@ -98,6 +101,13 @@ fresh(async (_) => {
           style="width: 20px"
           :src=githubIcon
           alt="githubIcon"
+      />
+    </el-menu-item>
+    <el-menu-item index="3" @click="goToSwagger">
+      <img
+          style="width: 20px"
+          :src=SwaggerIcon
+          alt="SwaggerIcon"
       />
     </el-menu-item>
   </el-menu>

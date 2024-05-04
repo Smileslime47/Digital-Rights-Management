@@ -3,6 +3,9 @@ import Group from "~/modules/Group.ts";
 import Constant from "~/constant/Constant.ts";
 import {CoroutineLock} from "~/server/CoroutineLock.ts";
 import {httpServiceIgnoreStatus} from "~/server/http.ts";
+import route from "~/route/route.ts";
+import routeTo from "~/route/routeTo.ts";
+import LocalToken from "~/modules/LocalToken.ts";
 
 /**
  * 缓存类，用于在路由未刷新时
@@ -25,14 +28,7 @@ class TokenUtils {
         if (userLocalId == null) return false
 
         //判断登陆凭证是否过期
-        let userExpireTime = localStorage.getItem(Constant.Authentication.EXPIRE_TIME_CLAIM)
-        if (userExpireTime == null) return false;
-        let expireTime = Number.parseInt(userExpireTime)
-        let nowTime = new Date().getTime()
-        if (nowTime - expireTime > 0) {
-            localStorage.clear()
-            return false
-        }
+        if (!this.checkToken()) return false
 
         //获取用户信息
         await httpServiceIgnoreStatus.get(
@@ -61,8 +57,21 @@ class TokenUtils {
         return true
     }
 
+    public static checkToken() {
+        //判断登陆凭证是否过期
+        let userExpireTime = localStorage.getItem(Constant.Authentication.EXPIRE_TIME_CLAIM)
+        if (userExpireTime == null) return false;
+        let expireTime = Number.parseInt(userExpireTime)
+        let nowTime = new Date().getTime()
+        if (nowTime - expireTime > 0) {
+            localStorage.clear()
+            return false
+        }
+        return true
+    }
+
     public static async checkCache(routeNow: string) {
-        if(this.routeCache === routeNow && this.initialized) return
+        if (this.routeCache === routeNow && this.initialized) return
         await this.lock.lockCoroutine()
         if (this.routeCache.length === 0 || this.routeCache !== routeNow || !this.initialized) {
             this.routeCache = routeNow
@@ -72,6 +81,23 @@ class TokenUtils {
         }
         this.lock.unlockCoroutine()
     }
+
+    public static getToken() {
+        if (!this.checkToken()) {
+            ElMessage.error("登陆凭证已过期，请重新登陆。")
+            localStorage.clear()
+            routeTo.login()
+            return null
+        }
+        return new LocalToken(
+            localStorage.getItem(Constant.Authentication.EXPIRE_TIME_CLAIM) ?? "",
+            localStorage.getItem(Constant.Authentication.GROUP_ID_CLAIM) ?? "",
+            localStorage.getItem(Constant.Authentication.TOKEN_STORAGE) ?? "",
+            localStorage.getItem(Constant.Authentication.USER_ID_CLAIM) ?? "",
+            localStorage.getItem(Constant.Authentication.USER_NICKNAME_CLAIM) ?? ""
+        )
+    }
+
 
     public static async getUser(routeNow: string) {
         await this.checkCache(routeNow)
