@@ -3,6 +3,7 @@ package moe._47saikyo.drm.backend.dao.impl
 import moe._47saikyo.drm.backend.dao.PendingRightDao
 import moe._47saikyo.drm.backend.mapper.PendingRightTable
 import moe._47saikyo.drm.core.domain.PendingRight
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -56,9 +57,13 @@ class PendingRightDaoImpl : PendingRightDao {
 
     override suspend fun insertPendingRight(pendingRight: PendingRight): PendingRight? =
         transaction {
-            PendingRightTable
-                .insert(PendingRightTable.getStatementBinder(pendingRight))
-                .resultedValues?.singleOrNull()?.let(PendingRightTable::resultRowToPendingRight)
+            try {
+                PendingRightTable
+                    .insert(PendingRightTable.getStatementBinder(pendingRight))
+                    .resultedValues?.singleOrNull()?.let(PendingRightTable::resultRowToPendingRight)
+            } catch (e: ExposedSQLException) {
+                null
+            }
         }
 
     override suspend fun updatePendingRight(pendingRight: PendingRight): Boolean =

@@ -3,6 +3,7 @@ package moe._47saikyo.drm.backend.dao.impl
 import moe._47saikyo.drm.backend.dao.UserDao
 import moe._47saikyo.drm.backend.mapper.UserTable
 import moe._47saikyo.drm.core.domain.User
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,8 +23,12 @@ class UserDaoImpl : UserDao {
 
     override suspend fun insertUser(user: User): User? =
         transaction {
-            UserTable.insert(UserTable.getStatementBinder(user)).resultedValues?.singleOrNull()
-                ?.let(UserTable::resultRowToUser)
+            try {
+                UserTable.insert(UserTable.getStatementBinder(user)).resultedValues?.singleOrNull()
+                    ?.let(UserTable::resultRowToUser)
+            } catch (e: ExposedSQLException) {
+                null
+            }
         }
 
     override suspend fun updateUser(user: User): Boolean =

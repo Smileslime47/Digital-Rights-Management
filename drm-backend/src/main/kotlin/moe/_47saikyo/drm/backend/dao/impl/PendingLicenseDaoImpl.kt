@@ -3,6 +3,7 @@ package moe._47saikyo.drm.backend.dao.impl
 import moe._47saikyo.drm.backend.dao.PendingLicenseDao
 import moe._47saikyo.drm.backend.mapper.PendingLicenseTable
 import moe._47saikyo.drm.core.domain.PendingLicense
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -12,14 +13,14 @@ import org.jetbrains.exposed.sql.transactions.transaction
  *
  * @author 刘一邦
  */
-class PendingLicenseDaoImpl: PendingLicenseDao {
+class PendingLicenseDaoImpl : PendingLicenseDao {
     override suspend fun getPendingLicense(where: SqlExpressionBuilder.() -> Op<Boolean>): PendingLicense? =
         transaction {
-             PendingLicenseTable
-                 .select(where)
-                 .sortedByDescending { it[PendingLicenseTable.create_time] }
-                 .map(PendingLicenseTable::resultRowToPendingLicense)
-                 .singleOrNull()
+            PendingLicenseTable
+                .select(where)
+                .sortedByDescending { it[PendingLicenseTable.create_time] }
+                .map(PendingLicenseTable::resultRowToPendingLicense)
+                .singleOrNull()
         }
 
     override suspend fun getPendingLicenses(): List<PendingLicense> =
@@ -38,7 +39,7 @@ class PendingLicenseDaoImpl: PendingLicenseDao {
                 .map(PendingLicenseTable::resultRowToPendingLicense)
         }
 
-    override suspend fun countPendingLicenses(where: SqlExpressionBuilder.() -> Op<Boolean>): Long  =
+    override suspend fun countPendingLicenses(where: SqlExpressionBuilder.() -> Op<Boolean>): Long =
         transaction {
             PendingLicenseTable
                 .select(where)
@@ -56,9 +57,13 @@ class PendingLicenseDaoImpl: PendingLicenseDao {
 
     override suspend fun insertPendingLicense(pendingLicense: PendingLicense): PendingLicense? =
         transaction {
-            PendingLicenseTable
-                .insert(PendingLicenseTable.getStatementBinder(pendingLicense))
-                .resultedValues?.singleOrNull()?.let(PendingLicenseTable::resultRowToPendingLicense)
+            try {
+                PendingLicenseTable
+                    .insert(PendingLicenseTable.getStatementBinder(pendingLicense))
+                    .resultedValues?.singleOrNull()?.let(PendingLicenseTable::resultRowToPendingLicense)
+            } catch (e: ExposedSQLException) {
+                null
+            }
         }
 
     override suspend fun updatePendingLicense(pendingLicense: PendingLicense): Boolean =

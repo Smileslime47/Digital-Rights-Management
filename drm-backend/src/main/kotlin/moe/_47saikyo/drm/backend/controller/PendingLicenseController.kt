@@ -114,7 +114,10 @@ fun Application.pendingLicenseController() {
                     //非作者智能查询自己对应版权下的待审核授权
                     if (rightDeployer == loginAddr) {
                         val (count, pages) =
-                            pendingLicenseService.countPendingLicensesOfRight(rightKeyPair) to pendingLicenseService.getPendingLicensesOfRight(rightKeyPair, pageSize, pageNumberStr!!.toInt())
+                            pendingLicenseService.countPendingLicensesOfRight(rightKeyPair) to pendingLicenseService.getPendingLicensesOfRight(
+                                rightKeyPair,
+                                pageSize,
+                                pageNumberStr!!.toInt())
                         call.httpRespond(
                             data = mapOf(
                                 Constant.RespondField.COUNT to count,
