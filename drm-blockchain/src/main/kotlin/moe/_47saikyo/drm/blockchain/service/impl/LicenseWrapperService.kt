@@ -1,5 +1,7 @@
 package moe._47saikyo.drm.blockchain.service.impl
 
+import moe._47saikyo.drm.blockchain.BlockChain
+import moe._47saikyo.drm.blockchain.Estimate
 import moe._47saikyo.drm.blockchain.annotation.ViewFunction
 import moe._47saikyo.drm.blockchain.contract.DRManager.License
 import moe._47saikyo.drm.blockchain.models.LicenseData
@@ -9,8 +11,10 @@ import moe._47saikyo.drm.blockchain.service.LicenseService
 import moe._47saikyo.drm.blockchain.service.ManagerService
 import moe._47saikyo.drm.blockchain.service.RightService
 import org.koin.java.KoinJavaComponent
+import org.web3j.abi.datatypes.Type
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
+import java.util.*
 
 /**
  * 基于Wrapper的LicenseService实现
@@ -26,24 +30,23 @@ class LicenseWrapperService : LicenseService {
         callerAddr: String,
         form: LicenseDeployForm
     ): BigInteger {
-//        val binCode = License.BINARY
-//
-//        val encodedConstructor = FunctionEncoder.encodeConstructor(
-//            listOf(
-//                string(form.rightTitle),
-//                address(form.rightAddr),
-//                string(form.owner),
-//                uint64(form.issueTime),
-//                uint64(form.expireTime),
-//                string(form.description)
-//            )
-//        )
-//
-//        return Estimate.estimateDeploy(callerAddr, "$binCode$encodedConstructor")
-//            .add(BlockChainConstant.Gas.MANAGER_ADD)
-//            .add(BlockChainConstant.Gas.RIGHT_ADD)
-
-        return BigInteger.valueOf(0)
+        val license = License(
+            BigInteger.valueOf(0),
+            form.rightTitle,
+            form.rightKeyPairData.toKeyPairStruct(),
+            callerAddr,
+            form.owner,
+            form.issueTime,
+            form.expireTime,
+            form.description
+        )
+        return Estimate.estimateCall(
+            callerAddr,
+            BlockChain.managerAddr,
+            "addLicense",
+            listOf<Type<*>>(license),
+            emptyList()
+        )
     }
 
     override fun addLicense(

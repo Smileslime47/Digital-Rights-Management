@@ -1,5 +1,7 @@
 package moe._47saikyo.drm.blockchain.service.impl
 
+import moe._47saikyo.drm.blockchain.BlockChain
+import moe._47saikyo.drm.blockchain.Estimate
 import moe._47saikyo.drm.blockchain.contract.DRManager.Right
 import moe._47saikyo.drm.blockchain.models.ReceiptWrapper
 import moe._47saikyo.drm.blockchain.models.RightData
@@ -7,6 +9,7 @@ import moe._47saikyo.drm.blockchain.models.RightDeployForm
 import moe._47saikyo.drm.blockchain.service.ManagerService
 import moe._47saikyo.drm.blockchain.service.RightService
 import org.koin.java.KoinJavaComponent
+import org.web3j.abi.datatypes.Type
 import org.web3j.tx.TransactionManager
 import java.math.BigInteger
 
@@ -29,26 +32,27 @@ class RightWrapperService : RightService {
         callerAddr: String,
         form: RightDeployForm
     ): BigInteger {
-//        //TODO
-//        val binCode = Right.BINARY
-//
-//        val encodedConstructor = FunctionEncoder.encodeConstructor(
-//            listOf(
-//                string(form.title),
-//                string(form.owner),
-//                string(form.registrationNumber),
-//                uint64(form.issueTime),
-//                uint64(form.expireTime),
-//                string(form.description),
-//                string(form.fileName),
-//                string(form.fileHash)
-//            )
-//        )
-//
-//        return Estimate.estimateCall(callerAddr, "$binCode$encodedConstructor")
-//            .add(BlockChainConstant.Gas.MANAGER_ADD)
+        val right = Right(
+            BigInteger.valueOf(0),
+            form.title,
+            callerAddr,
+            form.owner,
+            form.registrationNumber,
+            form.issueTime,
+            form.expireTime,
+            form.description,
+            form.fileName,
+            form.fileHash,
+            emptyList()
+        )
 
-        return BigInteger.valueOf(0)
+        return Estimate.estimateCall(
+            callerAddr,
+            BlockChain.managerAddr,
+            "addRight",
+            listOf<Type<*>>(right),
+            emptyList()
+        )
     }
 
     override fun addRight(
