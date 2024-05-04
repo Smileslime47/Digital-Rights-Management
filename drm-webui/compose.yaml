@@ -1,0 +1,7 @@
+version: '3'
+services:
+  drm-webui:
+    image: drm-webui:1.0.0
+    container_name: drm_webui
+    ports:
+      - '3000:3000'
