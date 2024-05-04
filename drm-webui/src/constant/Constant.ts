@@ -20,6 +20,7 @@ const Constant = {
         TOKEN_STORAGE: "token",
         USER_ID_CLAIM: "user_id",
         GROUP_ID_CLAIM: "group_id",
+        USER_NICKNAME_CLAIM: "user_nickname",
         EXPIRE_TIME_CLAIM: "expire_time"
     },
     RespondField: {

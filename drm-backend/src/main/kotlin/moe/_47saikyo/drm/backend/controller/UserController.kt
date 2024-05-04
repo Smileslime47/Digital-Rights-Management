@@ -39,6 +39,7 @@ fun Application.userController() {
         route("/user") {
             authenticateRequired(Constant.Authentication.NEED_LOGIN) {
                 get {
+
                     val targetIdStr = call.request.queryParameters["id"]
                     val targetId = if (targetIdStr?.matches(Regex("[0-9]+")) == true) targetIdStr.toLong() else null
                     val targetUser = targetId?.let { id -> userService.getUser(id) }
@@ -221,6 +222,7 @@ fun Application.userController() {
                         Constant.Authentication.TOKEN_STORAGE to token,
                         Constant.Authentication.USER_ID_CLAIM to loginUser.id,
                         Constant.Authentication.GROUP_ID_CLAIM to loginUser.permissionId,
+                        Constant.Authentication.USER_NICKNAME_CLAIM to loginUser.nickname,
                         Constant.Authentication.EXPIRE_TIME_CLAIM to jwtExpireTime
                     )
                 )
@@ -263,11 +265,11 @@ fun Application.userController() {
 
                 noticeService.insertNotice(
                     Notice(
-                    "欢迎注册Digital Right Manager",
-                    "欢迎您注册Digital Right Manager，您的用户名为${registerUser.username}，请您牢记您的用户名和密码，以免遗忘。",
-                    registerUser.id,
-                    "/profile/${registerUser.id}"
-                )
+                        "欢迎注册Digital Right Manager",
+                        "欢迎您注册Digital Right Manager，您的用户名为${registerUser.username}，请您牢记您的用户名和密码，以免遗忘。",
+                        registerUser.id,
+                        "/profile/${registerUser.id}"
+                    )
                 )
 
                 //签发jwt
@@ -293,7 +295,9 @@ fun Application.userController() {
                     data = mapOf(
                         Constant.Authentication.TOKEN_STORAGE to token,
                         Constant.Authentication.USER_ID_CLAIM to registerUser.id,
-                        Constant.Authentication.GROUP_ID_CLAIM to registerUser.permissionId
+                        Constant.Authentication.GROUP_ID_CLAIM to registerUser.permissionId,
+                        Constant.Authentication.USER_NICKNAME_CLAIM to registerUser.nickname,
+                        Constant.Authentication.EXPIRE_TIME_CLAIM to jwtExpireTime
                     )
                 )
             }

@@ -136,7 +136,7 @@ fun Application.pendingRightController() {
                             //发送通知
                             when (pendingRight != null) {
                                 true -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to true))
-                                false -> call.httpRespond(data = mapOf(Constant.RespondField.SUCCESS to false))
+                                false -> call.httpRespond(HttpStatus.SERVER_ERROR with "添加版权申请错误，请检查登记号和资源文件是否已存在于系统中")
                             }
                         }
                     }

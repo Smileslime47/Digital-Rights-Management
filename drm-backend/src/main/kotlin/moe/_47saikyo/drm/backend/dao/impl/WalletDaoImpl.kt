@@ -3,6 +3,7 @@ package moe._47saikyo.drm.backend.dao.impl
 import moe._47saikyo.drm.backend.dao.WalletDao
 import moe._47saikyo.drm.backend.mapper.WalletTable
 import moe._47saikyo.drm.core.domain.Wallet
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -12,7 +13,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
  *
  * @author 刘一邦
  */
-class WalletDaoImpl: WalletDao {
+class WalletDaoImpl : WalletDao {
     override suspend fun getWallet(where: SqlExpressionBuilder.() -> Op<Boolean>): Wallet? =
         transaction { WalletTable.select(where).map(WalletTable::resultRowToWallet).singleOrNull() }
 
@@ -21,8 +22,12 @@ class WalletDaoImpl: WalletDao {
 
     override suspend fun insertWallet(wallet: Wallet): Wallet? =
         transaction {
-            WalletTable.insert(WalletTable.getStatementBinder(wallet)).resultedValues?.singleOrNull()
-                ?.let(WalletTable::resultRowToWallet)
+            try {
+                WalletTable.insert(WalletTable.getStatementBinder(wallet)).resultedValues?.singleOrNull()
+                    ?.let(WalletTable::resultRowToWallet)
+            } catch (e: ExposedSQLException) {
+                null
+            }
         }
 
     override suspend fun updateWallet(wallet: Wallet): Boolean =

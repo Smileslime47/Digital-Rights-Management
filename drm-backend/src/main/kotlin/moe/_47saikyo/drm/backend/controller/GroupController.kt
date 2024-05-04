@@ -19,25 +19,23 @@ fun Application.groupController() {
 
     routing {
         route("/group") {
-            authenticateRequired(Constant.Authentication.NEED_LOGIN) {
-                get {
-                    //检查参数格式
-                    val targetIdStr = call.request.queryParameters["id"]
-                    if (targetIdStr == null || !targetIdStr.matches(Regex("[0-9]*"))) {
-                        call.httpRespond(HttpStatus.BAD_REQUEST)
-                        return@get
-                    }
-
-                    //检查用户组是否存在
-                    val targetId = targetIdStr.toLong()
-                    val targetGroup = groupService.getGroup(targetId)
-                    if (targetGroup == null) {
-                        call.httpRespond(HttpStatus.NOT_FOUND)
-                        return@get
-                    }
-
-                    call.httpRespond(data = mapOf(Constant.RespondField.GROUP to targetGroup))
+            get {
+                //检查参数格式
+                val targetIdStr = call.request.queryParameters["id"]
+                if (targetIdStr == null || !targetIdStr.matches(Regex("[0-9]*"))) {
+                    call.httpRespond(HttpStatus.BAD_REQUEST)
+                    return@get
                 }
+
+                //检查用户组是否存在
+                val targetId = targetIdStr.toLong()
+                val targetGroup = groupService.getGroup(targetId)
+                if (targetGroup == null) {
+                    call.httpRespond(HttpStatus.NOT_FOUND)
+                    return@get
+                }
+
+                call.httpRespond(data = mapOf(Constant.RespondField.GROUP to targetGroup))
             }
         }
     }

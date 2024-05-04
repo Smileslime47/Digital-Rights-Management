@@ -3,6 +3,7 @@ package moe._47saikyo.drm.backend.dao.impl
 import moe._47saikyo.drm.backend.dao.ReceiptDao
 import moe._47saikyo.drm.backend.mapper.ReceiptTable
 import moe._47saikyo.drm.core.domain.Receipt
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -16,8 +17,12 @@ class ReceiptDaoImpl : ReceiptDao {
 
     override suspend fun insertReceipt(receipt: Receipt): Receipt? =
         transaction {
-            ReceiptTable.insert(ReceiptTable.getStatementBinder(receipt)).resultedValues?.singleOrNull()
-                ?.let(ReceiptTable::resultRowToReceipt)
+            try {
+                ReceiptTable.insert(ReceiptTable.getStatementBinder(receipt)).resultedValues?.singleOrNull()
+                    ?.let(ReceiptTable::resultRowToReceipt)
+            } catch (e: ExposedSQLException) {
+                null
+            }
         }
 
     override suspend fun updateReceipt(receipt: Receipt): Boolean =

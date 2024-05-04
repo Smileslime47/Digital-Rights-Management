@@ -3,6 +3,7 @@ package moe._47saikyo.drm.backend.dao.impl
 import moe._47saikyo.drm.backend.dao.NoticeDao
 import moe._47saikyo.drm.backend.mapper.NoticeTable
 import moe._47saikyo.drm.core.domain.Notice
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -38,15 +39,19 @@ class NoticeDaoImpl : NoticeDao {
             NoticeTable
                 .select(where)
                 .sortedByDescending { it[NoticeTable.sent_time] }
-                .subList((pageNumber - 1) * pageSize, min(max,(pageNumber) * pageSize))
+                .subList((pageNumber - 1) * pageSize, min(max, (pageNumber) * pageSize))
                 .map(NoticeTable::resultRowToNotice)
         }
     }
 
     override suspend fun insertNotice(notice: Notice): Notice? =
         transaction {
-            NoticeTable.insert(NoticeTable.getStatementBinder(notice)).resultedValues?.singleOrNull()
-                ?.let(NoticeTable::resultRowToNotice)
+            try {
+                NoticeTable.insert(NoticeTable.getStatementBinder(notice)).resultedValues?.singleOrNull()
+                    ?.let(NoticeTable::resultRowToNotice)
+            } catch (e: ExposedSQLException) {
+                null
+            }
         }
 
     override suspend fun updateNotice(notice: Notice): Boolean =

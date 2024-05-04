@@ -15,6 +15,7 @@ object Constant {
         //------------------------------JWT Claim------------------------------//
         const val TOKEN_STORAGE = "token"
         const val USER_ID_CLAIM = "user_id"
+        const val USER_NICKNAME_CLAIM = "user_nickname"
         const val GROUP_ID_CLAIM = "group_id"
         const val EXPIRE_TIME_CLAIM = "expire_time"
 

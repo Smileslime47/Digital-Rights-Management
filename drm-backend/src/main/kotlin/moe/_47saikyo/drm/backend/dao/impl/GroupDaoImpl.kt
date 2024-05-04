@@ -3,6 +3,7 @@ package moe._47saikyo.drm.backend.dao.impl
 import moe._47saikyo.drm.backend.dao.GroupDao
 import moe._47saikyo.drm.backend.mapper.GroupTable
 import moe._47saikyo.drm.core.domain.Group
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -22,8 +23,12 @@ class GroupDaoImpl : GroupDao {
 
     override suspend fun insertGroup(group: Group): Group? =
         transaction {
-            GroupTable.insert(GroupTable.getStatementBinder(group)).resultedValues?.singleOrNull()
-                ?.let(GroupTable::resultRowToGroup)
+            try {
+                GroupTable.insert(GroupTable.getStatementBinder(group)).resultedValues?.singleOrNull()
+                    ?.let(GroupTable::resultRowToGroup)
+            } catch (e: ExposedSQLException) {
+                null
+            }
         }
 
     override suspend fun updateGroup(group: Group): Boolean =
