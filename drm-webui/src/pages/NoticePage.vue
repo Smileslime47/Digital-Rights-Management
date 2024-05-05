@@ -11,6 +11,8 @@ const filter = ref("")
 const maxPage = ref(0)
 const pageNow = ref("")
 
+const initialized = ref(false)
+
 watch(pageNow, (newVal) => {
   routeTo.notice(filter.value, newVal)
 })
@@ -29,7 +31,8 @@ fresh(async (route) => {
       }
   ).then((data) => {
     notices.value = data[Constant.RespondField.NOTICE]
-    maxPage.value = Math.ceil(data[Constant.RespondField.COUNT]/Constant.Global.DEFAULT_PAGE_SIZE)
+    maxPage.value = Math.ceil(data[Constant.RespondField.COUNT] / Constant.Global.DEFAULT_PAGE_SIZE)
+    initialized.value = true
   })
 })
 
@@ -74,30 +77,34 @@ const changeStatus = (id: number, filter: string) => {
       </el-aside>
       <el-main>
         <h1>通知列表</h1>
-        <el-space fill direction="vertical" style="width:100%">
-          <el-card class="notice" v-for="notice in notices">
-            <template #header>
-              <span>{{ notice.title }}</span>
-              <br/>
-              <el-text>{{ new Date(notice.sentTime).toLocaleDateString() }}</el-text>
-            </template>
-            <el-text>{{ notice.content }}</el-text>
-            <template #footer>
-              <el-button-group>
-                <el-button text bg type="info" @click="routeTo.page(notice.targetRoute)" v-if="notice.targetRoute">
-                  查看
-                </el-button>
-                <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.UNREAD)">未读
-                </el-button>
-                <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.READ)">已读
-                </el-button>
-                <el-button text bg type="danger" @click="changeStatus(notice.id,Constant.NoticeFilter.ARCHIVED)">归档
-                </el-button>
-              </el-button-group>
-            </template>
-          </el-card>
-        </el-space>
-        <el-pagination style="margin-top:10px" layout="prev, pager, next" :page-count="maxPage" v-model:current-page="pageNow"/>
+        <div v-if="initialized">
+          <el-space fill direction="vertical" style="width:100%">
+            <el-card class="notice" v-for="notice in notices">
+              <template #header>
+                <span>{{ notice.title }}</span>
+                <br/>
+                <el-text>{{ new Date(notice.sentTime).toLocaleDateString() }}</el-text>
+              </template>
+              <el-text>{{ notice.content }}</el-text>
+              <template #footer>
+                <el-button-group>
+                  <el-button text bg type="info" @click="routeTo.page(notice.targetRoute)" v-if="notice.targetRoute">
+                    查看
+                  </el-button>
+                  <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.UNREAD)">未读
+                  </el-button>
+                  <el-button text bg type="primary" @click="changeStatus(notice.id,Constant.NoticeFilter.READ)">已读
+                  </el-button>
+                  <el-button text bg type="danger" @click="changeStatus(notice.id,Constant.NoticeFilter.ARCHIVED)">归档
+                  </el-button>
+                </el-button-group>
+              </template>
+            </el-card>
+          </el-space>
+          <el-pagination style="margin-top:10px" layout="prev, pager, next" :page-count="maxPage"
+                         v-model:current-page="pageNow"/>
+        </div>
+        <el-skeleton animated v-else/>
       </el-main>
     </el-container>
   </TemplatePage>

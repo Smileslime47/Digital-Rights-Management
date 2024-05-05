@@ -59,7 +59,6 @@ declare module 'vue' {
     LicensePanel: typeof import('./components/ChainRightPage/LicensePanel.vue')['default']
     Login: typeof import('./components/Login.vue')['default']
     LoginPanel: typeof import('./components/LoginPage/LoginPanel.vue')['default']
-    NewAccountPanel: typeof import('./components/ChainAccountPage/NewAccountPanel.vue')['default']
     PendingLicenseOfRightTable: typeof import('./components/ChainRightPage/PendingLicenseOfRightTable.vue')['default']
     PendingLicenseOfUserTable: typeof import('./components/ChainAccountPage/PendingLicenseOfUserTable.vue')['default']
     PendingPanel: typeof import('./components/ChainAccountPage/PendingPanel.vue')['default']

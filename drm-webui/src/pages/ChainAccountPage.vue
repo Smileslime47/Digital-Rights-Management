@@ -35,21 +35,15 @@ fresh(async (_) => {
 </script>
 
 <template>
-  <TemplatePage side="true" v-loading="!initialized">
-    <div v-if="addr!=null&&addr.length>0">
-      <AccountPanel :addr="addr" :balance="balance"/>
+  <TemplatePage side="true">
+      <AccountPanel :addr="addr" :balance="balance" :loaded="initialized"/>
 
       <el-divider/>
 
-      <ChainPanel :addr="addr"/>
+      <ChainPanel :addr="addr" :loaded="initialized"/>
 
       <el-divider/>
 
-      <PendingPanel :addr="addr"/>
-    </div>
-
-    <div v-else>
-      <NewAccountPanel/>
-    </div>
+      <PendingPanel :addr="addr" :loaded="initialized"/>
   </TemplatePage>
 </template>

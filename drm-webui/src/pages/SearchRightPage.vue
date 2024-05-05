@@ -29,7 +29,7 @@ fresh(async (route) => {
 
 <template>
   <TemplatePage>
-    <div class="vertical-center" v-loading="!initialized">
+    <div class="vertical-center">
       <el-input
           class="wide-input"
           style="margin-bottom: 50px;"
@@ -40,24 +40,30 @@ fresh(async (route) => {
         </template>
       </el-input>
 
-      <el-space fill direction="vertical" style="width:80%" v-if="chainRights.length>0">
-        <el-card class="notice" v-for="right in chainRights">
-          <template #header>
-            <el-link class="medium-text" @click="routeTo.chainRight(right.deployer,right.index)">{{ right.title }}</el-link>
-          </template>
-          <el-text>{{ right.description !== "" ? right.description : "无描述" }}</el-text>
-          <template #footer>
-            <span>版权所有人：{{ right.owner }}</span>
-            <br/>
-            <span>版权登记号：{{ right.registrationNumber }}</span>
-            <br/>
-            <span>版权有效期：{{
-                new Date(right.issueTime).toLocaleDateString()
-              }} - {{ new Date(right.expireTime).toLocaleDateString() }}</span>
-          </template>
-        </el-card>
-      </el-space>
-      <el-empty v-else :image-size="200"/>
+      <div v-if="initialized" style="width: 100%" class="horizontal-center">
+        <el-space fill direction="vertical" style="width:80%" v-if="chainRights.length>0">
+          <el-card class="notice" v-for="right in chainRights">
+            <template #header>
+              <el-link class="medium-text" @click="routeTo.chainRight(right.deployer,right.index)">{{
+                  right.title
+                }}
+              </el-link>
+            </template>
+            <el-text>{{ right.description !== "" ? right.description : "无描述" }}</el-text>
+            <template #footer>
+              <span>版权所有人：{{ right.owner }}</span>
+              <br/>
+              <span>版权登记号：{{ right.registrationNumber }}</span>
+              <br/>
+              <span>版权有效期：{{
+                  new Date(right.issueTime).toLocaleDateString()
+                }} - {{ new Date(right.expireTime).toLocaleDateString() }}</span>
+            </template>
+          </el-card>
+        </el-space>
+        <el-empty v-else :image-size="200"/>
+      </div>
+      <el-skeleton animated v-else/>
     </div>
   </TemplatePage>
 </template>

@@ -10,22 +10,24 @@ const props = defineProps<{
 const chainLicenses = ref([])
 
 fresh((_) => {
-  //获取账户待审合约
-  httpService.get(
-      Constant.Api.CHAIN.LICENSE.BY_DEPLOYER,
-      {
-        params: {
-          deployer: props.addr,
+  if (props.addr != null && props.addr.length > 0) {
+    //获取账户待审合约
+    httpService.get(
+        Constant.Api.CHAIN.LICENSE.BY_DEPLOYER,
+        {
+          params: {
+            deployer: props.addr,
+          }
         }
-      }
-  ).then((data) => {
-    chainLicenses.value = data[Constant.RespondField.LICENSE]
-  })
+    ).then((data) => {
+      chainLicenses.value = data[Constant.RespondField.LICENSE]
+    })
+  }
 })
 </script>
 
 <template>
-  <el-table style="width: 100%" :data="chainLicenses" stripe>
+  <el-table style="width: 100%" :data="chainLicenses" stripe v-if="props.addr != null && props.addr.length > 0">
     <el-table-column prop="rightTitle" label="版权标题"/>
     <el-table-column prop="owner" label="授权所有人"/>
     <el-table-column label="授权起始时间">
@@ -42,10 +44,15 @@ fresh((_) => {
     <el-table-column label="操作">
       <template #default="scope">
         <el-button-group>
-          <el-button type="primary" plain bg text @click="routeTo.chainRight(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">查看版权</el-button>
-          <el-button type="success" plain bg text @click="routeTo.chainRight(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">下载资源</el-button>
+          <el-button type="primary" plain bg text
+                     @click="routeTo.chainRight(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">查看版权
+          </el-button>
+          <el-button type="success" plain bg text
+                     @click="routeTo.chainRight(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">下载资源
+          </el-button>
         </el-button-group>
       </template>
     </el-table-column>
   </el-table>
+  <el-text v-else>请先创建区块链账号</el-text>
 </template>

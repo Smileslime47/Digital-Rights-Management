@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import fresh from "~/composables/fresh.ts";
 import routeTo from "~/route/routeTo.ts";
 import TokenUtils from "~/server/TokenUtils.ts";
 import {useRoute} from "vue-router";
@@ -8,8 +7,9 @@ import Constant from "~/constant/Constant.ts";
 const userId = ref(0)
 const logged = ref(false)
 const noticeFilter = ref("all")
+const permissionVerify = ref(false)
 
-fresh((_) => {
+onMounted(() => {
   TokenUtils.getUser(
       useRoute().path
   ).then((result) => {
@@ -38,14 +38,5 @@ fresh((_) => {
     <el-menu-item index="4" @click="routeTo.createRight">
       <span>上传资源</span>
     </el-menu-item>
-    <el-menu-item index="5" disabled>
-      <span>获取授权</span>
-    </el-menu-item>
-    <el-menu-item index="6" @click="routeTo.chainVerify(Constant.Global.DEFAULT_PAGE)">
-      <span>版权审核</span>
-    </el-menu-item>
   </el-menu>
 </template>
-
-<style scoped>
-</style>

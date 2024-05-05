@@ -10,22 +10,24 @@ const props = defineProps<{
 const chainRights = ref([])
 
 fresh((_) => {
-  //获取账户待审合约
-  httpService.get(
-      Constant.Api.CHAIN.RIGHT.DEPLOYER,
-      {
-        params: {
-          deployer: props.addr
+  if (props.addr != null && props.addr.length > 0) {
+    //获取账户待审合约
+    httpService.get(
+        Constant.Api.CHAIN.RIGHT.DEPLOYER,
+        {
+          params: {
+            deployer: props.addr
+          }
         }
-      }
-  ).then((data) => {
-    chainRights.value = data[Constant.RespondField.RIGHT]
-  })
+    ).then((data) => {
+      chainRights.value = data[Constant.RespondField.RIGHT]
+    })
+  }
 })
 </script>
 
 <template>
-  <el-table style="width: 100%" :data="chainRights" stripe>
+  <el-table style="width: 100%" :data="chainRights" stripe v-if="props.addr != null && props.addr.length > 0">
     <el-table-column prop="title" label="版权标题"/>
     <el-table-column prop="owner" label="版权所有人"/>
     <el-table-column prop="registrationNumber" label="版权登记号"/>
@@ -47,4 +49,5 @@ fresh((_) => {
       </template>
     </el-table-column>
   </el-table>
+  <el-text v-else>请先创建区块链账号</el-text>
 </template>
