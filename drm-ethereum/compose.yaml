@@ -35,12 +35,12 @@ services:
        --networkid=721
        --http
        --http.addr="0.0.0.0"
-       --http.api="personal,eth,net"
+       --http.api="eth,net,web3,admin,personal"
        --http.corsdomain="*"
        --http.vhosts="*"
        --mine
        --miner.threads=4
-       --miner.etherbase="0x4db3443fc610477a5260c350254c9003b63e0673"
+       --miner.etherbase="0x4d28dab9badda6fa35eadaa028522e65be819d97"
   ethereum_node_1:
     image: drm-ethereum:1.0.4
     container_name: ethereum_node_1
@@ -56,9 +56,9 @@ services:
       --networkid=721
       --http
       --http.addr="0.0.0.0"
-      --http.api="personal,eth,net"
+      --http.api="eth,net,web3,admin,personal"
       --http.corsdomain="*"
       --http.vhosts="*"
       --mine
       --miner.threads=4
-      --miner.etherbase="0x4db3443fc610477a5260c350254c9003b63e0673"
+      --miner.etherbase="0x4d28dab9badda6fa35eadaa028522e65be819d97"
