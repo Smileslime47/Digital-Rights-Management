@@ -64,7 +64,9 @@ class TokenUtils {
         let expireTime = Number.parseInt(userExpireTime)
         let nowTime = new Date().getTime()
         if (nowTime - expireTime > 0) {
+            ElMessage.error("登陆凭证已过期，请重新登陆。")
             localStorage.clear()
+            routeTo.login()
             return false
         }
         return true
@@ -84,9 +86,6 @@ class TokenUtils {
 
     public static getToken() {
         if (!this.checkToken()) {
-            ElMessage.error("登陆凭证已过期，请重新登陆。")
-            localStorage.clear()
-            routeTo.login()
             return null
         }
         return new LocalToken(
