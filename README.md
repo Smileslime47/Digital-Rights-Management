@@ -2,9 +2,7 @@
 
 基于以太坊区块链和IPFS的Ktor项目
 
-该项目旨在通过部署在**以太坊私有链**上的智能合约实现对版权和授权的管理，并计划通过私有化部署的IPFS节点实现对数字资源的存储
-
-同时，希望对初学**Kotlin、KTor、TypeScript、Vue、Ethereum、Web3j**等技术栈的开发者有所启发
+该项目旨在通过部署在**以太坊私有链**上的智能合约实现对版权和授权的管理，并通过私有化部署的IPFS节点实现对数字资源的存储
 
 ## 开发语言和框架
 
@@ -21,6 +19,32 @@
 - IPFS基于java-ipfs-http-client库
 - 智能合约基于Solidity开发
   - EVM版本使用Paris
+
+## 部署流程
+
+### 数据库
+
+数据库构建语句（DDL）见[SQL-DDL文档](./SQL-DDL.md)
+
+### IPFS节点
+
+见`drm-ipfs-node`下[README文档](./drm-ipfs-node/README.md#部署)部署章节
+
+### Ethereum节点
+
+见`drm-ethereum`下[README文档](./drm-ethereum/README.md#部署)部署章节
+
+### 智能合约(依赖于Ethereum节点部署)
+
+见`drm-blockchain`下[README文档](./drm-blockchain/README.md#构建)构建章节
+
+### 后端（依赖于上述部分）
+
+见`drm-backend`下[README文档](./drm-backend/README.md)
+
+### 前端
+
+见`drm-webui`下[README文档](./drm-webui/README.md)
 
 ## 核心组件
 
