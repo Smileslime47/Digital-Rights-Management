@@ -5,13 +5,6 @@ import moe._47saikyo.drm.blockchain.contract.DRManager
 import moe._47saikyo.drm.blockchain.contract.DRManager.License
 import moe._47saikyo.drm.blockchain.contract.DRManager.Right
 import moe._47saikyo.drm.blockchain.service.ManagerService
-import moe._47saikyo.drm.blockchain.string
-import org.web3j.abi.FunctionEncoder
-import org.web3j.abi.FunctionReturnDecoder
-import org.web3j.abi.TypeReference
-import org.web3j.abi.datatypes.Function
-import org.web3j.protocol.core.DefaultBlockParameterName
-import org.web3j.protocol.core.methods.request.Transaction
 import org.web3j.protocol.core.methods.response.TransactionReceipt
 import org.web3j.tx.ReadonlyTransactionManager
 import org.web3j.tx.TransactionManager
@@ -98,7 +91,7 @@ class ManagerWrapperService : ManagerService {
     }
 
     override fun getRight(callerAddr: String, deployer: String, index: Number): Right {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, deployer)
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
 
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -111,7 +104,7 @@ class ManagerWrapperService : ManagerService {
     }
 
     override fun getRights(callerAddr: String, deployer: String): List<Right> {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, deployer)
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
 
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -124,7 +117,7 @@ class ManagerWrapperService : ManagerService {
     }
 
     override fun getLastRight(callerAddr: String, deployer: String): Right {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, deployer)
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
 
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -137,7 +130,7 @@ class ManagerWrapperService : ManagerService {
     }
 
     override fun getLicense(callerAddr: String, deployer: String, index: Number): License {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, deployer)
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
 
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -150,7 +143,7 @@ class ManagerWrapperService : ManagerService {
     }
 
     override fun getLicenses(callerAddr: String, deployer: String): List<License> {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, deployer)
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
 
         val manager = DRManager.load(
             BlockChain.managerAddr,
@@ -163,7 +156,7 @@ class ManagerWrapperService : ManagerService {
     }
 
     override fun getLastLicense(callerAddr: String, deployer: String): License {
-        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, deployer)
+        val txManager = ReadonlyTransactionManager(BlockChain.web3jInstance, callerAddr)
 
         val manager = DRManager.load(
             BlockChain.managerAddr,
