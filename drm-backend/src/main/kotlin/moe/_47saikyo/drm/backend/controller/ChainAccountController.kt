@@ -24,6 +24,7 @@ import java.util.*
  * @author 刘一邦
  */
 fun Application.chainAccountController() {
+    val logger = org.slf4j.LoggerFactory.getLogger("ChainAccountController")
     val userService: UserService by inject()
     val walletService: WalletService by inject()
     val accountService: AccountService by inject()
@@ -118,6 +119,8 @@ fun Application.chainAccountController() {
                             if (!addr.startsWith("0x")) {
                                 addr = "0x$addr"
                             }
+
+                            logger.info(walletFileJson)
 
                             //生成加密密钥和初始化向量
                             val secretKey = CryptoUtils.getSecretKey(password)

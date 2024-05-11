@@ -117,7 +117,8 @@ fun Application.pendingLicenseController() {
                             pendingLicenseService.countPendingLicensesOfRight(rightKeyPair) to pendingLicenseService.getPendingLicensesOfRight(
                                 rightKeyPair,
                                 pageSize,
-                                pageNumberStr!!.toInt())
+                                pageNumberStr!!.toInt()
+                            )
                         call.httpRespond(
                             data = mapOf(
                                 Constant.RespondField.COUNT to count,
@@ -168,8 +169,17 @@ fun Application.pendingLicenseController() {
 
                         //部署合约
                         val oldBalance = accountService.getBalance(dbWallet.address)
-                        pendingLicenseService.deployPendingLicense(pendingId, txManager)
+                        val license = pendingLicenseService.deployPendingLicense(pendingId, txManager)
                         val newBalance = accountService.getBalance(dbWallet.address)
+
+                        noticeService.insertNotice(
+                            Notice(
+                                title = "授权部署通知",
+                                content = "您的授权申请:${license!!.rightTitle}已成功部署。",
+                                receiverId = loginId,
+                                targetRoute = "/chain/right/${license.rightKeyPair.deployer}/${license.rightKeyPair.arrayIndex}"
+                            )
+                        )
 
                         call.httpRespond(
                             data = mapOf(
@@ -225,13 +235,13 @@ fun Application.pendingLicenseController() {
                             when {
                                 //检查版权存在性
                                 (targetLicense == null) -> {
-                                    call.httpRespond(HttpStatus.NOT_FOUND with "无效的版权ID")
+                                    call.httpRespond(HttpStatus.NOT_FOUND with "无效的授权ID")
                                     return@post
                                 }
 
                                 //检查版权状态
                                 (targetLicense.status != PendingStatus.PENDING) -> {
-                                    call.httpRespond(HttpStatus.FORBIDDEN with "非待审核版权")
+                                    call.httpRespond(HttpStatus.FORBIDDEN with "非待审核授权")
                                     return@post
                                 }
                             }
@@ -247,8 +257,8 @@ fun Application.pendingLicenseController() {
 
                             noticeService.insertNotice(
                                 Notice(
-                                    title = "版权审核通知",
-                                    content = "您的版权申请:${targetLicense.rightTitle}已通过审核,需要您填写区块链账户密码完成合约部署。",
+                                    title = "授权审核通知",
+                                    content = "您的授权申请:${targetLicense.rightTitle}已通过审核,需要您填写区块链账户密码完成合约部署。",
                                     receiverId = ownerWallet.userId,
                                     targetRoute = "/chain/account"
                                 )
@@ -275,13 +285,13 @@ fun Application.pendingLicenseController() {
                             when {
                                 //检查版权存在性
                                 (targetLicense == null) -> {
-                                    call.httpRespond(HttpStatus.NOT_FOUND with "无效的版权ID")
+                                    call.httpRespond(HttpStatus.NOT_FOUND with "无效的授权ID")
                                     return@post
                                 }
 
                                 //检查版权状态
                                 (targetLicense.status != PendingStatus.PENDING) -> {
-                                    call.httpRespond(HttpStatus.FORBIDDEN with "非待审核版权")
+                                    call.httpRespond(HttpStatus.FORBIDDEN with "非待审核授权")
                                     return@post
                                 }
                             }
@@ -290,8 +300,8 @@ fun Application.pendingLicenseController() {
 
                             noticeService.insertNotice(
                                 Notice(
-                                    title = "版权审核通知",
-                                    content = "您的版权申请:${targetLicense.rightTitle}未通过审核,原因:${form.rejectReason}。",
+                                    title = "授权审核通知",
+                                    content = "您的授权申请:${targetLicense.rightTitle}未通过审核,原因:${form.rejectReason}。",
                                     receiverId = ownerWallet!!.userId,
                                     targetRoute = "/chain/account"
                                 )

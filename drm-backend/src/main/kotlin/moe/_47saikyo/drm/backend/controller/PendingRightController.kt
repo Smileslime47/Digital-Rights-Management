@@ -98,6 +98,15 @@ fun Application.pendingRightController() {
                         val right = pendingRightService.deployPendingRight(pendingId, txManager)
                         val newBalance = accountService.getBalance(dbWallet.address)
 
+                        noticeService.insertNotice(
+                            Notice(
+                                title = "版权部署通知",
+                                content = "您的版权申请:${right!!.title}已成功部署。",
+                                receiverId = loginId,
+                                targetRoute = "/chain/right/${right.deployer}/${right.index}"
+                            )
+                        )
+
                         call.httpRespond(
                             data = mapOf(
                                 Constant.RespondField.COST to newBalance - oldBalance,
