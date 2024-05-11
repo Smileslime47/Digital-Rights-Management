@@ -76,7 +76,7 @@ fresh((_) => {
       <template #default="scope">
         <el-button-group>
           <el-button type="primary" plain text bg @click="routeTo.chainRight(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">查看版权</el-button>
-          <el-button type="success" plain text bg @click="downloadByLicense(scope.row.rightKeyPair.deployer,scope.row.rightKeyPair.arrayIndex)">下载资源</el-button>
+          <el-button type="success" plain text bg @click="downloadByLicense(scope.row.deployer,scope.row.index)">下载资源</el-button>
         </el-button-group>
       </template>
     </el-table-column>

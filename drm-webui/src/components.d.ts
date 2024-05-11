@@ -73,7 +73,4 @@ declare module 'vue' {
     TopNavBar: typeof import('./components/navigation/TopNavBar.vue')['default']
     VerifyPendingRightTable: typeof import('./components/ChainVerifyPage/VerifyPendingRightTable.vue')['default']
   }
-  export interface ComponentCustomProperties {
-    vLoading: typeof import('element-plus/es')['ElLoadingDirective']
-  }
 }
