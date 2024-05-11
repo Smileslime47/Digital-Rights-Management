@@ -3,8 +3,6 @@ package moe._47saikyo.drm.blockchain
 import com.fasterxml.jackson.databind.ObjectMapper
 import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainWrapperConfiguration
 import moe._47saikyo.drm.blockchain.contract.DRManager
-import moe._47saikyo.drm.blockchain.models.LicenseDeployForm
-import moe._47saikyo.drm.blockchain.models.RightDeployForm
 import moe._47saikyo.drm.blockchain.service.AccountService
 import moe._47saikyo.drm.blockchain.service.ManagerService
 import moe._47saikyo.drm.blockchain.service.impl.AccountServiceImpl
@@ -12,7 +10,6 @@ import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.inject
 import org.slf4j.LoggerFactory
 import org.web3j.utils.Convert
-import java.math.BigInteger
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -40,23 +37,26 @@ class PreDeploy {
 
     @Test
     fun newAccount() {
-        logger.info(ObjectMapper().writeValueAsString(accountService.newAccount("1234567890")))
+        val pwd = "1234567890"
+        logger.info(ObjectMapper().writeValueAsString(accountService.newAccount(pwd)))
     }
 
     /**
      * 预部署测试用DRManager合约
      *
-     * 上一次部署成功地址：0x13598c1e0e73d0793a29e35e8831aad41e40bfdc
+     * 上一次部署成功地址：0xbfe6ffcd87d4aa8d28239a1f5afbb22a3dd208f5
      */
     @Test
     fun deployManager() {
         val oldBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
+        logger.info(BlockChain.bankAddress!!)
         val manager = DRManager.deploy(BlockChain.web3jInstance, BlockChain.bankTxManager, BlockChain.gasProvider).send()
 
         val newBalance = AccountServiceImpl().getBalance(BlockChain.bankAddress!!,Convert.Unit.WEI)
 
         logger.info("Manager deployed at ${manager.contractAddress}.")
         logger.info("cost ${oldBalance - newBalance} wei.")
+        logger.info("Left $newBalance wei.")
     }
 }

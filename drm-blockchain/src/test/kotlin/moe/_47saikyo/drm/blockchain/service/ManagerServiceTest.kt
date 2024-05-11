@@ -6,6 +6,7 @@ import moe._47saikyo.drm.blockchain.Estimate
 import moe._47saikyo.drm.blockchain.address
 import moe._47saikyo.drm.blockchain.configuration.koin.KoinBlockChainWrapperConfiguration
 import moe._47saikyo.drm.blockchain.constant.BlockChainConstant
+import moe._47saikyo.drm.blockchain.contract.DRManager
 import moe._47saikyo.drm.blockchain.service.impl.AccountServiceImpl
 import org.koin.core.context.startKoin
 import org.koin.java.KoinJavaComponent.inject
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory
 import org.web3j.utils.Convert
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ManagerServiceTest {
     private val logger = LoggerFactory.getLogger(ManagerServiceTest::class.java)
@@ -32,8 +34,20 @@ class ManagerServiceTest {
 
     @Test
     fun testSearchRights() {
-        val rights = managerService.searchByTitle("0x4db3443fc610477a5260c350254c9003b63e0673","Te").toString()
+        val rights = managerService.searchByTitle("0x4db3443fc610477a5260c350254c9003b63e0673", "Te").toString()
         logger.info("rights: $rights")
+    }
+
+    @Test
+    fun pingTest() {
+        val manager = DRManager.load(
+            BlockChain.managerAddr,
+            BlockChain.web3jInstance,
+            BlockChain.bankTxManager,
+            BlockChain.gasProvider
+        )
+
+        assertEquals("pong", manager.ping().send())
     }
 
     @Test
