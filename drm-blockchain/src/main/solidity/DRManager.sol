@@ -76,6 +76,13 @@ contract DRManager {
     //Title键可重名，用于做搜索功能
     IterableMap private titleRightKeyMap;
 
+    /**
+     * 合约存活检测
+     */
+    function ping() pure public returns (string memory) {
+        return "pong";
+    }
+
     //------------------------------以下为搜索的相关操作------------------------------//
 
     /**
@@ -190,11 +197,11 @@ contract DRManager {
     }
 
     function addLicense(address owner, License memory license) public {
-        if (rightMap[owner].length <= license.rightKeyPair.arrayIndex) {
+        if (rightMap[license.rightKeyPair.deployer].length <= license.rightKeyPair.arrayIndex) {
             return;
         }
 
-        if (rightMap[owner].length == 0 && license.rightKeyPair.arrayIndex == 0 && stringEquals(rightMap[owner][0].title, "")) {
+        if (rightMap[license.rightKeyPair.deployer].length == 0 && license.rightKeyPair.arrayIndex == 0 && stringEquals(rightMap[license.rightKeyPair.deployer][0].title, "")) {
             return;
         }
 
